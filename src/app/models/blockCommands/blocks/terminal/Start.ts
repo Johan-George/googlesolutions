@@ -10,7 +10,7 @@ export class Start implements TerminalBlock {
   static label: string = 'When Start';
   static id: string = btoa(Start.name);
   terminate: number = null;
-  indentationLevel: number;
+  indentationLevel: number = 0;
 
   getId(): string {
     return Start.id;
@@ -21,7 +21,7 @@ export class Start implements TerminalBlock {
   }
 
   getAsCode(): string {
-    return 'function startTurn(grid, unit){';
+    return 'function startTurn(grid, unit) {';
   }
 
 }

@@ -12,7 +12,7 @@ export class ElseIf implements ConditionalBlock {
 
   static id: string = btoa(ElseIf.name);
   static label: string = 'Else if';
-  static asCode = (predicate: Predicate) => `else if(${predicate.getAsCode()}){`;
+  static asCode = (predicate: Predicate) => `} else if(${predicate.getAsCode()}) {`;
 
   condition: Predicate = new EmptyPredicate();
   terminal_blocks: Array<string> = [ElseIf.label, EndElseIf.label, Else.label];

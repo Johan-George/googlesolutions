@@ -10,7 +10,7 @@ export class Else implements ConditionalBlock {
 
   static id: string = btoa(Else.name);
   static label: string = 'Else';
-  static asCode: string = 'else {';
+  static asCode: string = '} else {';
 
   condition: Predicate;
   terminal_blocks: Array<string> = [EndElse.label];

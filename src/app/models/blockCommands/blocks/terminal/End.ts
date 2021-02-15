@@ -10,7 +10,7 @@ export class End implements TerminalBlock {
   static label: string = 'End';
   static id: string = btoa(End.name);
   terminate: number = null;
-  indentationLevel: number;
+  indentationLevel: number = 0;
 
   getId(): string {
     return End.id;
