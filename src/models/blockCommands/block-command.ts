@@ -3,7 +3,7 @@ import { GameAction } from "../game/GameAction";
 
 export interface BlockCommand{
 
-  getId: () => number
+  getId: () => string
   getLabel: () => string
   indentationLevel: number
   getAsCode: () => string
