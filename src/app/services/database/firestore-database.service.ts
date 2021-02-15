@@ -62,9 +62,9 @@ export class FirestoreDatabaseService {
   //getters
 
   /**
-   * 
-   * @param uid 
-   * @param listenerFunction 
+   * function to get user data from the database. Must include a listener function(Userdata) for response
+   * @param uid the user id you are getting data for
+   * @param listenerFunction the function(ProgramData) that recieves the request data
    */
   public getUserData(uid:string, listenerFunction) {
     this.queryDocument(this.USER_DATA, uid).subscribe(result => {
@@ -78,6 +78,11 @@ export class FirestoreDatabaseService {
     })
   }
 
+  /**
+   * function to get the data for a program from the database Must inclide a listener function(ProgramData) for response
+   * @param cid the program id you are getting data for
+   * @param listenerFunction the function(Programdata) that recieves the request data
+   */
   public getProgramData(cid:string, listenerFunction) {
     this.queryDocument(this.CODE_DATA, cid).subscribe(result => {
       var data = result.data();
@@ -116,6 +121,11 @@ export class FirestoreDatabaseService {
     });
   }
 
+  /**
+   * function to get the data for a level from the database Must inclide a listener function(LevelData) for response
+   * @param cid the program id you are getting data for
+   * @param listenerFunction the function(LevelData) that recieves the request data
+   */
   public getLevelData(lid:string, listenerFunction) {
     this.queryDocument(this.LEVEL_DATA, lid).subscribe(result => {
       var data = result.data();
@@ -128,6 +138,11 @@ export class FirestoreDatabaseService {
     });
   }
 
+  /**
+   * function to get the data for a program in a level from the database Must inclide a listener function(ProgramData) for response
+   * @param cid the program id you are getting data for
+   * @param listenerFunction the function(ProgramData) that recieves the request data
+   */
   public getLevelProgram(lid: string, listenerFunction) {
     var self = this;
     this.getLevelData(lid, function(data) {
@@ -136,6 +151,12 @@ export class FirestoreDatabaseService {
   }
 
   //setters
+  /**
+   * Function that sets the data in the user collection database based on a UserData object
+   * Returns the promise of the response
+   * @param uid the id of the user you are trying to change
+   * @param ud the UserData object to place into database
+   */
   public setUserData(uid: string, ud: UserData) : Promise<void> {
     return this.updateDocument(this.USER_DATA, uid, {
       Username: ud.Username,
@@ -144,6 +165,12 @@ export class FirestoreDatabaseService {
     })
   }
 
+  /**
+   * Function that sets the data in the program collection database based on a ProgramData object
+   * Returns the promise of the response
+   * @param uid the id of the program you are trying to change
+   * @param ud the ProgramData object to place into database
+   */
   public setProgramData(pid: string, pd: ProgramData) : Promise<void> {
     var compMap = new Map<string, string[]>();
 
@@ -166,6 +193,10 @@ export class FirestoreDatabaseService {
   }
 
   //deleters
+  /**
+   * Deletes program data from database
+   * @param pid the program id to delete
+   */
   public deleteProgramData(pid: string) : Promise<void> {
     return this.deleteDocument(this.CODE_DATA, pid);
   }
