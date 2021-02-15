@@ -1,0 +1,53 @@
+
+.code-block-unused{
+    flex-grow: 1;
+    flex-shrink: 1;
+    flex-basis: 250px;
+  }
+  
+  #card-list{
+    width: 75%;
+    display: flex;
+    margin: 100px auto auto;
+  }
+  
+  #current-code-list{
+    width: 75%;
+    margin: auto;
+    text-align: center;
+  }
+  
+  .code-block-used{
+    background-color: #00ffff;
+    width: 250px;
+    position: relative;
+    margin: auto;
+  }
+  
+  .code-block-used:nth-child(2n){
+    background-color: #ff4000;
+  }
+  
+  #export{
+    margin: 100px auto;
+    display: block;
+  }
+  
+  #actual-code{
+    background-color: black;
+    width: 500px;
+    height: 200px;
+    float: left;
+  }
+  
+  .code{
+    color: white;
+    position: relative;
+    margin-bottom: 0;
+  }
+  
+  
+  .comment{
+    color: #518058;
+  }
+  
