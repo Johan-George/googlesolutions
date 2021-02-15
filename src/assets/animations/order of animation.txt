@@ -1,0 +1,6 @@
+Order of animation from top to bottom:
+
+regular walk
+sword walk
+bow walk
+sword attack
