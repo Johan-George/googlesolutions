@@ -55,25 +55,6 @@ export class CodeService {
   }
 
   /**
-   * Validates code to check if code is valid
-   * @param commands Array of Code to compile
-   */
-  validateCode(commands: Array<BlockCommand>) {
-    // TODO -> use this array of strings to check that blocks are properly closed
-    let serializedCode = this.serializeBlocks(commands);
-
-    for (let command of commands) {
-
-      if (this.blockService.isConditional(command)) {
-        if (command.getId() === EmptyPredicate.id) {
-          throw new Error('Compilation Error: Cannot keep predicate empty');
-        }
-      }
-
-    }
-  }
-
-  /**
    * Serializes Code to string array for storage
    * @param commands Code to Serialize
    */
@@ -126,6 +107,11 @@ export class CodeService {
   createConditionalFunction(i, commands: Array<BlockCommand>, actions) {
 
     let condition = (<ConditionalBlock>commands[i]).condition;
+
+    if(condition.getLabel() === EmptyPredicate.label){
+      throw new Error('An if block is missing a condition');
+    }
+
     let terminal_blocks = (<ConditionalBlock>commands[i]).terminal_blocks;
     let elseIfs = [];
     let elseActions = [];
@@ -148,6 +134,10 @@ export class CodeService {
         i++;
 
       } else if (commands[i].getLabel() === ElseIf.label) {
+
+        if((<ConditionalBlock>commands[i]).condition.getLabel() === EmptyPredicate.label){
+          throw new Error('An Else if block is missing a condition');
+        }
 
         let next = this.parseElseIfOrElse(i, commands, actions);
         elseIfs.push([next[1], next[2]])
