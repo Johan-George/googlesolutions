@@ -1,11 +1,20 @@
-import {ConditionalBlock, Predicate} from '../../block-command';
-import {EndElse} from '../terminal/EndElse';
+import { ConditionalBlock, Predicate } from '../../block-command';
+import { EndElse } from '../terminal/EndElse';
 
-export class Else implements ConditionalBlock{
+/**
+ * ConditionalBlock representing an Else statement
+ * See block-command.ts for specific documentation 
+ * on properties and methods
+ */
+export class Else implements ConditionalBlock {
 
   static id: string = btoa(Else.name);
   static label: string = 'Else';
   static asCode: string = 'else {';
+
+  condition: Predicate;
+  terminal_blocks: Array<string> = [EndElse.label];
+  indentationLevel: number;
 
   getId(): string {
     return Else.id;
@@ -14,10 +23,6 @@ export class Else implements ConditionalBlock{
   getLabel(): string {
     return Else.label;
   }
-
-  condition: Predicate;
-  terminal_blocks: Array<string> = [EndElse.label];
-  indentationLevel: number;
 
   getAsCode(): string {
     return Else.asCode;

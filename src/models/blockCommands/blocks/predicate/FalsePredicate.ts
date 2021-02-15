@@ -1,6 +1,12 @@
-import {Predicate} from '../../block-command';
+import { Predicate } from '../../block-command';
 
-export class FalsePredicate implements Predicate{
+/**
+ * Predicate representing the False condition
+ * This condition is always false
+ * See block-command.ts for specific documentation 
+ * on properties and methods
+ */
+export class FalsePredicate implements Predicate {
 
   static id: string = btoa(FalsePredicate.name);
   static label: string = 'No Condition Selected';
@@ -11,19 +17,16 @@ export class FalsePredicate implements Predicate{
     return false;
   }
 
-  getId(){
-
+  getId(): string {
     return FalsePredicate.id;
-
   }
 
-  getLabel(){
+  getLabel(): string {
     return FalsePredicate.label;
   }
 
   getAsCode(): string {
     return FalsePredicate.asCode;
   }
-
 
 }

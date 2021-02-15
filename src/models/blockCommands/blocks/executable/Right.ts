@@ -1,11 +1,17 @@
 import { GameAction } from 'src/models/game/GameAction';
-import {Executable} from '../../block-command';
+import { Executable } from '../../block-command';
 
-export class Right implements Executable{
+/**
+ * Executable representing a right movement
+ * See block-command.ts for specific documentation 
+ * on properties and methods
+ */
+export class Right implements Executable {
 
   static label: string = 'Right';
   static id: string = btoa(Right.name);
-  static asCode = 'right();'
+  static asCode = 'right();';
+  indentationLevel: number;
 
   execute(grid, unit): GameAction {
     console.log('RIGHT')
@@ -16,16 +22,12 @@ export class Right implements Executable{
     return Right.id;
   }
 
-  getLabel(){
+  getLabel(): string {
     return Right.label;
   }
-
-  indentationLevel: number;
 
   getAsCode(): string {
     return Right.asCode;
   }
 
-
 }
-

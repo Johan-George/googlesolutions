@@ -1,11 +1,17 @@
 import { GameAction } from 'src/models/game/GameAction';
-import {Executable} from '../../block-command';
+import { Executable } from '../../block-command';
 
-export class Left implements Executable{
+/**
+ * Executable representing a left movement
+ * See block-command.ts for specific documentation 
+ * on properties and methods
+ */
+export class Left implements Executable {
 
   static label: string = 'Left';
   static id: string = btoa(Left.name);
-  static asCode = 'left();'
+  static asCode = 'left();';
+  indentationLevel: number;
 
   execute(grid, unit): GameAction {
     console.log('LEFT')
@@ -16,15 +22,12 @@ export class Left implements Executable{
     return Left.id;
   }
 
-  getLabel(){
+  getLabel(): string {
     return Left.label;
   }
-
-  indentationLevel: number;
 
   getAsCode(): string {
     return Left.asCode;
   }
-
 
 }

@@ -1,6 +1,11 @@
-import {TerminalBlock} from '../../block-command';
+import { TerminalBlock } from '../../block-command';
 
-export class EndIf implements TerminalBlock{
+/**
+ * TerminalBlock representing the end of an If block
+ * See block-command.ts for specific documentation 
+ * on properties and methods
+ */
+export class EndIf implements TerminalBlock {
 
   static label: string = 'End if';
   static id: string = btoa(EndIf.name);
@@ -11,7 +16,7 @@ export class EndIf implements TerminalBlock{
     return EndIf.id;
   }
 
-  getLabel(){
+  getLabel(): string {
     return EndIf.label;
   }
 

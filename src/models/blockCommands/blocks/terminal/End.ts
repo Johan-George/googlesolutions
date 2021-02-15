@@ -1,6 +1,11 @@
-import {TerminalBlock} from '../../block-command';
+import { TerminalBlock } from '../../block-command';
 
-export class End implements TerminalBlock{
+/**
+ * TerminalBlock representing the end of the code
+ * See block-command.ts for specific documentation 
+ * on properties and methods
+ */
+export class End implements TerminalBlock {
 
   static label: string = 'End';
   static id: string = btoa(End.name);
@@ -11,7 +16,7 @@ export class End implements TerminalBlock{
     return End.id;
   }
 
-  getLabel(){
+  getLabel(): string {
     return End.label;
   }
 

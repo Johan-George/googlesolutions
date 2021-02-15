@@ -1,9 +1,14 @@
-import {TerminalBlock} from '../../block-command';
+import { TerminalBlock } from '../../block-command';
 
-export class EndElseIf implements TerminalBlock{
+/**
+ * TerminalBlock representing the end of an ElseIf Block
+ * See block-command.ts for specific documentation 
+ * on properties and methods
+ */
+export class EndElseIf implements TerminalBlock {
 
-  static label = 'End Else If'
-  static id:string = btoa(EndElseIf.name);
+  static label: string = 'End Else If'
+  static id: string = btoa(EndElseIf.name);
   terminate: number = null;
   indentationLevel: number;
 

@@ -1,6 +1,12 @@
-import {Predicate} from '../../block-command';
+import { Predicate } from '../../block-command';
 
-export class TruePredicate implements Predicate{
+/**
+ * Predicate representing a true condition
+ * the condition will always be true
+ * See block-command.ts for specific documentation 
+ * on properties and methods
+ */
+export class TruePredicate implements Predicate {
 
   static id: string = btoa(TruePredicate.name);
   static label: string = 'No Condition Selected';
@@ -11,20 +17,16 @@ export class TruePredicate implements Predicate{
     return true;
   }
 
-  getId(){
-
+  getId() {
     return TruePredicate.id;
-
   }
 
-  getLabel(){
+  getLabel() {
     return TruePredicate.label;
   }
-
 
   getAsCode(): string {
     return TruePredicate.asCode;
   }
-
 
 }

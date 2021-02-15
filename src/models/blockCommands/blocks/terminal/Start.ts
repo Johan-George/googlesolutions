@@ -1,6 +1,11 @@
-import {TerminalBlock} from '../../block-command';
+import { TerminalBlock } from '../../block-command';
 
-export class Start implements TerminalBlock{
+/**
+ * TerminalBlock representing the start of the code
+ * See block-command.ts for specific documentation 
+ * on properties and methods
+ */
+export class Start implements TerminalBlock {
 
   static label: string = 'When Start';
   static id: string = btoa(Start.name);
@@ -11,10 +16,8 @@ export class Start implements TerminalBlock{
     return Start.id;
   }
 
-  getLabel(){
-
+  getLabel(): string {
     return Start.label;
-
   }
 
   getAsCode(): string {

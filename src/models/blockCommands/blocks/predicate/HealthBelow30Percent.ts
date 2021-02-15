@@ -1,6 +1,12 @@
-import {Predicate} from '../../block-command';
+import { Predicate } from '../../block-command';
 
-export class HealthBelow30Percent implements Predicate{
+/**
+ * Predicate representing Health below 30% condition
+ * condition checks the unit's health if below 30%
+ * See block-command.ts for specific documentation 
+ * on properties and methods
+ */
+export class HealthBelow30Percent implements Predicate {
 
   static label: string = 'Health Below 30%';
   static id: string = btoa(HealthBelow30Percent.name);
@@ -15,7 +21,7 @@ export class HealthBelow30Percent implements Predicate{
     return HealthBelow30Percent.id;
   }
 
-  getLabel(){
+  getLabel(): string {
     return HealthBelow30Percent.label;
   }
 

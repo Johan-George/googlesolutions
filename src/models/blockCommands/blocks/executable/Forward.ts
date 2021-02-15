@@ -1,11 +1,17 @@
 import { GameAction } from 'src/models/game/GameAction';
-import {Executable} from '../../block-command';
+import { Executable } from '../../block-command';
 
-export class Forward implements Executable{
+/**
+ * Executable representing a forward movement
+ * See block-command.ts for specific documentation 
+ * on properties and methods
+ */
+export class Forward implements Executable {
 
   static label: string = 'Forward';
   static id: string = btoa(Forward.name);
-  static asCode = 'forward();'
+  static asCode = 'forward();';
+  indentationLevel: number;
 
   execute(grid, unit): GameAction {
     console.log('FORWARD')
@@ -16,11 +22,9 @@ export class Forward implements Executable{
     return Forward.id;
   }
 
-  getLabel(){
+  getLabel(): string {
     return Forward.label;
   }
-
-  indentationLevel: number;
 
   getAsCode(): string {
     return Forward.asCode;

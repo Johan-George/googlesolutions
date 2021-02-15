@@ -1,26 +1,31 @@
-import {ConditionalBlock, Predicate} from '../../block-command';
-import {EndIf} from '../terminal/Endif';
-import {EmptyPredicate} from '../predicate/EmptyPredicate';
-import {EndElse} from '../terminal/EndElse';
-import {EndElseIf} from '../terminal/EndElseIf';
+import { ConditionalBlock, Predicate } from '../../block-command';
+import { EndIf } from '../terminal/Endif';
+import { EmptyPredicate } from '../predicate/EmptyPredicate';
+import { EndElse } from '../terminal/EndElse';
+import { EndElseIf } from '../terminal/EndElseIf';
 
+/**
+ * ConditionalBlock representing an If statement
+ * See block-command.ts for specific documentation 
+ * on properties and methods
+ */
 export class If implements ConditionalBlock {
 
-  condition: Predicate = new EmptyPredicate();
   static label: string = 'If';
-  terminal_blocks: Array<string> = [EndIf.label, EndElse.label, EndElseIf.label];
   static asCode = (predicate: Predicate) => `if(${predicate.getAsCode()}){`;
   static id: string = btoa(If.name);
+
+  condition: Predicate = new EmptyPredicate();
+  terminal_blocks: Array<string> = [EndIf.label, EndElse.label, EndElseIf.label];
+  indentationLevel: number;
 
   getId(): string {
     return If.id;
   }
 
-  getLabel(){
+  getLabel() {
     return If.label;
   }
-
-  indentationLevel: number;
 
   getAsCode(): string {
     return If.asCode(this.condition);

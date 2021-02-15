@@ -1,11 +1,17 @@
 import { GameAction } from 'src/models/game/GameAction';
-import {Executable} from '../../block-command';
+import { Executable } from '../../block-command';
 
-export class Backward implements Executable{
+/**
+ * Executable representing a backward movement
+ * See block-command.ts for specific documentation 
+ * on properties and methods
+ */
+export class Backward implements Executable {
 
   static label: string = 'Backward';
   static id: string = btoa(Backward.name);
-  static asCode = 'backward();'
+  static asCode = 'backward();';
+  indentationLevel: number;
 
   execute(grid, unit): GameAction {
     console.log('BACKWARD')
@@ -16,15 +22,12 @@ export class Backward implements Executable{
     return Backward.id;
   }
 
-  getLabel(){
+  getLabel(): string {
     return Backward.label;
   }
-
-  indentationLevel: number;
 
   getAsCode(): string {
     return Backward.asCode;
   }
-
 
 }

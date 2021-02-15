@@ -1,9 +1,14 @@
-import {TerminalBlock} from '../../block-command';
+import { TerminalBlock } from '../../block-command';
 
-export class EndElse implements TerminalBlock{
+/**
+ * TerminalBlock representing the end of an Else block
+ * See block-command.ts for specific documentation 
+ * on properties and methods
+ */
+export class EndElse implements TerminalBlock {
 
-  static label:string = 'End Else'
-  static id:string = btoa(EndElse.name);
+  static label: string = 'End Else'
+  static id: string = btoa(EndElse.name);
   terminate: number = null;
   indentationLevel: number;
 

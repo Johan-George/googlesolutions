@@ -1,6 +1,12 @@
-import {Predicate} from '../../block-command';
+import { Predicate } from '../../block-command';
 
-export class EnemyNear implements Predicate{
+/**
+ * Predicate representing The EnemyNear Condition
+ * Condition checks if there is an enemy near the unit
+ * See block-command.ts for specific documentation 
+ * on properties and methods
+ */
+export class EnemyNear implements Predicate {
 
   static label: string = 'Enemy Near';
   static id: string = btoa(EnemyNear.name);
@@ -14,7 +20,7 @@ export class EnemyNear implements Predicate{
   getId(): string {
     return EnemyNear.id;
   }
-  getLabel(){
+  getLabel(): string {
     return EnemyNear.label;
   }
 
