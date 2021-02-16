@@ -3,7 +3,7 @@ import { Executable } from '../../block-command';
 
 /**
  * Executable representing an attack
- * See block-command.ts for specific documentation 
+ * See block-command.ts for specific documentation
  * on properties and methods
  */
 export class Attack implements Executable {
