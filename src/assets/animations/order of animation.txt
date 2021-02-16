@@ -4,3 +4,4 @@ regular walk
 sword walk
 bow walk
 sword attack
+bow attack
