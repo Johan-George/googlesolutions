@@ -24,6 +24,8 @@ export class CodeService {
    * @param commands The Array of commands to compile
    */
   compileToExecutableCode(commands: Array<BlockCommand>) {
+
+    this.preProcessBlockCode(commands);
     let actions: Array<Function> = [];
 
     for (let i = 0; i < commands.length; i++) {
@@ -155,7 +157,7 @@ export class CodeService {
         i++;
 
       }
-    } 
+    }
     /*
     Append to the actions array a new function that will execute all the functions in the conditional_actions array
     if the given evaluation function returns true. Otherwise it will look through the else ifs to see if any of
@@ -228,5 +230,25 @@ export class CodeService {
     }
 
     return [i, condition, conditional_actions];
+  }
+
+  /**
+   * preprocesses user's code to check they only have one Executable, otherwise throws and exception
+   * @param commands the user's current block code
+   */
+  preProcessBlockCode(commands: Array<BlockCommand>){
+
+    let executableCount = 0;
+    for(let command of commands){
+      if(this.blockService.isExecutable(command)){
+
+        executableCount++;
+
+      }
+      if(executableCount > 1){
+        throw new Error('Only allowed one action per turn')
+      }
+    }
+
   }
 }

@@ -67,6 +67,7 @@ export class BlockCodeComponent implements OnInit {
       let serialized = this.codeService.serializeBlocks(this.currentCode);
 
     } catch (err) {
+      console.log(err);
       this.dialog.open(ErrorComponent, { data: err.message })
     }
 

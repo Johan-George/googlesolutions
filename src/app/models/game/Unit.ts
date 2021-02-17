@@ -24,10 +24,10 @@ export class Unit {
    * The code the that unit can run
    */
   activecode: BlockCommand[] | Function = [];
-
-  /**
-   * function to allow the unit to move
-   */
-  doMove() {}
+  maxHealth: number = 100;
+  health: number = 100;
+  defense: number = 10;
+  strength: number = 20;
+  attackRange: number = 1;
 
 }

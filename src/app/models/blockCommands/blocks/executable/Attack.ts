@@ -1,5 +1,6 @@
 import { GameAction } from 'src/app/models/game/GameAction';
 import { Executable } from '../../block-command';
+import {Unit} from '../../../game/Unit';
 
 /**
  * Executable representing an attack
@@ -13,7 +14,16 @@ export class Attack implements Executable {
   static asCode = 'attack();';
   indentationLevel: number;
 
-  execute(grid, unit): GameAction {
+  execute(grid: Array<Array<Unit>>, unit: Unit): GameAction {
+    // let location = unit.location;
+    // let range = unit.attackRange;
+    // for(let i = location.x - range; i <= location.x + range; i++){
+    //   for(let j = location.y - range; i <= location.y + range; j++){
+    //
+    //
+    //
+    //   }
+    // }
     console.log('ATTACK')
     return new GameAction("None", null, null, false);
   }
