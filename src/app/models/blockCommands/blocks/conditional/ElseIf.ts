@@ -1,14 +1,14 @@
-import { ConditionalBlock, Predicate } from '../../block-command';
+import {ConditionalBlock, Predicate, TerminalBlock} from '../../block-command';
 import { EmptyPredicate } from '../predicate/EmptyPredicate';
 import { EndElseIf } from '../terminal/EndElseIf';
 import { Else } from './Else';
 
 /**
  * ConditionalBlock representing an Else-If statement
- * See block-command.ts for specific documentation 
+ * See block-command.ts for specific documentation
  * on properties and methods
  */
-export class ElseIf implements ConditionalBlock {
+export class ElseIf implements ConditionalBlock, TerminalBlock {
 
   static id: string = btoa(ElseIf.name);
   static label: string = 'Else if';
@@ -17,6 +17,7 @@ export class ElseIf implements ConditionalBlock {
   condition: Predicate = new EmptyPredicate();
   terminal_blocks: Array<string> = [ElseIf.label, EndElseIf.label, Else.label];
   indentationLevel: number;
+  terminate: number = null;
 
   getId(): string {
     return ElseIf.id;

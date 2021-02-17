@@ -89,32 +89,36 @@ export class BlockCodeComponent implements OnInit {
    blocks we get their index using the event. But we also need the option to do it by indent when we recalculate
    the indentation when blocks are deleted or when we import the code.
    */
-  setIndentationLevel(event, block, index = null) {
+  setIndentationLevel(event, block, index=null){
 
     let blockIndex = index;
 
-    if (event !== null) {
+    if(event !== null){
+
       blockIndex = event.currentIndex;
+
     }
 
     let blockAbove = this.currentCode[blockIndex - 1];
-    if (blockIndex === 1) {
+    if(blockIndex === 1){
       block.indentationLevel = 1;
-    } else if (this.blockService.isConditional(blockAbove) && !(this.blockService.isTerminal(block))) {
+    }else if(this.blockService.isConditional(blockAbove) && !(this.blockService.isTerminal(block))){
       block.indentationLevel = blockAbove.indentationLevel + 1;
-    } else if (this.blockService.isTerminal(block) && !(blockAbove.indentationLevel === 1)) {
+    }else if(this.blockService.isTerminal(block) && !(blockAbove.indentationLevel === 1)){
       block.indentationLevel = blockAbove.indentationLevel - 1;
-    } else {
+    }else{
       block.indentationLevel = blockAbove.indentationLevel;
     }
 
   }
 
-  recalculateIndentation() {
-    for (let i = 1; i < this.currentCode.length - 1; i++) {
+  recalculateIndentation(){
+
+    for(let i = 1; i < this.currentCode.length - 1; i++){
 
       let block = this.currentCode[i];
       this.setIndentationLevel(null, block, i);
+
     }
 
   }
