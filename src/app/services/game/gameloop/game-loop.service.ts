@@ -2,10 +2,13 @@ import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 import { Stack } from 'src/app/dataStructures/Stack';
 import { BlockCommand, ConditionalBlock, Executable } from 'src/app/models/blockCommands/block-command';
+import { Else } from 'src/app/models/blockCommands/blocks/conditional/Else';
+import { ElseIf } from 'src/app/models/blockCommands/blocks/conditional/ElseIf';
 import { If } from 'src/app/models/blockCommands/blocks/conditional/If';
 import { EndIf } from 'src/app/models/blockCommands/blocks/terminal/Endif';
 import { GameAction } from 'src/app/models/game/GameAction';
 import { Unit } from 'src/app/models/game/Unit';
+import { BlockService } from '../../program-construction/block.service';
 import { LevelDataInterfaceService } from '../levelDataInterface/level-data-interface.service';
 
 @Injectable({
@@ -59,7 +62,7 @@ export class GameLoopServiceService {
    */
   gameData;
 
-  constructor(private LevelInterface: LevelDataInterfaceService) { }
+  constructor(private LevelInterface: LevelDataInterfaceService, private blockServ: BlockService) { }
 
   /**
    * Must be called before loop is prepped
@@ -142,10 +145,10 @@ export class GameLoopServiceService {
       this.lastAction = null;
 
       return last;
-      
-    } catch(error) {
+
+    } catch (error) {
       last = null;
-      return new GameAction("Error", null, null, false); 
+      return new GameAction("Error", null, null, false);
     }
   }
 
@@ -160,32 +163,33 @@ export class GameLoopServiceService {
     var finalReturn = false;
 
     //conditional check
-    if (this.isConditional(cmd)) {
-      this.currentConditions.push(new ConditionalHold(cmd as ConditionalBlock, this.codeIndex));
+    if (this.blockServ.isConditional(cmd)) {
 
-      //check conditioning
-      if ((cmd as ConditionalBlock).condition.evaluation(this.grid, unit)) {
-        this.currentConditions.peek().preCondition = true;
-        this.codeIndex++;
-        return true;
+      if (cmd instanceof If) {
+        return this.handleIfStatement(cmd, unit);
+      } else if (cmd instanceof ElseIf) {
 
-      } else {
-        this.currentConditions.peek().preCondition = false;
-        //Find endblock
-        do {
-          this.codeIndex++;
-        } while (!(unit.activecode[this.codeIndex] instanceof EndIf));
-        return true;
+        if(this.currentConditions.peek().preCondition) {
+          this.seekToEndIf(unit);
+        } else {
+          this.currentConditions.pop();
+          
+          return this.handleIfStatement(cmd, unit);
+        }
 
+      } else if(cmd instanceof Else) {
+
+        if(this.currentConditions.peek().preCondition) {
+          this.seekToEndIf(unit);
+        } else {
+          finalReturn = true;
+        }
       }
+
       //conditionalEnd check
-    } else if (cmd instanceof EndIf) {
-      var lastHold: ConditionalHold = this.currentConditions.peek();
-
+    } else if (this.blockServ.isTerminal(cmd)) {
       finalReturn = true;
-      if (lastHold.conditional instanceof If) {
-        this.currentConditions.pop();
-      }
+      this.currentConditions.pop();
 
       //It must be an action
     } else {
@@ -232,16 +236,40 @@ export class GameLoopServiceService {
     return arr;
   }
 
-  /**
-   * Returns true if the block is an instance of ConditionalBlock
-   * @param command the BlockCommand to check
-   */
-  private isConditional(command: BlockCommand): command is ConditionalBlock {
-    /*
-     the condition field is unique to the ConditionalBlock interface so if it is defined then we know it is a
-     Conditional Block
-     */
-    return (<ConditionalBlock>command).condition !== undefined;
+  private handleIfStatement(cmd: BlockCommand, unit: Unit): boolean {
+    this.currentConditions.push(new ConditionalHold(cmd as ConditionalBlock, this.codeIndex));
+
+    //check conditioning
+    if ((cmd as ConditionalBlock).condition.evaluation(this.grid, unit)) {
+      this.currentConditions.peek().preCondition = true;
+      this.codeIndex++;
+      return true;
+
+    } else {
+      this.currentConditions.peek().preCondition = false;
+
+      //Find endblock
+      this.seekToEndIf(unit);
+
+      /*while (!(unit.activecode[this.codeIndex] instanceof EndIf));*/
+      return true;
+    }
+  }
+
+  private seekToEndIf(unit: Unit) {
+    var conditionCount = 1;
+    var curBlock: BlockCommand;
+
+    do {
+      this.codeIndex++;
+      curBlock = unit.activecode[this.codeIndex]
+
+      if (curBlock instanceof If) {
+        conditionCount++;
+      } else if (this.blockServ.isTerminal(curBlock)) {
+        conditionCount--;
+      }
+    } while (!(this.blockServ.isTerminal(curBlock) || curBlock instanceof Else || curBlock instanceof ElseIf) || !(conditionCount <= 0));
   }
 }
 
