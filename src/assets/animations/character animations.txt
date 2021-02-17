@@ -1,0 +1,5 @@
+order of swordsman and archery animation from top to bottom:
+
+idle
+walk
+attack
