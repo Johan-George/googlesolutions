@@ -18,6 +18,7 @@ import { AngularFirestoreModule } from '@angular/fire/firestore';
 import { AngularFireAuthModule } from '@angular/fire/auth';
 import { BlockCodeComponent } from './components/block-code/block-code.component';
 import { ErrorComponent } from './components/error/error.component';
+import { SigninPageComponent } from './components/signin-page/signin-page.component';
 
 const firebaseConfig = {
   apiKey: "AIzaSyB25gxYu7PkMvnjKhisCzPP62grU_OEMLU",
@@ -32,7 +33,8 @@ const firebaseConfig = {
   declarations: [
     AppComponent,
     BlockCodeComponent,
-    ErrorComponent
+    ErrorComponent,
+    SigninPageComponent
   ],
   imports: [
     BrowserModule,

@@ -12,11 +12,11 @@ export class AuthyLoginService {
 
   constructor(public afAuth: AngularFireAuth, public router: Router) {  }
 
-  public AuthLogin() {
+  public AuthLogin(route: string) {
     this.afAuth.signInWithPopup(new firebase.default.auth.GoogleAuthProvider())
     .then((userCred) => {
       AuthyLoginService.user = userCred.user.uid;
-      //this.router.navigate([""]);
+      this.router.navigate([route]);
       console.log("Logged in user " + AuthyLoginService.user);
     }).catch(error => {
       console.log("Could not login due to " + error);
@@ -24,9 +24,11 @@ export class AuthyLoginService {
   }
 
   public logout() {
-    AuthyLoginService.user = null;
-    this.afAuth.signOut();
-    console.log("user logout");
+    this.afAuth.signOut().then(() => {
+      AuthyLoginService.user = null;
+      console.log("User signout");
+      this.router.navigate([""]);
+    });
   }
 
 }
