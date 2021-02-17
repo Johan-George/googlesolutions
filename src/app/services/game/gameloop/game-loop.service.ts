@@ -1,4 +1,5 @@
 import { Injectable } from '@angular/core';
+import { Observable } from 'rxjs';
 import { Stack } from 'src/app/dataStructures/Stack';
 import { BlockCommand, ConditionalBlock, Executable } from 'src/app/models/blockCommands/block-command';
 import { If } from 'src/app/models/blockCommands/blocks/conditional/If';
@@ -53,7 +54,25 @@ export class GameLoopServiceService {
    */
   lastAction: GameAction;
 
+  /**
+   * Data stored for game run
+   */
+  gameData;
+
   constructor(private LevelInterface: LevelDataInterfaceService) { }
+
+  /**
+   * Must be called before loop is prepped
+   */
+  loadData(levelid: string, programid: string): Promise<void> {
+    return new Promise((resolutionFunc, rejectionFunc) => {
+      this.LevelInterface.getGameInfo(levelid, programid).then(result => {
+        this.gameData = result;
+
+        resolutionFunc();
+      });
+    })
+  }
 
   /**
    * Called before the start of game
@@ -62,12 +81,12 @@ export class GameLoopServiceService {
   prepLoop() {
 
     try {
+      var data = this.gameData;
+
       this.isTeam1Active = true;
       this.unitIndex = 0;
       this.codeIndex = 0;
       this.lastAction = null;
-
-      var data = this.LevelInterface.getGameInfo();
 
       this.team1units = data.team1Units;
       this.team2units = data.team2Units;

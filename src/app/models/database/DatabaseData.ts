@@ -46,29 +46,27 @@ export class ProgramData {
      * Array of Program Objects representing a mapping of 
      * each Unit's avaliable program data
      */
-    CodeBlocks: ProgramComponent[]
+    //CodeBlocks: ProgramComponent[]
 
     /**
      * Array of TroopLocation Objects representing a mapping
      * of each Unit's starting location
      */
-    Formation: TroopLocation[]
+    //Formation: TroopLocation[]
+
+    /**
+     * Array of units in the mapping
+     */
+    Units: UnitData[]
+    
 }
 
 /**
- * Object representing each Unit's avaliable program within
- * the ProgramData
+ * Object representing each Unit's avaliable program and location 
+ * within the ProgramData
  */
-export class ProgramComponent {
-    TroopId: number
+export class UnitData {
+    TroopType: number
     CodeBlocks: string[]
-}
-
-/**
- * Object representing each Unit's starting location within
- * the ProgramData
- */
-export class TroopLocation {
-    TroopId: number
     location: {x:number, y:number}
 }

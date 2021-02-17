@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { AngularFirestore } from '@angular/fire/firestore';
 import { Observable } from 'rxjs';
-import { LevelData, ProgramComponent, ProgramData, TroopLocation, UserData } from 'src/app/models/database/DatabaseData';
+import { LevelData, ProgramData, UnitData, UserData } from 'src/app/models/database/DatabaseData';
 
 @Injectable({
   providedIn: 'root'
@@ -86,36 +86,20 @@ export class FirestoreDatabaseService {
   public getProgramData(cid:string, listenerFunction) {
     this.queryDocument(this.CODE_DATA, cid).subscribe(result => {
       var data = result.data();
-
-      //get all code components
-      var cbArr: ProgramComponent[] = [];
-
-      console.log(typeof data.components);
-
-      for(const [key, value] of (new Map<string, string[]>(Object.entries(data.components))).entries()) {
-        cbArr.push({
-          TroopId: parseInt(key),
-          CodeBlocks: value
-        });
-      }
-
-      var formationArr: TroopLocation[] = [];
-
-      for(const [key, value] of (new Map(Object.entries(data.formation))).entries()) {
-        formationArr.push({
-          TroopId: parseInt(key),
-          location: {
-            x: value[0],
-            y: value[1]
-          }
-        });
+      
+      //gets array of units
+      var units = [];
+      for(var x = 0; x < data.units.length; x++) {
+        var u: UnitData = {TroopType: data.units[x].type, CodeBlocks: data.units[x].blocks, 
+            location: {x: data.units[x].location[0], y: data.units[x].location[1]}};
+        
+        units.push(u);
       }
 
       var pd: ProgramData = {
         Name: data.name,
         Verified: data.verified,
-        CodeBlocks: cbArr,
-        Formation: formationArr
+        Units: units
       }
       listenerFunction(pd);
     });
@@ -172,23 +156,16 @@ export class FirestoreDatabaseService {
    * @param ud the ProgramData object to place into database
    */
   public setProgramData(pid: string, pd: ProgramData) : Promise<void> {
-    var compMap = new Map<string, string[]>();
 
-    for(let a of pd.CodeBlocks) {
-      compMap.set(a.TroopId.toString(), a.CodeBlocks);
-    }
-
-    var troopMap = new Map<string, number[]>();
-
-    for(let a of pd.Formation) {
-      troopMap.set(a.TroopId.toString(), [a.location.x, a.location.y]);
+    var dbunit = [];
+    for(var x = 0; x < pd.Units.length; x++) {
+      dbunit.push({blocks: pd.Units[x].CodeBlocks, location: pd.Units[x].location, type: pd.Units[x].TroopType});
     }
 
     return this.updateDocument(this.CODE_DATA, pid, {
       name: pd.Name,
       verified: pd.Verified,
-      components: Array.from(compMap).reduce((obj, [key, value]) => (Object.assign(obj, {[key]: value})), {}),
-      formation: Array.from(troopMap).reduce((obj, [key, value]) => (Object.assign(obj, {[key]: value})), {})
+      units: dbunit
     });
   }
 
