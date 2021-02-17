@@ -1,0 +1,11 @@
+{
+  "targets": {
+    "solutions2021-efce9": {
+      "hosting": {
+        "googlesolutions": [
+          "solutions2021-efce9"
+        ]
+      }
+    }
+  }
+}
