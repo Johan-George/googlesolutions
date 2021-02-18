@@ -1,1 +1,23 @@
-<p>test works!</p>
+<style>
+    td {
+      border-style: solid;
+      border-width: 3px;
+      min-width: 50px;
+      min-height: 50px;
+    }
+    tr{
+      min-height: 50px;
+      height: 25px;
+    }
+  </style>
+  <table class="table" *ngIf="map">
+    <tr *ngFor="let row of map; let i = index">
+      <td *ngFor="let col of row">
+        <p *ngIf="col">Id: {{col.id}} Team: {{col.team}}</p>
+      </td>
+    </tr>
+  <table>
+  <p *ngIf="lastAction">Last Action: {{lastAction.actionId}}</p>
+  <p *ngIf="!lastAction">Last Action: None</p>
+  <button (click)="stepGameButton()">Step Game</button>
+  <p>{{loading}}</p>

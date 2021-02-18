@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { BlockCommand } from 'src/app/models/blockCommands/block-command';
-import { ProgramData } from 'src/app/models/database/DatabaseData';
+import { CodeType, ProgramData } from 'src/app/models/database/DatabaseData';
 import { Unit } from 'src/app/models/game/Unit';
 import { FirestoreDatabaseService } from '../../database/firestore-database.service';
 import { CodeService } from '../../program-construction/code.service';
@@ -18,11 +18,13 @@ export class LevelDataInterfaceService {
     var self = this;
 
     var curUnitId = 0;
-    return new Promise((resolutionFunc, rejectiongFunc) =>{
+    return new Promise((resolutionFunc, rejectionFunc) =>{
       var returnObject: {team1Units: Unit[], team2Units: Unit[], griddimensions: {x: number, y: number}} = 
         {team1Units: [], team2Units: [], griddimensions: this.PLAYSPACE_SIZE};
 
       this.database.getLevelProgram(levelid, function(prog: ProgramData) {
+
+        var progPromises: Array<Promise<void>> = []
 
         //fill team units
         for(var x = 0; x < prog.Units.length; x++) {
@@ -30,8 +32,24 @@ export class LevelDataInterfaceService {
           var u: Unit = self.newUnitOnType(prog.Units[x].TroopType);
           u.id = curUnitId++;
           u.team = 2;
-          u.activecode = self.deserializeBlockCode(prog.Units[x].CodeBlocks);
           u.location = prog.Units[x].location;
+          if(prog.Units[x].CodeType == CodeType.BLOCK) {
+            u.codeType = CodeType.BLOCK;
+            u.activecode = self.deserializeBlockCode(prog.Units[x].CodeBlocks);
+            console.log("after deserialize length " + u.activecode.length);
+            console.log("after deserialize cmd " + u.activecode[0].getLabel());
+          } else if(prog.Units[x].CodeType == CodeType.FILE){
+            u.codeType = CodeType.FILE;
+            progPromises.push(new Promise((resolveP, rejectP) => {
+              self.database.getUserCodeFromStorage(prog.Units[x].CodeFile.storageRef, prog.Units[x].CodeFile.filename, function(data) {
+                u.activecode = data;
+                resolveP();
+              });
+            }));    
+          } else {
+            console.log("Illegal code type, continuing");
+            continue;
+          }
           
           returnObject.team2Units.push(u);
         }
@@ -44,14 +62,28 @@ export class LevelDataInterfaceService {
             var u: Unit = self.newUnitOnType(playerProg.Units[x].TroopType);
             u.id = curUnitId++;
             u.team = 1;
-            u.activecode = self.deserializeBlockCode(playerProg.Units[x].CodeBlocks);
             u.location = playerProg.Units[x].location;
-
-            returnObject.team2Units.push(u);
-
+            if(playerProg.Units[x].CodeType == CodeType.BLOCK) {
+              u.codeType = CodeType.BLOCK;
+              u.activecode = self.deserializeBlockCode(playerProg.Units[x].CodeBlocks);
+            } else if(playerProg.Units[x].CodeType == CodeType.FILE) {
+              u.codeType = CodeType.FILE;
+              progPromises.push(new Promise((resolveP, rejectP) => {
+                self.database.getUserCodeFromStorage(playerProg.Units[x].CodeFile.storageRef, playerProg.Units[x].CodeFile.filename, function(data) {
+                  u.activecode = data;
+                  resolveP();
+                });
+              }));
+            } else {
+              console.log("Illegal code type, continuing of type " + (playerProg.Units[x].CodeType.toString()));
+              continue;
+            }
+            returnObject.team1Units.push(u);
           }
 
-          resolutionFunc(returnObject);
+          Promise.all(progPromises).then(function(val) {
+            resolutionFunc(returnObject);
+          });
         });
       });
     });
@@ -62,6 +94,7 @@ export class LevelDataInterfaceService {
   }
 
   private deserializeBlockCode(code: string[]): BlockCommand[] {
+    console.log("Code length:" + code.length)
     return this.codeServ.deserializeToBlocks(code);
   }
 

@@ -93,11 +93,12 @@ export class FirestoreDatabaseService {
       var units = [];
       for(var x = 0; x < data.units.length; x++) {
         var u: UnitData = {TroopType: data.units[x].type, CodeBlocks: data.units[x].blocks, 
-          CodeType: CodeType[(data.ctype as string)], CodeFile: data.codeFile,
-          location: {x: data.units[x].location[0], y: data.units[x].location[1]}};
-        
+          CodeType: CodeType[data.units[x].ctype as string], CodeFile: data.units[x].codeFile,
+          location: data.units[x].location};
+
         units.push(u);
       }
+
 
       var pd: ProgramData = {
         Name: data.name,
