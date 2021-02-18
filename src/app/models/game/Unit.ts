@@ -11,11 +11,6 @@ export class Unit {
   id: number = -1;
 
   /**
-   * The amount of Action Energy the unit has left
-   */
-  energy: number = 3;
-
-  /**
    * The team that the unit belongs to
    */
   team: number = -1;
@@ -24,15 +19,15 @@ export class Unit {
    * the location of the unit on the grid
    */
   location: { x: number, y: number } = { x: 0, y: 0 };
-  
+
   /**
    * The code the that unit can run
    */
-  activecode: BlockCommand[] = [];
-
-  /**
-   * function to allow the unit to move
-   */
-  doMove() {}
+  activecode: any = [];
+  maxHealth: number = 100;
+  health: number = 100;
+  defense: number = 10;
+  strength: number = 20;
+  attackRange: number = 1;
 
 }

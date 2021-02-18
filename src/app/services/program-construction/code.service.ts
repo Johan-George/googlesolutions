@@ -24,17 +24,20 @@ export class CodeService {
    * @param commands The Array of commands to compile
    */
   compileToExecutableCode(commands: Array<BlockCommand>) {
+
     let actions: Array<Function> = [];
+    let executable_count = 0;
 
     for (let i = 0; i < commands.length; i++) {
 
       if (this.blockService.isExecutable(commands[i])) {
 
         actions.push((<Executable>commands[i]).execute);
+        executable_count += 1;
 
       } else if (commands[i].getLabel() === If.label) {
-
-        let condition = this.createConditionalFunction(i, commands, actions);
+        
+        let condition = this.createConditionalFunction(i, commands, executable_count);
         i = condition[0];
         actions.push(condition[1]);
 
@@ -48,6 +51,10 @@ export class CodeService {
           throw new Error('Added terminal block without a sequence to terminate');
         }
 
+      }
+
+      if(executable_count > 1){
+        throw new Error('Only allowed one action per turn');
       }
 
     }
@@ -102,11 +109,13 @@ export class CodeService {
    * Creates ConditionalBlock object
    * @param i location of conditional block in code
    * @param commands code to place
-   * @param actions TODO: DOCUMENT
+   * @param executable_count the amount of executables seen in the global scope of the code
    */
-  createConditionalFunction(i, commands: Array<BlockCommand>, actions) {
+  createConditionalFunction(i, commands: Array<BlockCommand>, executable_count) {
 
     let condition = (<ConditionalBlock>commands[i]).condition;
+    let global_executables = executable_count;
+    let local_executables = 0;
 
     if(condition.getLabel() === EmptyPredicate.label){
       throw new Error('An if block is missing a condition');
@@ -128,7 +137,7 @@ export class CodeService {
 
       if (commands[i].getLabel() === If.label) {
 
-        let inner_condition = this.createConditionalFunction(i, commands, actions);
+        let inner_condition = this.createConditionalFunction(i, commands, local_executables + global_executables);
         i = inner_condition[0];
         conditional_actions.push(inner_condition[1]);
         i++;
@@ -139,13 +148,13 @@ export class CodeService {
           throw new Error('An Else if block is missing a condition');
         }
 
-        let next = this.parseElseIfOrElse(i, commands, actions);
+        let next = this.parseElseIfOrElse(i, commands, global_executables);
         elseIfs.push([next[1], next[2]])
         i = next[0];
 
       } else if (commands[i].getLabel() === Else.label) {
 
-        let next = this.parseElseIfOrElse(i, commands, actions);
+        let next = this.parseElseIfOrElse(i, commands, global_executables);
         elseActions = next[2];
         i = next[0];
 
@@ -153,9 +162,15 @@ export class CodeService {
 
         conditional_actions.push((<Executable>commands[i]).execute);
         i++;
+        local_executables++;
 
       }
-    } 
+      if(global_executables + local_executables > 1){
+
+        throw new Error('Only one action allowed per turn');
+
+      }
+    }
     /*
     Append to the actions array a new function that will execute all the functions in the conditional_actions array
     if the given evaluation function returns true. Otherwise it will look through the else ifs to see if any of
@@ -197,10 +212,12 @@ export class CodeService {
    * Parses ElseIf or Else statement into a conditional and its actions
    * @param i the index location of of the statement
    * @param commands the code to compare against
-   * @param actions TODO DOCUMENTATION
+   * @param executable_count the amount of executable blocks seen in the global scope of the code
    */
-  parseElseIfOrElse(i, commands: Array<BlockCommand>, actions) {
+  parseElseIfOrElse(i, commands: Array<BlockCommand>, executable_count) {
     let condition = null;
+    let global_executables = executable_count;
+    let local_executables = 0;
 
     if (commands[i].getLabel() === ElseIf.label) {
       condition = (<ConditionalBlock>commands[i]).condition;
@@ -217,16 +234,24 @@ export class CodeService {
       }
 
       if (commands[i].getLabel() === If.label) {
-        let inner = this.createConditionalFunction(i, commands, actions);
+        let inner = this.createConditionalFunction(i, commands, local_executables + global_executables);
         i = inner[0];
         conditional_actions.push(inner[1])
       } else {
         conditional_actions.push((<Executable>commands[i]).execute);
         i++;
+        local_executables++;
       }
+
+    }
+
+    if(local_executables + global_executables > 1){
+
+      throw new Error('Only one action allowed per turn');
 
     }
 
     return [i, condition, conditional_actions];
   }
+
 }

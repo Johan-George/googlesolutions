@@ -67,6 +67,7 @@ export class BlockCodeComponent implements OnInit {
       let serialized = this.codeService.serializeBlocks(this.currentCode);
 
     } catch (err) {
+      console.log(err);
       this.dialog.open(ErrorComponent, { data: err.message })
     }
 
@@ -104,7 +105,8 @@ export class BlockCodeComponent implements OnInit {
       block.indentationLevel = 1;
     }else if(this.blockService.isConditional(blockAbove) && !(this.blockService.isTerminal(block))){
       block.indentationLevel = blockAbove.indentationLevel + 1;
-    }else if(this.blockService.isTerminal(block) && !(blockAbove.indentationLevel === 1)){
+    }else if(this.blockService.isTerminal(block) && !(blockAbove.indentationLevel === 1)
+      && !(this.blockService.isConditional(blockAbove))){
       block.indentationLevel = blockAbove.indentationLevel - 1;
     }else{
       block.indentationLevel = blockAbove.indentationLevel;

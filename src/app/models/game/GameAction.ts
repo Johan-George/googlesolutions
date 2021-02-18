@@ -9,7 +9,7 @@ export class GameAction {
      * The action in String representation of what occured in the previous step
      */
     actionId: string = null;
-    
+
     /**
      * The Unit object that was committing the action
      * null if the action was not committed by the unit
@@ -17,13 +17,13 @@ export class GameAction {
     doer: Unit = null;
 
     /**
-     * The Unit object that was recieving the action
+     * The Unit object that was receiving the action
      * null if the action aws not acted to another unit
      */
-    reciver: Unit = null;
+    receiver: Unit = null;
 
     /**
-     * The boolean value that represents if any unit has died 
+     * The boolean value that represents if any unit has died
      * after the previous action.
      */
     hasDied: boolean = false;
@@ -32,13 +32,13 @@ export class GameAction {
      * Main Constructor for game action
      * @param id String Id of what happened
      * @param doer The unit object that committed the action (null if no unit has commited the action)
-     * @param reciever The unit object that recieved the action (null if no unit has recieved the action)
+     * @param receiver The unit object that recieved the action (null if no unit has recieved the action)
      * @param died true if any unit died, false otherwise
      */
-    constructor(id: string, doer: Unit, reciever: Unit, died: boolean) {
+    constructor(id: string, doer: Unit, receiver: Unit, died: boolean) {
         this.actionId = id;
         this.doer = doer;
-        this.reciver = reciever;
+        this.receiver = receiver;
         this.hasDied = died;
     }
 }
