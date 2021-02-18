@@ -12,13 +12,14 @@ import { MatCardModule } from '@angular/material/card';
 import { MatSelectModule } from '@angular/material/select';
 import { MatDialogModule } from '@angular/material/dialog';
 
-
 import { AngularFireModule } from '@angular/fire';
 import { AngularFirestoreModule } from '@angular/fire/firestore';
 import { AngularFireAuthModule } from '@angular/fire/auth';
 import {AngularFireStorageModule} from '@angular/fire/storage';
 import { BlockCodeComponent } from './components/block-code/block-code.component';
 import { ErrorComponent } from './components/error/error.component';
+import { SigninPageComponent } from './components/signin-page/signin-page.component';
+import { TestComponent } from './components/test/test.component';
 
 const firebaseConfig = {
   apiKey: "AIzaSyB25gxYu7PkMvnjKhisCzPP62grU_OEMLU",
@@ -33,7 +34,9 @@ const firebaseConfig = {
   declarations: [
     AppComponent,
     BlockCodeComponent,
-    ErrorComponent
+    ErrorComponent,
+    SigninPageComponent,
+    TestComponent
   ],
   imports: [
     BrowserModule,
