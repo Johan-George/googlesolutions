@@ -23,7 +23,7 @@ export class Unit {
   /**
    * The code the that unit can run
    */
-  activecode: BlockCommand[] | Function = [];
+  activecode: any = [];
   maxHealth: number = 100;
   health: number = 100;
   defense: number = 10;

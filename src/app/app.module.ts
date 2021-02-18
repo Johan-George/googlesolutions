@@ -16,6 +16,7 @@ import { MatDialogModule } from '@angular/material/dialog';
 import { AngularFireModule } from '@angular/fire';
 import { AngularFirestoreModule } from '@angular/fire/firestore';
 import { AngularFireAuthModule } from '@angular/fire/auth';
+import {AngularFireStorageModule} from '@angular/fire/storage';
 import { BlockCodeComponent } from './components/block-code/block-code.component';
 import { ErrorComponent } from './components/error/error.component';
 
@@ -43,6 +44,7 @@ const firebaseConfig = {
     AngularFireModule.initializeApp(firebaseConfig),
     AngularFirestoreModule,
     AngularFireAuthModule,
+    AngularFireStorageModule,
 
     MatButtonModule,
     MatIconModule,

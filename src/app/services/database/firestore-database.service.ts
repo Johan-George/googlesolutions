@@ -2,6 +2,7 @@ import { Injectable } from '@angular/core';
 import { AngularFirestore } from '@angular/fire/firestore';
 import { Observable } from 'rxjs';
 import { LevelData, ProgramComponent, ProgramData, TroopLocation, UserData } from 'src/app/models/database/DatabaseData';
+import {AngularFireStorage} from '@angular/fire/storage';
 
 @Injectable({
   providedIn: 'root'
@@ -25,7 +26,7 @@ export class FirestoreDatabaseService {
    */
   private LEVEL_DATA = "Level_Data";
 
-  constructor(private db: AngularFirestore) {}
+  constructor(private db: AngularFirestore, private storage: AngularFireStorage) {}
 
   /**
    * Sends a request to database for the specified document in the collection
@@ -64,7 +65,7 @@ export class FirestoreDatabaseService {
   /**
    * function to get user data from the database. Must include a listener function(Userdata) for response
    * @param uid the user id you are getting data for
-   * @param listenerFunction the function(ProgramData) that recieves the request data
+   * @param listenerFunction the function(ProgramData) that receives the request data
    */
   public getUserData(uid:string, listenerFunction) {
     this.queryDocument(this.USER_DATA, uid).subscribe(result => {
@@ -79,9 +80,9 @@ export class FirestoreDatabaseService {
   }
 
   /**
-   * function to get the data for a program from the database Must inclide a listener function(ProgramData) for response
+   * function to get the data for a program from the database Must include a listener function(ProgramData) for response
    * @param cid the program id you are getting data for
-   * @param listenerFunction the function(Programdata) that recieves the request data
+   * @param listenerFunction the function(Programdata) that receives the request data
    */
   public getProgramData(cid:string, listenerFunction) {
     this.queryDocument(this.CODE_DATA, cid).subscribe(result => {
@@ -122,9 +123,9 @@ export class FirestoreDatabaseService {
   }
 
   /**
-   * function to get the data for a level from the database Must inclide a listener function(LevelData) for response
+   * function to get the data for a level from the database Must include a listener function(LevelData) for response
    * @param cid the program id you are getting data for
-   * @param listenerFunction the function(LevelData) that recieves the request data
+   * @param listenerFunction the function(LevelData) that receives the request data
    */
   public getLevelData(lid:string, listenerFunction) {
     this.queryDocument(this.LEVEL_DATA, lid).subscribe(result => {
@@ -139,15 +140,46 @@ export class FirestoreDatabaseService {
   }
 
   /**
-   * function to get the data for a program in a level from the database Must inclide a listener function(ProgramData) for response
-   * @param cid the program id you are getting data for
-   * @param listenerFunction the function(ProgramData) that recieves the request data
+   * function to get the data for a program in a level from the database Must include a listener function(ProgramData) for response
+   * @param lid the program id you are getting data for
+   * @param listenerFunction the function(ProgramData) that receives the request data
    */
   public getLevelProgram(lid: string, listenerFunction) {
     var self = this;
     this.getLevelData(lid, function(data) {
       self.getProgramData(data.ProgramId.toString(), listenerFunction);
     })
+  }
+
+  /**
+   * function to retrieve the user's hand typed code and converts it to a worker. Must include a listener function(ProgramData) for response
+   * @param storageRef the path in storage to the user's code
+   * @param fileName the name you wish to save the file as
+   * @param listenerFunction the function(Worker) that receives the request data
+   */
+  public getUserCodeFromStorage(storageRef, fileName, listenerFunction){
+
+    let ref = this.storage.ref(storageRef);
+    ref.getDownloadURL().subscribe(
+      res => {
+        let xhr = new XMLHttpRequest();
+        xhr.responseType = 'text';
+        xhr.onload = function(event) {
+          let code = xhr.response;
+          let file = new File([code], fileName, {
+            type: "text/javascript",
+          });
+          let url = window.URL.createObjectURL(file);
+          listenerFunction(new Worker(url));
+        };
+        xhr.open('GET', res);
+        xhr.send();
+      },
+      error => {
+        console.log(error);
+      }
+    )
+
   }
 
   //setters
@@ -200,4 +232,5 @@ export class FirestoreDatabaseService {
   public deleteProgramData(pid: string) : Promise<void> {
     return this.deleteDocument(this.CODE_DATA, pid);
   }
+
 }
