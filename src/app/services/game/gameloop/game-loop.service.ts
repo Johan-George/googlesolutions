@@ -1,11 +1,10 @@
 import { Injectable } from '@angular/core';
-import { Observable } from 'rxjs';
 import { Stack } from 'src/app/dataStructures/Stack';
 import { BlockCommand, ConditionalBlock, Executable } from 'src/app/models/blockCommands/block-command';
 import { Else } from 'src/app/models/blockCommands/blocks/conditional/Else';
 import { ElseIf } from 'src/app/models/blockCommands/blocks/conditional/ElseIf';
 import { If } from 'src/app/models/blockCommands/blocks/conditional/If';
-import { EndIf } from 'src/app/models/blockCommands/blocks/terminal/Endif';
+import { CodeType } from 'src/app/models/database/DatabaseData';
 import { GameAction } from 'src/app/models/game/GameAction';
 import { Unit } from 'src/app/models/game/Unit';
 import { BlockService } from '../../program-construction/block.service';
@@ -18,6 +17,8 @@ import { LevelDataInterfaceService } from '../levelDataInterface/level-data-inte
  * Service that runs the internal gameloop for the game
  */
 export class GameLoopServiceService {
+
+  WORKER_TIMEOUT_TIME = 5000;
 
   /**
    * 2d grid representation of the map
@@ -61,6 +62,9 @@ export class GameLoopServiceService {
    * Data stored for game run
    */
   gameData;
+
+  workerRunning: Worker;
+
 
   constructor(private LevelInterface: LevelDataInterfaceService, private blockServ: BlockService) { }
 
@@ -119,37 +123,97 @@ export class GameLoopServiceService {
   /**
    * runs through 1 action in the game via interpreting game commands
    */
-  stepGame(): GameAction {
+  stepGame(): Promise<any> {
+    var self = this;
+    return Promise.race([this.baseStepPromise(), new Promise<GameAction>((resolve, reject) => {
+      setTimeout(function(){
+        reject("Code Took too long");
 
-    try {
+        if(self.workerRunning != null) {
+          self.workerRunning.terminate();
+        }
+      }, this.WORKER_TIMEOUT_TIME);
+    })]);
+  }
 
-      if (this.team1units.length == 0) {
-        return new GameAction("GameEnd2", null, null, false);
-      } else if (this.team2units.length == 0) {
-        return new GameAction("GameEnd1", null, null, false);
-      }
+  baseStepPromise(): Promise<GameAction> {
 
-      var currentCodeBlock: BlockCommand = null;
+    return new Promise((successFunc, rejectFunc) => {
 
-      do {
+      try {
+
+        if (this.team1units.length == 0) {
+          //return new GameAction("GameEnd2", null, null, false);
+          successFunc(new GameAction("GameEnd2", null, null, false));
+        } else if (this.team2units.length == 0) {
+          //return new GameAction(""GameEnd1"", null, null, false);
+          successFunc(new GameAction("GameEnd1", null, null, false));
+        }
+
         var unit = ((this.isTeam1Active) ? this.team1units : this.team2units)[this.unitIndex]
-        currentCodeBlock = unit.activecode[this.codeIndex];
-      } while (this.evalCodeBlock(currentCodeBlock, unit))
 
-      var last = this.lastAction;
+        if (unit.codeType == CodeType.BLOCK) {
 
-      if (last == null) {
-        last = new GameAction("NoEvent", null, null, false);
+          //it is a codeblock task
+          var currentCodeBlock: BlockCommand = null;
+
+          do {
+            unit = ((this.isTeam1Active) ? this.team1units : this.team2units)[this.unitIndex]
+            currentCodeBlock = unit.activecode[this.codeIndex];
+          } while (this.evalCodeBlock(currentCodeBlock, unit))
+
+          //next unit
+          var curTeam: Unit[] = (this.isTeam1Active) ? this.team1units : this.team2units;
+
+          this.unitIndex++;
+          this.codeIndex = 0;
+          if (curTeam.length <= this.unitIndex) {
+            //no more units to run through switch sides
+            this.unitIndex = 0;
+            this.isTeam1Active = !this.isTeam1Active;
+          }
+
+          this.currentConditions.clear();
+
+          //check action integrity
+          var last = this.lastAction;
+
+          if (last == null) {
+            last = new GameAction("NoEvent", null, null, false);
+          }
+
+          this.lastAction = null;
+
+          successFunc(last);
+        } else if(CodeType.FILE) {
+
+          this.workerRunning = unit.activecode as Worker;
+          
+          this.workerRunning.postMessage([this.grid, unit]);
+          
+          var self = this
+
+          this.workerRunning.onmessage = function(event) {
+            self.workerRunning = null;
+            successFunc(event.data);
+          }
+
+          this.workerRunning.onerror = function(event) {
+            self.workerRunning = null;
+            rejectFunc("Written Code has encountered an error");
+          }
+
+        } else {
+          //none type
+          rejectFunc("Unexpected Nonetype code");
+        }
+
+      } catch (error) {
+        last = null;
+        //return new GameAction("Error", null, null, false);
+        successFunc(new GameAction("Error", null, null, false));
       }
-
-      this.lastAction = null;
-
-      return last;
-
-    } catch (error) {
-      last = null;
-      return new GameAction("Error", null, null, false);
-    }
+    });
   }
 
   /**
@@ -169,17 +233,17 @@ export class GameLoopServiceService {
         return this.handleIfStatement(cmd, unit);
       } else if (cmd instanceof ElseIf) {
 
-        if(this.currentConditions.peek().preCondition) {
+        if (this.currentConditions.peek().preCondition) {
           this.seekToEndIf(unit);
         } else {
           this.currentConditions.pop();
-          
+
           return this.handleIfStatement(cmd, unit);
         }
 
-      } else if(cmd instanceof Else) {
+      } else if (cmd instanceof Else) {
 
-        if(this.currentConditions.peek().preCondition) {
+        if (this.currentConditions.peek().preCondition) {
           this.seekToEndIf(unit);
         } else {
           finalReturn = true;
@@ -201,17 +265,17 @@ export class GameLoopServiceService {
     //check range in code array
     if (unit.activecode.length <= this.codeIndex) {
       //no more code, next unit
-      var curTeam: Unit[] = (this.isTeam1Active) ? this.team1units : this.team2units;
+      // var curTeam: Unit[] = (this.isTeam1Active) ? this.team1units : this.team2units;
 
-      this.unitIndex++;
-      this.codeIndex = 0;
-      if (curTeam.length <= this.unitIndex) {
-        //no more units to run through switch sides
-        this.unitIndex = 0;
-        this.isTeam1Active = !this.isTeam1Active;
-      }
+      // this.unitIndex++;
+      // this.codeIndex = 0;
+      // if (curTeam.length <= this.unitIndex) {
+      //   //no more units to run through switch sides
+      //   this.unitIndex = 0;
+      //   this.isTeam1Active = !this.isTeam1Active;
+      // }
 
-      this.currentConditions.clear();
+      // this.currentConditions.clear();
       return false;
     } else {
       return finalReturn;
