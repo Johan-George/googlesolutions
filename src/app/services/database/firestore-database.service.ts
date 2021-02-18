@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { AngularFirestore } from '@angular/fire/firestore';
 import { Observable } from 'rxjs';
-import { LevelData, ProgramComponent, ProgramData, TroopLocation, UserData, UnitData } from 'src/app/models/database/DatabaseData';
+import { LevelData, ProgramData, UserData, UnitData } from 'src/app/models/database/DatabaseData';
 import {AngularFireStorage} from '@angular/fire/storage';
 
 
@@ -88,13 +88,13 @@ export class FirestoreDatabaseService {
   public getProgramData(cid:string, listenerFunction) {
     this.queryDocument(this.CODE_DATA, cid).subscribe(result => {
       var data = result.data();
-      
+
       //gets array of units
       var units = [];
       for(var x = 0; x < data.units.length; x++) {
-        var u: UnitData = {TroopType: data.units[x].type, CodeBlocks: data.units[x].blocks, 
+        var u: UnitData = {TroopType: data.units[x].type, CodeBlocks: data.units[x].blocks,
             location: {x: data.units[x].location[0], y: data.units[x].location[1]}};
-        
+
         units.push(u);
       }
 
