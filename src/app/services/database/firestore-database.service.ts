@@ -3,7 +3,6 @@ import { AngularFirestore } from '@angular/fire/firestore';
 import { Observable } from 'rxjs';
 import { LevelData, ProgramData, UserData, UnitData, CodeType } from 'src/app/models/database/DatabaseData';
 import {AngularFireStorage} from '@angular/fire/storage';
-import { getLocaleDayNames } from '@angular/common';
 
 
 @Injectable({
@@ -89,7 +88,7 @@ export class FirestoreDatabaseService {
   public getProgramData(cid:string, listenerFunction) {
     this.queryDocument(this.CODE_DATA, cid).subscribe(result => {
       var data = result.data();
-      
+
       //gets array of units
       var units = [];
       for(var x = 0; x < data.units.length; x++) {
