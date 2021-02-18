@@ -17,6 +17,9 @@ import { EndElse } from 'src/app/models/blockCommands/blocks/terminal/EndElse';
 import { EndElseIf } from 'src/app/models/blockCommands/blocks/terminal/EndElseIf';
 import { EndIf } from 'src/app/models/blockCommands/blocks/terminal/Endif';
 import { Start } from 'src/app/models/blockCommands/blocks/terminal/Start';
+import {ElementSelectorsMigration} from '@angular/cdk/schematics/ng-update/migrations/element-selectors';
+import {TextAction1} from '../../models/blockCommands/blocks/executable/TestAction1';
+import {TextAction2} from '../../models/blockCommands/blocks/executable/TestAction2';
 
 @Injectable({
   providedIn: 'root'
@@ -77,18 +80,40 @@ export class BlockService {
    * @param id the Id of the block to search for
    */
   getById(id: string) {
-    for (let block of BlockService.allBlocks) {
+    switch (id) {
+      case If.id:
+        return new If();
+      case Attack.id:
+        return new Attack();
+      case Backward.id:
+        return new Backward();
+      case Forward.id:
+        return new Forward();
+      case Left.id:
+        return new Left();
+      case Right.id:
+        return new Right();
+      case Wait.id:
+        return new Wait();
+      case ElseIf.id:
+        return new ElseIf();
+      case Else.id:
+        return new Else();
+      case EndIf.id:
+        return new EndIf();
+      case EndElseIf.id:
+        return new EndElseIf();
+      case EndElse.id:
+        return new EndElse();
+      case TextAction1.id:
+        return new TextAction1();
+      case TextAction2.id:
+        return new TextAction2();
+      default:
+        throw new Error('Id not recognized.');
 
-      if (id == block.getId()) {
-        if (this.isConditional(block)) {
-          let copy = Object.assign({}, block);
-          copy.condition = null;
-          return copy
-        } else {
-          return Object.assign({}, block);
-        }
-      }
     }
+
   }
 
 }
