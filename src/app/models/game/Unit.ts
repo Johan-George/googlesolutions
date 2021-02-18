@@ -1,4 +1,4 @@
-import { BlockCommand } from "../blockCommands/block-command";
+import { CodeType } from "../database/DatabaseData";
 
 /**
  * Object that represents a Unit on the grid
@@ -23,6 +23,7 @@ export class Unit {
   /**
    * The code the that unit can run
    */
+  codeType: CodeType = CodeType.NONE;
   activecode: any = [];
   maxHealth: number = 100;
   health: number = 100;

@@ -66,7 +66,13 @@ export class ProgramData {
  * within the ProgramData
  */
 export class UnitData {
-    TroopType: number
-    CodeBlocks: string[]
-    location: {x:number, y:number}
+    TroopType: number = undefined
+    CodeType: CodeType = CodeType.NONE
+    CodeBlocks: string[] = null
+    CodeFile: {storageRef: string, filename: string} = null
+    location: {x:number, y:number} = null
+}
+
+export enum CodeType {
+    BLOCK, FILE, NONE
 }

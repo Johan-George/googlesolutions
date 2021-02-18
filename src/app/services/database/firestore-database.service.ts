@@ -1,8 +1,9 @@
 import { Injectable } from '@angular/core';
 import { AngularFirestore } from '@angular/fire/firestore';
 import { Observable } from 'rxjs';
-import { LevelData, ProgramComponent, ProgramData, TroopLocation, UserData, UnitData } from 'src/app/models/database/DatabaseData';
+import { LevelData, ProgramData, UserData, UnitData, CodeType } from 'src/app/models/database/DatabaseData';
 import {AngularFireStorage} from '@angular/fire/storage';
+import { getLocaleDayNames } from '@angular/common';
 
 
 @Injectable({
@@ -93,7 +94,8 @@ export class FirestoreDatabaseService {
       var units = [];
       for(var x = 0; x < data.units.length; x++) {
         var u: UnitData = {TroopType: data.units[x].type, CodeBlocks: data.units[x].blocks, 
-            location: {x: data.units[x].location[0], y: data.units[x].location[1]}};
+          CodeType: CodeType[(data.ctype as string)], CodeFile: data.codeFile,
+          location: {x: data.units[x].location[0], y: data.units[x].location[1]}};
         
         units.push(u);
       }
@@ -192,7 +194,8 @@ export class FirestoreDatabaseService {
 
     var dbunit = [];
     for(var x = 0; x < pd.Units.length; x++) {
-      dbunit.push({blocks: pd.Units[x].CodeBlocks, location: pd.Units[x].location, type: pd.Units[x].TroopType});
+      dbunit.push({blocks: pd.Units[x].CodeBlocks, location: pd.Units[x].location, type: pd.Units[x].TroopType,
+      ctype: CodeType[pd.Units[x].CodeType], codeFile: pd.Units[x].CodeFile});
     }
 
     return this.updateDocument(this.CODE_DATA, pid, {
