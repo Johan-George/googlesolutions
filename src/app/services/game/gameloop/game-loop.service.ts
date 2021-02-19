@@ -142,9 +142,6 @@ export class GameLoopServiceService {
 
       try {
 
-        console.log(this.team1units.length);
-        console.log(this.team1units.length);
-
         if (this.team1units.length == 0) {
           //return new GameAction("GameEnd2", null, null, false);
           successFunc(new GameAction("GameEnd2", null, null, false));
@@ -154,15 +151,8 @@ export class GameLoopServiceService {
         }
 
         var unit = ((this.isTeam1Active) ? this.team1units : this.team2units)[this.unitIndex]
-        console.log(this.isTeam1Active);
-        console.log("test 0");
-        console.log(unit.codeType);
-        console.log(unit.team);
-        console.log(unit.location.x);
 
         if (unit.codeType == CodeType.BLOCK) {
-
-          console.log("test 1");
 
           //it is a codeblock task
           var currentCodeBlock: BlockCommand = null;
@@ -171,8 +161,6 @@ export class GameLoopServiceService {
             unit = ((this.isTeam1Active) ? this.team1units : this.team2units)[this.unitIndex]
             currentCodeBlock = unit.activecode[this.codeIndex];
           } while (this.evalCodeBlock(currentCodeBlock, unit))
-
-          console.log("test 2");
 
           //next unit
           var curTeam: Unit[] = (this.isTeam1Active) ? this.team1units : this.team2units;
@@ -198,14 +186,11 @@ export class GameLoopServiceService {
 
           successFunc(last);
         } else if(CodeType.FILE) {
-          console.log("test w");
 
           this.workerRunning = unit.activecode as Worker;
-          console.log("test 2");
 
-          this.workerRunning.postMessage([this.grid, unit]);
-          console.log("test 1");
-          
+          this.workerRunning.postMessage(JSON.stringify({grid: this.grid, unit: unit}));
+
           var self = this
 
           this.workerRunning.onmessage = function(event) {
@@ -263,8 +248,6 @@ export class GameLoopServiceService {
   //TODO COMPLETE FOR ALL CONDITIONALS
   private evalCodeBlock(cmd: BlockCommand, unit: Unit): boolean {
     var finalReturn = false;
-
-    console.log(cmd.getLabel);
 
     //conditional check
     if (this.blockServ.isConditional(cmd)) {

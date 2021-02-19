@@ -19,7 +19,7 @@ export class LevelDataInterfaceService {
 
     var curUnitId = 0;
     return new Promise((resolutionFunc, rejectionFunc) =>{
-      var returnObject: {team1Units: Unit[], team2Units: Unit[], griddimensions: {x: number, y: number}} = 
+      var returnObject: {team1Units: Unit[], team2Units: Unit[], griddimensions: {x: number, y: number}} =
         {team1Units: [], team2Units: [], griddimensions: this.PLAYSPACE_SIZE};
 
       this.database.getLevelProgram(levelid, function(prog: ProgramData) {
@@ -36,8 +36,6 @@ export class LevelDataInterfaceService {
           if(prog.Units[x].CodeType == CodeType.BLOCK) {
             u.codeType = CodeType.BLOCK;
             u.activecode = self.deserializeBlockCode(prog.Units[x].CodeBlocks);
-            console.log("after deserialize length " + u.activecode.length);
-            console.log("after deserialize cmd " + u.activecode[0].getLabel());
           } else if(prog.Units[x].CodeType == CodeType.FILE){
             u.codeType = CodeType.FILE;
             progPromises.push(new Promise((resolveP, rejectP) => {
@@ -45,12 +43,12 @@ export class LevelDataInterfaceService {
                 u.activecode = data;
                 resolveP();
               });
-            }));    
+            }));
           } else {
             console.log("Illegal code type, continuing");
             continue;
           }
-          
+
           returnObject.team2Units.push(u);
         }
 
@@ -94,7 +92,6 @@ export class LevelDataInterfaceService {
   }
 
   private deserializeBlockCode(code: string[]): BlockCommand[] {
-    console.log("Code length:" + code.length)
     return this.codeServ.deserializeToBlocks(code);
   }
 

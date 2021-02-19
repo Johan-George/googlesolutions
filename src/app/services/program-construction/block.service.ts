@@ -20,6 +20,8 @@ import { Start } from 'src/app/models/blockCommands/blocks/terminal/Start';
 import {ElementSelectorsMigration} from '@angular/cdk/schematics/ng-update/migrations/element-selectors';
 import {TextAction1} from '../../models/blockCommands/blocks/executable/TestAction1';
 import {TextAction2} from '../../models/blockCommands/blocks/executable/TestAction2';
+import {TruePredicate} from '../../models/blockCommands/blocks/predicate/TruePredicate';
+import {FalsePredicate} from '../../models/blockCommands/blocks/predicate/FalsePredicate';
 
 @Injectable({
   providedIn: 'root'
@@ -79,7 +81,7 @@ export class BlockService {
    * Returns CommandBlock from id
    * @param id the Id of the block to search for
    */
-  getById(id: string) {
+  getById(id: string): BlockCommand {
     switch (id) {
       case If.id:
         return new If();
@@ -109,6 +111,14 @@ export class BlockService {
         return new TextAction1();
       case TextAction2.id:
         return new TextAction2();
+      case HealthBelow30Percent.id:
+        return new HealthBelow30Percent();
+      case EnemyNear.id:
+        return new EnemyNear();
+      case TruePredicate.id:
+        return new TruePredicate();
+      case FalsePredicate.id:
+        return new FalsePredicate();
       default:
         throw new Error('Id not recognized.');
 
