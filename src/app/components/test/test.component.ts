@@ -1,4 +1,14 @@
 import { Component } from '@angular/core';
+import { Else } from 'src/app/models/blockCommands/blocks/conditional/Else';
+import { ElseIf } from 'src/app/models/blockCommands/blocks/conditional/ElseIf';
+import { If } from 'src/app/models/blockCommands/blocks/conditional/If';
+import { TextAction1 } from 'src/app/models/blockCommands/blocks/executable/TestAction1';
+import { TextAction2 } from 'src/app/models/blockCommands/blocks/executable/TestAction2';
+import { FalsePredicate } from 'src/app/models/blockCommands/blocks/predicate/FalsePredicate';
+import { TruePredicate } from 'src/app/models/blockCommands/blocks/predicate/TruePredicate';
+import { EndElse } from 'src/app/models/blockCommands/blocks/terminal/EndElse';
+import { EndIf } from 'src/app/models/blockCommands/blocks/terminal/Endif';
+import { CodeType } from 'src/app/models/database/DatabaseData';
 import { GameAction } from 'src/app/models/game/GameAction';
 import { Unit } from 'src/app/models/game/Unit';
 import { FirestoreDatabaseService } from 'src/app/services/database/firestore-database.service';
@@ -21,10 +31,16 @@ export class TestComponent {
     //   console.log(data.Units[0].TroopType);
     // });
     //
-    // var cb = cds.serializeBlocks([new TextAction1, new TextAction2])
-    //
-    // db.setProgramData("3", {Name: "Hello", Verified: true,
-    //     Units: [{TroopType:1, CodeBlocks: cb, location: {x:5,y:5}, CodeType: CodeType.BLOCK,
+    // var state = new If();
+    // state.condition = new FalsePredicate();
+
+    // var state2 = new ElseIf();
+    // state2.condition = new FalsePredicate();
+
+    // var cb = cds.serializeBlocks([state, new TextAction1(), state2, new TextAction1(), state2, new TextAction1(), new Else(), new TextAction2(), new EndElse()]);
+    
+    // db.setProgramData("2", {Name: "Hello", Verified: true,
+    //     Units: [{TroopType:1, CodeBlocks: cb, location: {x:1,y:1}, CodeType: CodeType.BLOCK,
     //           CodeFile: null}]});
     //
     // db.setProgramData("2", {Name: "Hello", Verified: true,

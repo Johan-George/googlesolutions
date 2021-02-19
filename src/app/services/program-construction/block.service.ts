@@ -119,6 +119,8 @@ export class BlockService {
         return new TruePredicate();
       case FalsePredicate.id:
         return new FalsePredicate();
+      case EmptyPredicate.id:
+        return new EmptyPredicate();
       default:
         throw new Error('Id not recognized.');
 

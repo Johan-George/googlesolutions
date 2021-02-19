@@ -72,9 +72,11 @@ export class CodeService {
 
       if (!this.blockService.isConditional(command)) {
         repr.push(String(command.getId()));
+        console.log(command.getLabel() + " turned into " + command.getId().toString());
       } else {
         repr.push(String(command.getId() + '_'
           + command.condition.getId()));
+          console.log(command.getLabel() + " turned into " + command.getId().toString());
       }
 
     }
@@ -89,6 +91,8 @@ export class CodeService {
     let commands: Array<BlockCommand> = [];
 
     for (let rep of repr) {
+
+      console.log("checking " + rep);
 
       if (rep.includes('_')) {
 
