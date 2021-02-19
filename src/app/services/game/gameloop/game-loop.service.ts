@@ -9,6 +9,7 @@ import { GameAction } from 'src/app/models/game/GameAction';
 import { Unit } from 'src/app/models/game/Unit';
 import { BlockService } from '../../program-construction/block.service';
 import { LevelDataInterfaceService } from '../levelDataInterface/level-data-interface.service';
+import {Wait} from '../../../models/blockCommands/blocks/executable/Wait';
 
 @Injectable({
   providedIn: 'root'
@@ -205,8 +206,12 @@ export class GameLoopServiceService {
               self.unitIndex = 0;
               self.isTeam1Active = !self.isTeam1Active;
             }
-
-            successFunc(event.data);
+            /*
+            Note the the convertWorkerMessageToAction never returns null. Instead if something goes
+            wrong it will return a default wait action.
+             */
+            self.lastAction = self.convertWorkerMessageToAction(event.data, self.grid, unit);
+            successFunc(self.lastAction);
           }
 
           this.workerRunning.onerror = function(event) {
@@ -358,6 +363,34 @@ export class GameLoopServiceService {
       }
     } while (!(this.blockServ.isTerminal(curBlock) || curBlock instanceof Else || curBlock instanceof ElseIf) || !(conditionCount <= 0));
   }
+
+  /**
+   * Takes the data returned from the web worker and converts it to a game action object. If unable to
+   * parse game action then we make the unit just wait.
+   * @param data the data from the web worker
+   * @param grid the map the user is playing
+   * @param unit the unit the user is controlling
+   * @private
+   */
+  private convertWorkerMessageToAction(data, grid, unit): GameAction{
+
+    let action = data.result;
+    try {
+      console.log(action);
+      let executable = this.blockServ.getById(btoa(action));
+      if(!(this.blockServ.isExecutable(executable))){
+        throw new Error();
+      }else{
+        return executable.execute(grid, unit);
+      }
+
+    }catch (err){
+
+      return new Wait().execute(grid, unit);
+
+    }
+  }
+
 }
 
 /**
