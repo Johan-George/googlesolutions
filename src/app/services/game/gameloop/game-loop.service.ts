@@ -6,7 +6,7 @@ import { ElseIf } from 'src/app/models/blockCommands/blocks/conditional/ElseIf';
 import { If } from 'src/app/models/blockCommands/blocks/conditional/If';
 import { CodeType } from 'src/app/models/database/DatabaseData';
 import { GameAction } from 'src/app/models/game/GameAction';
-import { Unit } from 'src/app/models/game/Unit';
+import { Unit } from 'src/app/models/game/units/Unit';
 import { BlockService } from '../../program-construction/block.service';
 import { LevelDataInterfaceService } from '../levelDataInterface/level-data-interface.service';
 import {Wait} from '../../../models/blockCommands/blocks/executable/Wait';

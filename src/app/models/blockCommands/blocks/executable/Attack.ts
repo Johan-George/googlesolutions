@@ -1,6 +1,6 @@
 import { GameAction } from 'src/app/models/game/GameAction';
 import { Executable } from '../../block-command';
-import {Unit} from '../../../game/Unit';
+import {Unit} from '../../../game/units/Unit';
 
 /**
  * Executable representing an attack

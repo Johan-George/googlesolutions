@@ -1,6 +1,6 @@
 import { Component } from '@angular/core';
 import { GameAction } from 'src/app/models/game/GameAction';
-import { Unit } from 'src/app/models/game/Unit';
+import { Unit } from 'src/app/models/game/units/Unit';
 import { FirestoreDatabaseService } from 'src/app/services/database/firestore-database.service';
 import { GameLoopServiceService } from 'src/app/services/game/gameloop/game-loop.service';
 import { CodeService } from 'src/app/services/program-construction/code.service';
