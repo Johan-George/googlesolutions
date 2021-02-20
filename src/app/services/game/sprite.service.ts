@@ -35,15 +35,15 @@ export class SpriteService {
   flipSpriteInPlace(unit){
 
     unit.sprite.scaleX = -unit.sprite.scaleX;
-    if(unit.sprite.scaleX > 0){
-
-      unit.sprite.x -= SpriteConstants.spriteSize;
-
-    }else{
-
-      unit.sprite.x += SpriteConstants.spriteSize;
-
-    }
+    // if(unit.sprite.scaleX > 0){
+    //
+    //   unit.sprite.x -= SpriteConstants.spriteSize;
+    //
+    // }else{
+    //
+    //   unit.sprite.x += SpriteConstants.spriteSize;
+    //
+    // }
 
   }
 

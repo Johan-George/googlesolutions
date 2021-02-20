@@ -50,7 +50,7 @@ export class Unit {
     let data = {
       'images': [imageData],
       'frames': {width:SpriteConstants.spriteSize,
-        height:SpriteConstants.spriteSize, regX: 0, regY:0, spacing:0, margin:0},
+        height:SpriteConstants.spriteSize, regX: 20, regY:20, spacing:0, margin:0},
       'animations': {
         'idle':[0],
         'walk':[this.walk_frames[0], this.walk_frames[1], 'idle' ,0.25],

@@ -3,7 +3,7 @@ import { GameAction } from 'src/app/models/game/GameAction';
 
 /**
  * Executable to make unit wait action
- * See block-command.ts for specific documentation 
+ * See block-command.ts for specific documentation
  * on properties and methods
  */
 export class Wait implements Executable {
@@ -14,8 +14,7 @@ export class Wait implements Executable {
   indentationLevel: number;
 
   execute(grid, unit): GameAction {
-    console.log('WAIT')
-    return new GameAction("None", null, null, false);
+    return new GameAction(Wait.name, unit, null, false);
   }
 
   getId(): string {
