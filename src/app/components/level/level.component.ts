@@ -10,6 +10,13 @@ import {CodeService} from '../../services/program-construction/code.service';
 import {Left} from '../../models/blockCommands/blocks/executable/Left';
 import {Wait} from '../../models/blockCommands/blocks/executable/Wait';
 import {Right} from '../../models/blockCommands/blocks/executable/Right';
+import {If} from '../../models/blockCommands/blocks/conditional/If';
+import {EnemyNear} from '../../models/blockCommands/blocks/predicate/EnemyNear';
+import {Else} from '../../models/blockCommands/blocks/conditional/Else';
+import {Attack} from '../../models/blockCommands/blocks/executable/Attack';
+import {EndElse} from '../../models/blockCommands/blocks/terminal/EndElse';
+import {HealthBelow30Percent} from '../../models/blockCommands/blocks/predicate/HealthBelow30Percent';
+import {ElseIf} from '../../models/blockCommands/blocks/conditional/ElseIf';
 (<any>window).createjs = createjs;
 let stage;
 let tiles_on_side = 10;
@@ -54,9 +61,14 @@ export class LevelComponent implements OnInit, AfterViewInit {
       let archer = new Archer();
       let swordsman = new Swordsman();
       this.units = [archer, swordsman];
-      swordsman.activecode = [new Right()];
-      archer.activecode = [new Right()];
+      let elseIfHealthLow = new ElseIf();
+      elseIfHealthLow.condition = new HealthBelow30Percent();
+      let ifEnemyNear = new If();
+      ifEnemyNear.condition = new EnemyNear();
+      swordsman.activecode = [ifEnemyNear, new Attack(), elseIfHealthLow, new Forward(), new Else(), new Wait(), new EndElse()];
+      archer.activecode = [ifEnemyNear, new Attack(), new Else(), new Forward(), new EndElse()];
       swordsman.location.x = 9;
+      swordsman.team = 1;
 
       this.sprite.initSpritesForAll(this.units, imageQueue);
       this.placeAllOnScreen(this.units);
@@ -130,7 +142,7 @@ export class LevelComponent implements OnInit, AfterViewInit {
 
     for(let func of this.compiled[this.unitIndex]){
 
-      func(this.grid, this.units[this.unitIndex]);
+      console.log(func(this.grid, this.units[this.unitIndex]));
 
     }
     this.placeOnScreen(this.units[this.unitIndex]);

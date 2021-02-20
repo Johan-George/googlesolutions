@@ -36,7 +36,7 @@ export class CodeService {
         executable_count += 1;
 
       } else if (commands[i].getLabel() === If.label) {
-        
+
         let condition = this.createConditionalFunction(i, commands, executable_count);
         i = condition[0];
         actions.push(condition[1]);
@@ -179,9 +179,9 @@ export class CodeService {
     return [i, (grid, unit) => {
       if (condition.evaluation(grid, unit)) {
 
-        for (let action of conditional_actions) {
-          action(grid, unit);
-        }
+
+        return conditional_actions[0](grid, unit);
+
 
       } else {
 
@@ -189,19 +189,14 @@ export class CodeService {
         while (i < elseIfs.length) {
           if (elseIfs[i][0].evaluation(grid, unit)) {
 
-            for (let action of elseIfs[i][1]) {
-              action(grid, unit);
-            }
-            break;
+            return elseIfs[i][1][0](grid, unit);
 
           }
           i++;
         }
 
         if (i === elseIfs.length) {
-          for (let action of elseActions) {
-            action(grid, unit);
-          }
+          return elseActions[0](grid, unit);
         }
 
       }
@@ -226,7 +221,6 @@ export class CodeService {
     let conditional_actions: Array<(grid, unit) => GameAction> = [];
     let terminal_blocks = (<ConditionalBlock>commands[i]).terminal_blocks;
     i++;
-
     while (!(terminal_blocks.includes(commands[i].getLabel()))) {
 
       if (commands[i].getLabel() === End.label) {

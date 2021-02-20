@@ -27,11 +27,9 @@ export class Backward implements Executable {
     else{
       newLocation = {x:unit.location.x + 1, y:unit.location.y}
     }
-
-    console.log(`${newLocation.x} ${grid.length}`)
-    console.log(newLocation.x >= 0 && newLocation.x < grid.length);
     if(GridParserService.isInBounds(newLocation, grid) && !GridParserService.isUnitOccupied(newLocation, grid)){
 
+      grid[unit.location.x][unit.location.y] = null;
       unit.location = newLocation;
       unit.doWalkAnimation();
       return new GameAction(Backward.name, unit, null, false);

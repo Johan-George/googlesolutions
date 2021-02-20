@@ -21,6 +21,7 @@ export class Right implements Executable {
     let newLocation = {x:unit.location.x, y:unit.location.y + 1}
     if (GridParserService.isInBounds(newLocation, grid) && !GridParserService.isUnitOccupied(newLocation, grid)){
 
+      grid[unit.location.x][unit.location.y] = null;
       unit.location = newLocation;
       unit.doWalkAnimation();
       return new GameAction(Right.name, unit, null, false);

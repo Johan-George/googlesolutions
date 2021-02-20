@@ -30,6 +30,7 @@ export class Forward implements Executable {
 
     if(GridParserService.isInBounds(newLocation, grid) && !GridParserService.isUnitOccupied(newLocation, grid)){
 
+      grid[unit.location.x][unit.location.y] = null;
       unit.location = newLocation;
       unit.doWalkAnimation();
       return new GameAction(Forward.name, unit, null, false);

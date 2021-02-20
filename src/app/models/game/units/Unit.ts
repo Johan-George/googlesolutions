@@ -53,8 +53,8 @@ export class Unit {
         height:SpriteConstants.spriteSize, regX: 20, regY:20, spacing:0, margin:0},
       'animations': {
         'idle':[0],
-        'walk':[this.walk_frames[0], this.walk_frames[1], 'idle' ,0.25],
-        'attack': [this.attack_frames[0], this.attack_frames[1], 'idle', 0.25]
+        'walk':[this.walk_frames[0], this.walk_frames[1], 'idle'],
+        'attack': [this.attack_frames[0], this.attack_frames[1], 'idle']
       }
     };
     let spriteSheet = new createjs.SpriteSheet(data);
