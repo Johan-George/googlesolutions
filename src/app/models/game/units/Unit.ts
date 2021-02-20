@@ -1,5 +1,6 @@
 import { CodeType } from "../../database/DatabaseData";
 import * as createjs from 'createjs-module';
+import {SpriteConstants} from '../../../services/SpriteConstants';
 /**
  * Object that represents a Unit on the grid
  */
@@ -38,7 +39,9 @@ export class Unit {
   defense: number = 10;
   strength: number = 20;
   attackRange: number = 1;
-  sprite: createjs.Sprite
+  sprite: createjs.Sprite;
+  walk_frames: Array<number>;
+  attack_frames: Array<number>;
 
   constructor() {}
 
@@ -46,11 +49,12 @@ export class Unit {
 
     let data = {
       'images': [imageData],
-      'frames': {width:40, height:40, regX: 0, regY:0, spacing:0, margin:0},
+      'frames': {width:SpriteConstants.spriteSize,
+        height:SpriteConstants.spriteSize, regX: 0, regY:0, spacing:0, margin:0},
       'animations': {
         'idle':[0],
-        'walk':[12, 19, 'idle' ,0.25],
-        'attack': [24, 35, 'idle', 0.25]
+        'walk':[this.walk_frames[0], this.walk_frames[1], 'idle' ,0.25],
+        'attack': [this.attack_frames[0], this.attack_frames[1], 'idle', 0.25]
       }
     };
     let spriteSheet = new createjs.SpriteSheet(data);
