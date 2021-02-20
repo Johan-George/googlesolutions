@@ -5,6 +5,7 @@ import { Unit } from 'src/app/models/game/units/Unit';
 import { FirestoreDatabaseService } from '../../database/firestore-database.service';
 import { CodeService } from '../../program-construction/code.service';
 import {Archer} from '../../../models/game/units/Archer';
+import { Swordsman } from 'src/app/models/game/units/Swordsman';
 
 @Injectable({
   providedIn: 'root'
@@ -88,8 +89,15 @@ export class LevelDataInterfaceService {
     });
   }
 
-  private newUnitOnType(id: number): Unit {
-    return new Archer();
+  private newUnitOnType(id: string): Unit {
+    switch(id){
+      case Archer.dbid:
+        return new Archer();
+      case Swordsman.dbid:
+        return new Swordsman;
+      default:
+        return new Unit();
+    }
   }
 
   private deserializeBlockCode(code: string[]): BlockCommand[] {

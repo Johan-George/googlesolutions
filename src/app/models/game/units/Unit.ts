@@ -17,6 +17,11 @@ export class Unit {
   /**
    * The Id number on the grid of the unit
    */
+  static dbid: string;
+
+  /**
+   * The Id number on the grid of the unit
+   */
   id: number = -1;
 
   /**

@@ -66,7 +66,7 @@ export class ProgramData {
  * within the ProgramData
  */
 export class UnitData {
-    TroopType: number = undefined
+    TroopType: string = undefined
     CodeType: CodeType = CodeType.NONE
     CodeBlocks: string[] = null
     CodeFile: {storageRef: string, filename: string} = null

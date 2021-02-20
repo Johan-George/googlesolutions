@@ -2,6 +2,7 @@ import {Unit} from './Unit';
 
 export class Swordsman extends Unit{
 
+  static dbid: string = btoa(Swordsman.name);
   id = -1
   maxHealth: number = 100;
   health: number = 100;

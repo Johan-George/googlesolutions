@@ -2,6 +2,7 @@ import {Unit} from './Unit';
 
 export class Archer extends Unit{
 
+  static dbid: string = btoa(Archer.name);
   id = -1;
   maxHealth: number = 100;
   health: number = 100;
