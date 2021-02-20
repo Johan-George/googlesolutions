@@ -20,6 +20,7 @@ import { BlockCodeComponent } from './components/block-code/block-code.component
 import { ErrorComponent } from './components/error/error.component';
 import { SigninPageComponent } from './components/signin-page/signin-page.component';
 import { TestComponent } from './components/test/test.component';
+import { LevelComponent } from './components/level/level.component';
 
 const firebaseConfig = {
   apiKey: "AIzaSyB25gxYu7PkMvnjKhisCzPP62grU_OEMLU",
@@ -36,7 +37,8 @@ const firebaseConfig = {
     BlockCodeComponent,
     ErrorComponent,
     SigninPageComponent,
-    TestComponent
+    TestComponent,
+    LevelComponent
   ],
   imports: [
     BrowserModule,

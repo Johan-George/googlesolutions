@@ -1,4 +1,4 @@
-import { Unit } from "./Unit";
+import { Unit } from "./units/Unit";
 
 /**
  * Object that represents a single action that occured in 1 step of the game

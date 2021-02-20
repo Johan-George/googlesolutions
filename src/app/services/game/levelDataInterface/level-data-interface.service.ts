@@ -1,9 +1,10 @@
 import { Injectable } from '@angular/core';
 import { BlockCommand } from 'src/app/models/blockCommands/block-command';
 import { CodeType, ProgramData } from 'src/app/models/database/DatabaseData';
-import { Unit } from 'src/app/models/game/Unit';
+import { Unit } from 'src/app/models/game/units/Unit';
 import { FirestoreDatabaseService } from '../../database/firestore-database.service';
 import { CodeService } from '../../program-construction/code.service';
+import {Archer} from '../../../models/game/units/Archer';
 
 @Injectable({
   providedIn: 'root'
@@ -88,7 +89,7 @@ export class LevelDataInterfaceService {
   }
 
   private newUnitOnType(id: number): Unit {
-    return new Unit();
+    return new Archer();
   }
 
   private deserializeBlockCode(code: string[]): BlockCommand[] {

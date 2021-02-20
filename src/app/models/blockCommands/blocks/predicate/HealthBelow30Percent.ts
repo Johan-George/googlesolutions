@@ -3,7 +3,7 @@ import { Predicate } from '../../block-command';
 /**
  * Predicate representing Health below 30% condition
  * condition checks the unit's health if below 30%
- * See block-command.ts for specific documentation 
+ * See block-command.ts for specific documentation
  * on properties and methods
  */
 export class HealthBelow30Percent implements Predicate {
@@ -14,7 +14,7 @@ export class HealthBelow30Percent implements Predicate {
   indentationLevel: number;
 
   evaluation(grid, unit): boolean {
-    return true;
+    return ((unit.health / unit.maxHealth) * 100) < 30;
   }
 
   getId(): string {

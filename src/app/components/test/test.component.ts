@@ -10,7 +10,7 @@ import { EndElse } from 'src/app/models/blockCommands/blocks/terminal/EndElse';
 import { EndIf } from 'src/app/models/blockCommands/blocks/terminal/Endif';
 import { CodeType } from 'src/app/models/database/DatabaseData';
 import { GameAction } from 'src/app/models/game/GameAction';
-import { Unit } from 'src/app/models/game/Unit';
+import { Unit } from 'src/app/models/game/units/Unit';
 import { FirestoreDatabaseService } from 'src/app/services/database/firestore-database.service';
 import { GameLoopServiceService } from 'src/app/services/game/gameloop/game-loop.service';
 import { CodeService } from 'src/app/services/program-construction/code.service';
