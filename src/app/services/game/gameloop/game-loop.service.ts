@@ -10,6 +10,7 @@ import { Unit } from 'src/app/models/game/units/Unit';
 import { BlockService } from '../../program-construction/block.service';
 import { LevelDataInterfaceService } from '../levelDataInterface/level-data-interface.service';
 import {Wait} from '../../../models/blockCommands/blocks/executable/Wait';
+import {UnitReadOnly} from '../../../models/game/units/UnitReadOnly';
 
 @Injectable({
   providedIn: 'root'
@@ -190,7 +191,7 @@ export class GameLoopServiceService {
 
           this.workerRunning = unit.activecode as Worker;
 
-          this.workerRunning.postMessage(JSON.stringify({grid: this.grid, unit: unit}));
+          this.workerRunning.postMessage(JSON.stringify({grid: this.convertGridToReadOnly(this.grid), unit: new UnitReadOnly(unit)}));
 
           var self = this
 
@@ -307,6 +308,24 @@ export class GameLoopServiceService {
       return false;
     } else {
       return finalReturn;
+    }
+
+  }
+
+  private convertGridToReadOnly(grid: Unit[][]){
+
+    let newGrid = [];
+    for (let row of grid){
+      let newRow = [];
+      for(let el of row){
+
+        if(el === null){
+          continue;
+        }
+        newRow.push(new UnitReadOnly(el));
+
+      }
+      newGrid.push(newRow);
     }
 
   }

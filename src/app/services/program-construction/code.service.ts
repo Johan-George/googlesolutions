@@ -92,8 +92,6 @@ export class CodeService {
 
     for (let rep of repr) {
 
-      console.log("checking " + rep);
-
       if (rep.includes('_')) {
 
         let ids = rep.split('_');

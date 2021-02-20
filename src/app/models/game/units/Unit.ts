@@ -1,6 +1,7 @@
 import { CodeType } from "../../database/DatabaseData";
 import * as createjs from 'createjs-module';
 import {SpriteConstants} from '../../../services/SpriteConstants';
+
 /**
  * Object that represents a Unit on the grid
  */

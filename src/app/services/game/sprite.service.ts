@@ -26,6 +26,9 @@ export class SpriteService {
 
     for(let unit of units){
 
+      if(unit === null){
+        continue;
+      }
       unit.initSprite(imageQueue.getResult(unit.constructor.name));
 
     }
