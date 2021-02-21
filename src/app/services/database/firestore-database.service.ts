@@ -153,12 +153,10 @@ export class FirestoreDatabaseService {
         xhr.responseType = 'text';
         xhr.onload = function(event) {
           let code = xhr.response;
-          console.log(code);
           let file = new File([code], fileName, {
             type: "text/javascript",
           });
           let url = window.URL.createObjectURL(file);
-          console.log(url);
           listenerFunction(new Worker(url));
         };
         xhr.open('GET', res);

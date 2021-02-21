@@ -10,6 +10,7 @@ import { Unit } from 'src/app/models/game/units/Unit';
 import { BlockService } from '../../program-construction/block.service';
 import { LevelDataInterfaceService } from '../levelDataInterface/level-data-interface.service';
 import {Wait} from '../../../models/blockCommands/blocks/executable/Wait';
+import {UnitReadOnly} from '../../../models/game/units/UnitReadOnly';
 
 @Injectable({
   providedIn: 'root'
@@ -143,12 +144,15 @@ export class GameLoopServiceService {
 
       try {
 
-        if (this.team1units.length == 0) {
+        // Return at the end of each of these to not execute the code after. We know we're done.
+        if (this.team1units.length === 0) {
           //return new GameAction("GameEnd2", null, null, false);
           successFunc(new GameAction("GameEnd2", null, null, false));
-        } else if (this.team2units.length == 0) {
+          return;
+        } else if (this.team2units.length === 0) {
           //return new GameAction(""GameEnd1"", null, null, false);
           successFunc(new GameAction("GameEnd1", null, null, false));
+          return;
         }
 
         var unit = ((this.isTeam1Active) ? this.team1units : this.team2units)[this.unitIndex]
@@ -190,7 +194,7 @@ export class GameLoopServiceService {
 
           this.workerRunning = unit.activecode as Worker;
 
-          this.workerRunning.postMessage(JSON.stringify({grid: this.grid, unit: unit}));
+          this.workerRunning.postMessage(JSON.stringify({grid: this.convertGridToReadOnly(this.grid), unit: new UnitReadOnly(unit)}));
 
           var self = this
 
@@ -311,6 +315,24 @@ export class GameLoopServiceService {
 
   }
 
+  private convertGridToReadOnly(grid: Unit[][]){
+
+    let newGrid = [];
+    for (let row of grid){
+      let newRow = [];
+      for(let el of row){
+
+        if(el === null){
+          continue;
+        }
+        newRow.push(new UnitReadOnly(el));
+
+      }
+      newGrid.push(newRow);
+    }
+
+  }
+
   /**
    * Creates a null filled 2d array of units for the grid at specified size
    * @param x size in x direction
@@ -389,6 +411,21 @@ export class GameLoopServiceService {
       return new Wait().execute(grid, unit);
 
     }
+  }
+
+  deleteUnit(unit: Unit){
+
+    let team = unit.team === 1 ? this.team1units : this.team2units;
+    for(let i = 0; i < team.length; i++){
+
+      if(team[i].id === unit.id){
+
+        team.splice(i);
+
+      }
+
+    }
+
   }
 
 }

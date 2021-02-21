@@ -14,7 +14,8 @@ export class SpriteService {
   static loadSpriteSheets(){
     let manifest = [
       {id:SpriteConstants.archer, src: 'assets/animations/archer sprite sheet.png'},
-      {id:SpriteConstants.swordsmen, src: 'assets/animations/swordsman sprite sheet.png'}
+      {id:SpriteConstants.swordsmen, src: 'assets/animations/swordsman sprite sheet.png'},
+      {id:SpriteConstants.testMap, src:'assets/maps/test map.png'}
     ];
     let queue = new createjs.LoadQueue();
     queue.loadManifest(manifest);
@@ -26,6 +27,9 @@ export class SpriteService {
 
     for(let unit of units){
 
+      if(unit === null){
+        continue;
+      }
       unit.initSprite(imageQueue.getResult(unit.constructor.name));
 
     }
@@ -35,15 +39,6 @@ export class SpriteService {
   flipSpriteInPlace(unit){
 
     unit.sprite.scaleX = -unit.sprite.scaleX;
-    // if(unit.sprite.scaleX > 0){
-    //
-    //   unit.sprite.x -= SpriteConstants.spriteSize;
-    //
-    // }else{
-    //
-    //   unit.sprite.x += SpriteConstants.spriteSize;
-    //
-    // }
 
   }
 
