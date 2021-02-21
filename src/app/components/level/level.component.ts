@@ -9,6 +9,7 @@ import {GameAction} from '../../models/game/GameAction';
 (<any>window).createjs = createjs;
 let stage;
 let tiles_on_side = 20;
+let canvas_length = 800;
 
 @Component({
   selector: 'app-level',
@@ -20,6 +21,7 @@ export class LevelComponent implements OnInit {
   private grid: Unit[][];
   public loading: string = "loading";
   private lastAction: GameAction;
+  private gameStart = false;
 
   constructor(private sprite: SpriteService, private code: CodeService, private loopservice: GameLoopServiceService) { }
 
@@ -32,16 +34,25 @@ export class LevelComponent implements OnInit {
         let imageQueue = SpriteService.loadSpriteSheets();
         stage = new createjs.Stage('battlegrounds');
         imageQueue.on('complete', () => {
+          let shape = new createjs.Shape();
+          shape.graphics.beginBitmapFill(imageQueue.getResult(SpriteConstants.testMap)).drawRect(0, 0, canvas_length, canvas_length);
+          stage.addChild(shape);
+          this.drawGrid();
           for(let row of self.grid){
             this.sprite.initSpritesForAll(row, imageQueue);
             self.placeAllOnScreen(row);
           }
 
         })
-        this.drawGrid();
+        let tickCount = 0;
         createjs.Ticker.on('tick', _ => {
 
           stage.update();
+          tickCount += 1;
+          if(this.lastAction !== undefined && !(this.lastAction.actionId === "GameEnd2" || this.lastAction.actionId === "GameEnd1") && this.gameStart
+            && tickCount % 20 === 0 && this.loading === 'done'){
+            this.step();
+          }
 
         });
         this.loading = "done";
@@ -115,9 +126,21 @@ export class LevelComponent implements OnInit {
     prom.then(result => {
       this.lastAction = result as GameAction;
       this.loading = "done";
-      this.placeOnScreen(this.lastAction.doer);
-      this.placeOnGrid(this.lastAction.doer);
+      if(!this.lastAction.doer === null){
+
+        this.placeOnScreen(this.lastAction.doer);
+        this.placeOnGrid(this.lastAction.doer);
+
+      }
       console.log(this.lastAction);
+      if(this.lastAction.hasDied){
+
+        let dead = this.lastAction.receiver
+        this.grid[dead.location.x][dead.location.y] = null;
+        stage.removeChild(dead.sprite);
+        this.loopservice.deleteUnit(dead);
+
+      }
 
     });
 
@@ -127,24 +150,18 @@ export class LevelComponent implements OnInit {
 
   }
 
+  startGame(){
+
+    this.step();
+    this.gameStart = true;
+
+  }
+
   placeOnGrid(unit){
 
     this.grid[unit.location.x][unit.location.y] = unit;
 
   }
-
-  // placeAllOnGrid(units: Array<Unit>){
-  //
-  //   for(let unit of units){
-  //
-  //     if(unit === null){
-  //       continue;
-  //     }
-  //     this.placeOnGrid(unit);
-  //
-  //   }
-  //
-  // }
 
 
 }
