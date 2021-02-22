@@ -27,7 +27,6 @@ export class Forward implements Executable {
     else{
       newLocation = {x:unit.location.x - 1, y:unit.location.y}
     }
-
     if(GridParserService.isInBounds(newLocation, grid) && !GridParserService.isUnitOccupied(newLocation, grid)){
 
       grid[unit.location.x][unit.location.y] = null;

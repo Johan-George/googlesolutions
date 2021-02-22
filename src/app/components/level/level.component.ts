@@ -126,19 +126,20 @@ export class LevelComponent implements OnInit {
     prom.then(result => {
       this.lastAction = result as GameAction;
       this.loading = "done";
-      if(!this.lastAction.doer === null){
+      if(!(this.lastAction.doer === null)){
 
         this.placeOnScreen(this.lastAction.doer);
         this.placeOnGrid(this.lastAction.doer);
 
       }
-      console.log(this.lastAction);
+      //console.log(this.lastAction);
       if(this.lastAction.hasDied){
 
         let dead = this.lastAction.receiver
         this.grid[dead.location.x][dead.location.y] = null;
         stage.removeChild(dead.sprite);
         this.loopservice.deleteUnit(dead);
+        console.log('Death happened');
 
       }
 

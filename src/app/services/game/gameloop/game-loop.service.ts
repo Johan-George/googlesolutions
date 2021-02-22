@@ -141,6 +141,7 @@ export class GameLoopServiceService {
   baseStepPromise(): Promise<GameAction> {
 
     return new Promise((successFunc, rejectFunc) => {
+      // console.log(`State when stepped ${this.grid[5][2]} ${this.grid[5][5]}`);
 
       try {
 
@@ -196,26 +197,32 @@ export class GameLoopServiceService {
 
           this.workerRunning.postMessage(JSON.stringify({grid: this.convertGridToReadOnly(this.grid), unit: new UnitReadOnly(unit)}));
 
+          //console.log(`State when stepped ${this.grid[5][2]} ${this.grid[5][5]}`);
           var self = this
+          var messageSent = false;
 
           this.workerRunning.onmessage = function(event) {
-            self.workerRunning = null;
 
-            var curTeam: Unit[] = (self.isTeam1Active) ? self.team1units : self.team2units;
+            if(!messageSent){
+              self.workerRunning = null;
 
-            self.unitIndex++;
-            self.codeIndex = 0;
-            if (curTeam.length <= self.unitIndex) {
-              //no more units to run through switch sides
-              self.unitIndex = 0;
-              self.isTeam1Active = !self.isTeam1Active;
+              var curTeam: Unit[] = (self.isTeam1Active) ? self.team1units : self.team2units;
+
+              self.unitIndex++;
+              self.codeIndex = 0;
+              if (curTeam.length <= self.unitIndex) {
+                //no more units to run through switch sides
+                self.unitIndex = 0;
+                self.isTeam1Active = !self.isTeam1Active;
+              }
+              /*
+              Note the the convertWorkerMessageToAction never returns null. Instead if something goes
+              wrong it will return a default wait action.
+               */
+              self.lastAction = self.convertWorkerMessageToAction(event.data, self.grid, unit);
+              successFunc(self.lastAction);
             }
-            /*
-            Note the the convertWorkerMessageToAction never returns null. Instead if something goes
-            wrong it will return a default wait action.
-             */
-            self.lastAction = self.convertWorkerMessageToAction(event.data, self.grid, unit);
-            successFunc(self.lastAction);
+            messageSent = true;
           }
 
           this.workerRunning.onerror = function(event) {
@@ -398,7 +405,6 @@ export class GameLoopServiceService {
 
     let action = data.result;
     try {
-      console.log(action);
       let executable = this.blockServ.getById(btoa(action));
       if(!(this.blockServ.isExecutable(executable))){
         throw new Error();
