@@ -337,6 +337,7 @@ export class GameLoopServiceService {
       }
       newGrid.push(newRow);
     }
+    return newGrid;
 
   }
 
