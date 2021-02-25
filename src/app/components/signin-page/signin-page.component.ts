@@ -9,9 +9,13 @@ import { AuthyLoginService } from 'src/app/services/login/authy-login.service';
 export class SigninPageComponent {
 
   //Page Path to go to after log in successful
-  routeToAfterLogin: string;
+  routeToAfterLogin: string = "";
 
-  constructor(private authyService: AuthyLoginService) { }
+  constructor(private authyService: AuthyLoginService) { 
+    if(this.authyService.checkSigninStatus(this.routeToAfterLogin)) {
+      this.authyService.router.navigate([this.routeToAfterLogin]);
+    }
+  }
 
   loginUser() {
     this.authyService.AuthLogin(this.routeToAfterLogin);
