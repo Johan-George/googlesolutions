@@ -8,19 +8,24 @@ import * as firebase from 'firebase/app';
 })
 export class AuthyLoginService {
 
-  static user: string = null;
+  //See docs for user at https://firebase.google.com/docs/reference/js/firebase.User
+  private static user: firebase.default.User = null;
 
-  constructor(public afAuth: AngularFireAuth, public router: Router) {  }
+  constructor(public afAuth: AngularFireAuth, public router: Router) { }
 
   public AuthLogin(route: string) {
-    this.afAuth.signInWithPopup(new firebase.default.auth.GoogleAuthProvider())
-    .then((userCred) => {
-      AuthyLoginService.user = userCred.user.uid;
+    if (AuthyLoginService.user == null) {
+      this.afAuth.signInWithPopup(new firebase.default.auth.GoogleAuthProvider())
+        .then((userCred) => {
+          AuthyLoginService.user = userCred.user;
+          this.router.navigate([route]);
+          console.log("Logged in user " + AuthyLoginService.user.displayName);
+        }).catch(error => {
+          console.log("Could not login due to " + error);
+        });
+    } else {
       this.router.navigate([route]);
-      console.log("Logged in user " + AuthyLoginService.user);
-    }).catch(error => {
-      console.log("Could not login due to " + error);
-    })
+    }
   }
 
   public logout() {
@@ -29,6 +34,10 @@ export class AuthyLoginService {
       console.log("User signout");
       this.router.navigate([""]);
     });
+  }
+
+  public getUser() {
+    return AuthyLoginService.user;
   }
 
 }
