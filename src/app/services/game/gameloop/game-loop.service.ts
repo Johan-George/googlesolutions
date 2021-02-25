@@ -4,7 +4,7 @@ import { BlockCommand, ConditionalBlock, Executable } from 'src/app/models/block
 import { Else } from 'src/app/models/blockCommands/blocks/conditional/Else';
 import { ElseIf } from 'src/app/models/blockCommands/blocks/conditional/ElseIf';
 import { If } from 'src/app/models/blockCommands/blocks/conditional/If';
-import { CodeType } from 'src/app/models/database/DatabaseData';
+import { CodeType, ProgramData } from 'src/app/models/database/DatabaseData';
 import { GameAction } from 'src/app/models/game/GameAction';
 import { Unit } from 'src/app/models/game/units/Unit';
 import { BlockService } from '../../program-construction/block.service';
@@ -76,6 +76,16 @@ export class GameLoopServiceService {
   loadData(levelid: string, programid: string): Promise<void> {
     return new Promise((resolutionFunc, rejectionFunc) => {
       this.LevelInterface.getGameInfo(levelid, programid).then(result => {
+        this.gameData = result;
+
+        resolutionFunc();
+      });
+    })
+  }
+
+  loadTestData(programData: ProgramData): Promise<void> {
+    return new Promise((resolutionFunc, rejectionFunc) => {
+      this.LevelInterface.getGameInfoTesting(programData).then(result => {
         this.gameData = result;
 
         resolutionFunc();

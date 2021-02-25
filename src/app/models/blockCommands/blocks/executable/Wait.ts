@@ -14,7 +14,7 @@ export class Wait implements Executable {
   indentationLevel: number;
 
   execute(grid, unit): GameAction {
-    return new GameAction(Wait.name, unit, null, false);
+    return new GameAction("Unit " + unit.id + " " + Wait.name, unit, null, false);
   }
 
   getId(): string {

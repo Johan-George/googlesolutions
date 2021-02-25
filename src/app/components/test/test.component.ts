@@ -38,7 +38,7 @@ export class TestComponent {
     // state2.condition = new FalsePredicate();
 
     // var cb = cds.serializeBlocks([state, new TextAction1(), state2, new TextAction1(), state2, new TextAction1(), new Else(), new TextAction2(), new EndElse()]);
-    
+
     // db.setProgramData("2", {Name: "Hello", Verified: true,
     //     Units: [{TroopType:1, CodeBlocks: cb, location: {x:1,y:1}, CodeType: CodeType.BLOCK,
     //           CodeFile: null}]});
@@ -47,15 +47,19 @@ export class TestComponent {
     // Units: [{TroopType:1, CodeBlocks: null, location: {x:1,y:1}, CodeType: CodeType.FILE,
     //       CodeFile: {storageRef: "code/app.js", filename: "app.js"} }]});
 
-
     var self = this;
-    //run the game
-    loopservice.loadData("1","2").then(result => {
-      if(loopservice.prepLoop()) {
-        self.map = self.loopservice.grid;
-        this.loading = "done";
-      }
+
+    db.getProgramData("1", function (data) {
+      //run the game
+      loopservice.loadTestData(data).then(result => {
+        if (loopservice.prepLoop()) {
+          self.map = self.loopservice.grid;
+          this.loading = "done";
+        }
+      });
     });
+
+
   }
 
   stepGameButton() {
