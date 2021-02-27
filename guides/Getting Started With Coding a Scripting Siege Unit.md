@@ -39,13 +39,14 @@ For you to understand the data you will receive, let's have a look at the format
   "grid": [
     [null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null],
     [null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null],
-    [null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null],
-    [null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null],
-    [null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null],
-    [null,null,
-    {"id": 0,"team": 2,"location": {"y": 5,"x": 2},"maxHealth": 100,"health": 100,"defense": 10,"strength": 15,"attackRange": 4},
-      null,null,null,null,null,null,null,null,null,{"id": 1,"team": 1,"location": {"y": 5,"x": 12},"maxHealth": 100,"health": 100,"defense": 10,"strength": 15,"attackRange": 4},
+    [null,null,null,null,null,
+      {"id": 0,"team": 2,"location": {"x": 2,"y": 5},"maxHealth": 100,"health": 100,"defense": 10,"strength": 15,"attackRange": 4},
+      null,null,null,null,null,null,
+      {"id": 1,"team": 1,"location": {"x": 12, "y": 5},"maxHealth": 100,"health": 100,"defense": 10,"strength": 15,"attackRange": 4},
       null,null,null,null,null,null,null],
+    [null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null],
+    [null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null],
+    [null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null],
     [null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null],
     [null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null],
     [null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null],
@@ -78,7 +79,7 @@ For you to understand the data you will receive, let's have a look at the format
 ```
 > Note we indented it this way just for the sake of clarity. In reality, the JSON data will be in one line. Also, it would all be wrapped in quotation marks.
 
-This might look like quite a bit to unpack for some of you but we’ll do our best to explain what this data format represents. Everything in the curly braces (these: `{}`) represents a javascript object. An object is just a collection of related data each with a name to refer to each of them by. Data within an object can be anything from text, a true or false value, an array (a list of data), or even other objects. You will notice in these objects, we have some text in quotation marks followed by a colon and some data. The text in the quotes is the name of the data right of the colon. When we convert the JSON data to a real object, we will use those names to access the data. For instance, we have some data in the object called `grid`, and another called `unit`. The data called `grid` is a list containing inner lists, representing what unit, if any, is on each tile. If you haven't noticed `grid` is 20 by 20 (20 inner lists each with 20 items) just like the 20 by 20 in-game grid. Each item in the inner lists represents a tile, more specifically what unit is on that tile. If there isn’t a unit on a tile, then there is a value of `null`, otherwise, you get an object representing that unit.  Each inner list represents a row in the game while the items in those inner lists represent what unit is on a given tile. You will notice in the above example, only the sixth list contains objects. In that sixth list, there are two objects representing units. This would mean on the sixth row, there are two units, while all the null values in the inner lists mean the other tiles on the grid have no units on them. Within these unit objects, you will see that you are given the exact location on the grid that these units are on. Note that the x and y values range from 0-19, representing 20 rows and 20 columns. Since the numbering starts from 0, the sixth row will be row number 5, the first row will be number 0, etc (programming languages tend to number stuff starting at 0). Lastly, the `unit` data in the outer object (the object that contains the grid data), is just a representation of the unit you are controlling. Now that you have an idea of what data the game sends, we can go over how to use it. The below code takes the `unit` data and stores it in a variable called *you*.
+This might look like quite a bit to unpack for some of you but we’ll do our best to explain what this data format represents. Everything in the curly braces (these: `{}`) represents a javascript object. An object is just a collection of related data each with a name to refer to each of them by. Data within an object can be anything from text, a true or false value, an array (a list of data), or even other objects. You will notice in these objects, we have some text in quotation marks followed by a colon and some data. The text in the quotes is the name of the data right of the colon. When we convert the JSON data to a real object, we will use those names to access the data. For instance, we have some data in the object called `grid`, and another called `unit`. The data called `grid` is a list containing inner lists, representing what unit, if any, is on each tile. If you haven't noticed `grid` is 20 by 20 (20 inner lists each with 20 items) just like the 20 by 20 in-game grid. Each item in the inner lists represents a tile, more specifically what unit is on that tile. If there isn’t a unit on a tile, then there is a value of `null`, otherwise, you get an object representing that unit.  Each inner list represents a column in the game while the items in those inner lists represent what unit is on a tile on that column. You will notice in the above example, only the third list contains objects. In that third list, there are two objects representing units. This would mean on the third column, there are two units, while all the null values in the inner lists mean the other tiles on the grid have no units on them. Within these unit objects, you will see that you are given the exact location on the grid that these units are on. Note that the x and y values range from 0-19, representing 20 rows and 20 columns. Since the numbering starts from 0, the third column will be column number 2, the first column will be number 0, etc (programming languages tend to number stuff starting at 0). Lastly, the `unit` data in the outer object (the object that contains the grid data), is just a representation of the unit you are controlling. Now that you have an idea of what data the game sends, we can go over how to use it. The below code takes the `unit` data and stores it in a variable called *you*.
 
 ```javascript
 let data = JSON.parse(turnEvent.data);
@@ -97,22 +98,22 @@ To get the x value of the location of the unit you would do the following:
 let xLocation = you.location.x;
 ```
 
-To get a specific unit in the grid is a bit more involved than what we just did, but we will go into more detail about it. Here's how you'd get the unit on the sixth row of the 3rd column:
+To get a specific unit in the grid is a bit more involved than what we just did, but we will go into more detail about it. Here's how you'd get the unit on the third column of the sixth row:
 
 ```javascript
 let data = JSON.parse(turnEvent.data);
 let grid = data.grid;
-// Get the sixth row of the grid and get the first unit found in that row (located on x: 5, y: 2). Remember we count stuff starting at 0, so the sixth row will be number 5, and the third column will be number 2
-let person = grid[5][2];
+// Get the third column of the grid and get the first unit found in that column (located on x: 2, y: 5). Remember we count stuff starting at 0, so the third column will be number 2, and the sixth row will be number 5
+let person = grid[2][5];
 ```
 
-First, we get the grid data within the data object. This grid data is a list of lists (as seen in the JSON data above), which we store as a variable called grid. Then we get the sixth item of the list (another list) and get the third item of that inner list. This would be a single unit object as seen in the JSON data above. We would then store it in a variable called person so we can do operations like what you've seen above. The tables below are a summary of all that exists in the data we send you:
+First, we get the grid data within the data object. This grid data is a list of lists (as seen in the JSON data above), which we store as a variable called grid. Then we get the third item of the list (another list) and get the sixth item of that inner list. This would be a single unit object as seen in the JSON data above. We would then store it in a variable called person so we can do operations like what you've seen above. The tables below are a summary of all that exists in the data we send you:
 
 **The Data Sent From Each Turn**
 
 | Data | Definition                                                                                                                                                              |
 |------|-------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
-| grid | A 20 by 20 list of lists (20 inner lists, each with 20 items) representing the 20 by 20 in-game grid. Each inner list represents an in-game row where each item represents what unit (if any) is on each tile of that row. If there is no unit on a tile, then that tile has a null value. |
+| grid | A 20 by 20 list of lists (20 inner lists, each with 20 items) representing the 20 by 20 in-game grid. Each inner list represents an in-game column where each item represents what unit (if any) is on each tile of that column. If there is no unit on a tile, then that tile has a null value. |
 | unit | A unit object representing the stats of the unit you are controlling (ex. health, defense, attack range, etc).                                                            |
 
 **The Contents of all Unit objects**

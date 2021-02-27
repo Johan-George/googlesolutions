@@ -107,7 +107,7 @@ Javascript numbers each item in the array in order from 0 to the number of items
 ```Javascript
 let number = nums[1];
 ```
-In this case, we will be getting item 1 which has a value of 12. It's also important to understand that an array can also contain a bunch of inner arrays (usually called a 2D array). In Scripting Siege, you will see that we will use these 2D arrays to represent data about the in-game, grid. More precisely, you will encounter an array containing a bunch of inner arrays representing rows in the grid. In each of these inner arrays is data representing all the units on that row. For now, let us give you a simpler example of a 2D array:
+In this case, we will be getting item 1 which has a value of 12. It's also important to understand that an array can also contain a bunch of inner arrays (usually called a 2D array). In Scripting Siege, you will see that we will use these 2D arrays to represent data about the in-game, grid. More precisely, you will encounter an array containing a bunch of inner arrays representing columns in the grid. In each of these inner arrays is data representing all the units on that column. For now, let us give you a simpler example of a 2D array:
 
 ```Javascript
 let grid = [

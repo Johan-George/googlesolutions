@@ -37,10 +37,10 @@ export class LevelDataInterfaceService {
           u.id = curUnitId++;
           u.team = 2;
           u.location = prog.Units[x].location;
-          if (prog.Units[x].CodeType == CodeType.BLOCK) {
+          if (prog.Units[x].CodeType === CodeType.BLOCK) {
             u.codeType = CodeType.BLOCK;
             u.activecode = self.deserializeBlockCode(prog.Units[x].CodeBlocks);
-          } else if (prog.Units[x].CodeType == CodeType.FILE) {
+          } else if (prog.Units[x].CodeType === CodeType.FILE) {
             u.codeType = CodeType.FILE;
             progPromises.push(new Promise((resolveP, rejectP) => {
               self.database.getUserCodeFromStorage(prog.Units[x].CodeFile.storageRef, prog.Units[x].CodeFile.filename, function (data) {

@@ -116,12 +116,12 @@ export class GameLoopServiceService {
 
       for (var x = 0; x < this.team1units.length; x++) {
         var u = this.team1units[x];
-        this.grid[u.location.y][u.location.x] = u;
+        this.grid[u.location.x][u.location.y] = u;
       }
 
       for (var x = 0; x < this.team2units.length; x++) {
         var u = this.team2units[x];
-        this.grid[u.location.y][u.location.x] = u;
+        this.grid[u.location.x][u.location.y] = u;
       }
 
     } catch (error) {
@@ -151,7 +151,6 @@ export class GameLoopServiceService {
   baseStepPromise(): Promise<GameAction> {
 
     return new Promise((successFunc, rejectFunc) => {
-      // console.log(`State when stepped ${this.grid[5][2]} ${this.grid[5][5]}`);
 
       try {
 
@@ -201,13 +200,11 @@ export class GameLoopServiceService {
           this.lastAction = null;
 
           successFunc(last);
-        } else if(CodeType.FILE) {
-
+        } else if(unit.codeType === CodeType.FILE) {
+          
           this.workerRunning = unit.activecode as Worker;
-          console.log({grid: this.convertGridToReadOnly(this.grid), unit: new UnitReadOnly(unit)});
           this.workerRunning.postMessage(JSON.stringify({grid: this.convertGridToReadOnly(this.grid), unit: new UnitReadOnly(unit)}));
 
-          //console.log(`State when stepped ${this.grid[5][2]} ${this.grid[5][5]}`);
           var self = this
           var messageSent = false;
 
