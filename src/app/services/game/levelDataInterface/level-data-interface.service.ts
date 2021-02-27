@@ -70,12 +70,13 @@ export class LevelDataInterfaceService {
               u.activecode = self.deserializeBlockCode(playerProg.Units[x].CodeBlocks);
             } else if (playerProg.Units[x].CodeType == CodeType.FILE) {
               u.codeType = CodeType.FILE;
-              progPromises.push(new Promise((resolveP, rejectP) => {
-                self.database.getUserCodeFromStorage(playerProg.Units[x].CodeFile.storageRef, playerProg.Units[x].CodeFile.filename, function (data) {
-                  u.activecode = data;
-                  resolveP();
-                });
-              }));
+              // progPromises.push(new Promise((resolveP, rejectP) => {
+              //   self.database.getUserCodeFromStorage(playerProg.Units[x].CodeFile.storageRef, playerProg.Units[x].CodeFile.filename, function (data) {
+              //     u.activecode = data;
+              //     resolveP();
+              //   });
+              // }));
+              progPromises.push(self.getStorageReadPromise(playerProg.Units[x].CodeFile.storageRef, playerProg.Units[x].CodeFile.filename, u));
             } else {
               console.log("Illegal code type, continuing of type " + (playerProg.Units[x].CodeType.toString()));
               continue;
@@ -110,52 +111,63 @@ export class LevelDataInterfaceService {
       var curUnitId = 0;
       var self = this;
 
-      for(var x = 0; x < programData.Units.length; x++) {
+      for (var x = 0; x < programData.Units.length; x++) {
         var u: Unit = this.newUnitOnType(programData.Units[x].TroopType);
-          u.id = curUnitId++;
-          u.team = 2;
-          u.location = programData.Units[x].location;
-          if (programData.Units[x].CodeType == CodeType.BLOCK) {
-            u.codeType = CodeType.BLOCK;
-            u.activecode = this.deserializeBlockCode(programData.Units[x].CodeBlocks);
-          } else if (programData.Units[x].CodeType == CodeType.FILE) {
-            u.codeType = CodeType.FILE;
-            progPromises.push(new Promise<void>((resolveP, rejectP) => {
-              self.database.getUserCodeFromStorage(programData.Units[x].CodeFile.storageRef, programData.Units[x].CodeFile.filename, function (data) {
-                u.activecode = data;
-                resolveP();
-              });
-            }));
-          } else {
-            console.log("Illegal code type, continuing");
-            continue;
-          }
+        u.id = curUnitId++;
+        u.team = 2;
+        u.location = programData.Units[x].location;
+        if (programData.Units[x].CodeType == CodeType.BLOCK) {
+          u.codeType = CodeType.BLOCK;
+          u.activecode = this.deserializeBlockCode(programData.Units[x].CodeBlocks);
+        } else if (programData.Units[x].CodeType == CodeType.FILE) {
+          u.codeType = CodeType.FILE;
+          // progPromises.push(new Promise<void>((resolveP, rejectP) => {
+          //   self.database.getUserCodeFromStorage(programData.Units[x].CodeFile.storageRef, programData.Units[x].CodeFile.filename, function (data) {
+          //     u.activecode = data;
+          //     resolveP();
+          //   });
+          //}));
+          progPromises.push(self.getStorageReadPromise(programData.Units[x].CodeFile.storageRef, programData.Units[x].CodeFile.filename, u));
+        } else {
+          console.log("Illegal code type, continuing");
+          continue;
+        }
 
-          result.team1Units.push(u);
+        result.team1Units.push(u);
 
-          Promise.all(progPromises).then(function (val) {
-            resolutionFunc(result);
-          });
+        Promise.all(progPromises).then(function (val) {
+          resolutionFunc(result);
+        });
       }
 
-  });
+    });
 
 
-}
+  }
 
   private newUnitOnType(id: string): Unit {
-  switch (id) {
-    case Archer.dbid:
-      return new Archer();
-    case Swordsman.dbid:
-      return new Swordsman;
-    default:
-      return new Unit();
+    switch (id) {
+      case Archer.dbid:
+        return new Archer();
+      case Swordsman.dbid:
+        return new Swordsman;
+      default:
+        return new Unit();
+    }
   }
-}
 
   private deserializeBlockCode(code: string[]): BlockCommand[] {
-  return this.codeServ.deserializeToBlocks(code);
-}
+    return this.codeServ.deserializeToBlocks(code);
+  }
+
+  private getStorageReadPromise(storageRef, filename, passedunit) {
+    var self = this;
+    return new Promise<void>((resolveP, rejectP) => {
+      self.database.getUserCodeFromStorage(storageRef, filename, function (data) {
+        passedunit.activecode = data;
+        resolveP();
+      })
+    });
+  }
 
 }

@@ -116,6 +116,7 @@ export class GameLoopServiceService {
 
       for (var x = 0; x < this.team1units.length; x++) {
         var u = this.team1units[x];
+        console.log(u);
         this.grid[u.location.x][u.location.y] = u;
       }
 
@@ -201,8 +202,9 @@ export class GameLoopServiceService {
 
           successFunc(last);
         } else if(unit.codeType === CodeType.FILE) {
-          
+
           this.workerRunning = unit.activecode as Worker;
+
           this.workerRunning.postMessage(JSON.stringify({grid: this.convertGridToReadOnly(this.grid), unit: new UnitReadOnly(unit)}));
 
           var self = this
