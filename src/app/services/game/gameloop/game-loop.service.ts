@@ -204,7 +204,7 @@ export class GameLoopServiceService {
         } else if(CodeType.FILE) {
 
           this.workerRunning = unit.activecode as Worker;
-
+          console.log({grid: this.convertGridToReadOnly(this.grid), unit: new UnitReadOnly(unit)});
           this.workerRunning.postMessage(JSON.stringify({grid: this.convertGridToReadOnly(this.grid), unit: new UnitReadOnly(unit)}));
 
           //console.log(`State when stepped ${this.grid[5][2]} ${this.grid[5][5]}`);
@@ -340,6 +340,7 @@ export class GameLoopServiceService {
       for(let el of row){
 
         if(el === null){
+          newRow.push(el);
           continue;
         }
         newRow.push(new UnitReadOnly(el));
