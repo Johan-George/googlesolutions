@@ -17,7 +17,7 @@ In your code, you need to provide a function (a collection of related code) to p
 ```javascript
 this.onmessage = function (turnEvent){
 
-  this.postMessage({result: 'Forward'});
+  this.postMessage({result: 'East'});
 
 }
 ```
@@ -137,11 +137,11 @@ Remember that the game only accepts a set of recognized actions that you can sen
 | Action   | Definition                                                                                                               |
 |----------|--------------------------------------------------------------------------------------------------------------------------|
 | Attack   | Attack the first enemy unit in range if any. Otherwise, just wait.                                                       |
-| Wait     | End the turn without acting.                                                                               |
-| Forward  | Walk one tile towards the enemy. If the tile is occupied by another unit or the area is out of bounds wait.              |
-| Backward | Walk one tile away from the enemy. If the tile is occupied by another unit or the area is out of bounds wait.            |
-| Left     | Walk one tile towards the top of the grid. If the tile is occupied by another unit or the area is out of bounds wait.    |
-| Right    | Walk one tile towards the bottom of the grid. If the tile is occupied by another unit or the area is out of bounds wait. |
+| Wait     | End the turn without acting.                                                                    |
+| West     | Walk one tile West. If the tile is occupied by another unit or the area is out of bounds wait.  |
+| East     | Walk one tile East. If the tile is occupied by another unit or the area is out of bounds wait.  |
+| North    | Walk one tile North. If the tile is occupied by another unit or the area is out of bounds wait. |
+| South    | Walk one tile South. If the tile is occupied by another unit or the area is out of bounds wait. |
 
 ###Conclusion
 
