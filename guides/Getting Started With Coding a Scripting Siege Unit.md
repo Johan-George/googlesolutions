@@ -149,5 +149,5 @@ Remember that the game only accepts a set of recognized actions that you can sen
 
 ###Conclusion
 
-In this guide, we went over all you need to know to start coding the behavior of your scripting siege units. With this knowledge, you will be able to write more complex custom behavior to your units to perform better in the game and learn to code in the process. You can find some example code to get you started [here](INSERT_LINK_HERE). Good luck and have fun!
+In this guide, we went over all you need to know to start coding the behavior of your scripting siege units. With this knowledge, you will be able to write more complex custom behavior to your units to perform better in the game and learn to code in the process. You can find some example code to get you started [here](https://github.com/john-amiscaray/Scripting-Siege-API-Docs-With-A-Usable-Example). Good luck and have fun!
 
