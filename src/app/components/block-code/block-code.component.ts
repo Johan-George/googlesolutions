@@ -91,8 +91,10 @@ export class BlockCodeComponent implements OnInit {
     console.log('Here')
     if(value.getLabel() === HealthBelow30Percent.label && !this.hasHealthFunc){
       this.addFunctionToRealCode(healthBelow30PercentFunc);
+      this.hasHealthFunc = true;
     }else if(value.getLabel() === EnemyNear.label && !this.hasEnemyNearFunc){
       this.addFunctionToRealCode(enemyNearFunc);
+      this.hasEnemyNearFunc = true;
     }
   }
 

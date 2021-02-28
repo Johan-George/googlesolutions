@@ -10,7 +10,7 @@ export class EnemyNear implements Predicate {
 
   static label: string = 'Enemy Near';
   static id: string = btoa(EnemyNear.name);
-  static asCode = 'enemyNear()'
+  static asCode = 'enemyNear(grid, me)'
   indentationLevel: number;
 
   evaluation(grid, unit): boolean {
