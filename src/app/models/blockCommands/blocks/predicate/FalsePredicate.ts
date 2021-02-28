@@ -3,7 +3,7 @@ import { Predicate } from '../../block-command';
 /**
  * Predicate representing the False condition
  * This condition is always false
- * See block-command.ts for specific documentation 
+ * See block-command.ts for specific documentation
  * on properties and methods
  */
 export class FalsePredicate implements Predicate {
@@ -12,6 +12,8 @@ export class FalsePredicate implements Predicate {
   static label: string = 'No Condition Selected';
   static asCode = 'false';
   indentationLevel: number;
+  negate: boolean = false;
+  conjunction: string = '';
 
   evaluation(grid, unit): boolean {
     return false;

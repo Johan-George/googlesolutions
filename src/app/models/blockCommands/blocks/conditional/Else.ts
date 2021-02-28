@@ -13,7 +13,7 @@ export class Else implements ConditionalBlock, TerminalBlock {
   static label: string = 'Else';
   static asCode: string = '} else {';
 
-  condition: Predicate = new EmptyPredicate();
+  conditions: Array<Predicate> = [new EmptyPredicate()];
   terminal_blocks: Array<string> = [EndElse.label];
   indentationLevel: number;
   terminate: number = null;

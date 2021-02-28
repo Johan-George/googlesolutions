@@ -371,7 +371,7 @@ export class GameLoopServiceService {
     this.currentConditions.push(new ConditionalHold(cmd as ConditionalBlock, this.codeIndex));
 
     //check conditioning
-    if ((cmd as ConditionalBlock).condition.evaluation(this.grid, unit)) {
+    if ((cmd as ConditionalBlock).conditions[0].evaluation(this.grid, unit)) {
       this.currentConditions.peek().preCondition = true;
       this.codeIndex++;
       return true;

@@ -3,7 +3,7 @@ import { Predicate } from '../../block-command';
 /**
  * Predicate representing a true condition
  * the condition will always be true
- * See block-command.ts for specific documentation 
+ * See block-command.ts for specific documentation
  * on properties and methods
  */
 export class TruePredicate implements Predicate {
@@ -12,6 +12,8 @@ export class TruePredicate implements Predicate {
   static label: string = 'No Condition Selected';
   static asCode = 'true';
   indentationLevel: number;
+  negate: boolean = false;
+  conjunction: string = '';
 
   evaluation(grid, unit): boolean {
     return true;

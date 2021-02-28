@@ -75,7 +75,7 @@ export class CodeService {
         console.log(command.getLabel() + " turned into " + command.getId().toString());
       } else {
         repr.push(String(command.getId() + '_'
-          + command.condition.getId()));
+          + command.conditions[0].getId()));
           console.log(command.getLabel() + " turned into " + command.getId().toString());
       }
 
@@ -96,7 +96,7 @@ export class CodeService {
 
         let ids = rep.split('_');
         let conditional: ConditionalBlock = <ConditionalBlock>this.blockService.getById(ids[0]);
-        conditional.condition = <Predicate>this.blockService.getById(ids[1]);
+        conditional.conditions[0] = <Predicate>this.blockService.getById(ids[1]);
         commands.push(conditional);
 
       } else {
@@ -115,7 +115,7 @@ export class CodeService {
    */
   createConditionalFunction(i, commands: Array<BlockCommand>, executable_count) {
 
-    let condition = (<ConditionalBlock>commands[i]).condition;
+    let condition = (<ConditionalBlock>commands[i]).conditions[0];
     let global_executables = executable_count;
     let local_executables = 0;
 
@@ -146,7 +146,7 @@ export class CodeService {
 
       } else if (commands[i].getLabel() === ElseIf.label) {
 
-        if((<ConditionalBlock>commands[i]).condition.getLabel() === EmptyPredicate.label){
+        if((<ConditionalBlock>commands[i]).conditions[0].getLabel() === EmptyPredicate.label){
           throw new Error('An Else if block is missing a condition');
         }
 
@@ -217,7 +217,7 @@ export class CodeService {
     let local_executables = 0;
 
     if (commands[i].getLabel() === ElseIf.label) {
-      condition = (<ConditionalBlock>commands[i]).condition;
+      condition = (<ConditionalBlock>commands[i]).conditions[0];
     }
 
     let conditional_actions: Array<(grid, unit) => GameAction> = [];

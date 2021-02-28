@@ -32,7 +32,7 @@ export interface BlockCommand{
 }
 
 /**
- * BlockCommand representing of a condition within a BlockCommand conditional 
+ * BlockCommand representing of a condition within a BlockCommand conditional
  */
 export interface Predicate extends BlockCommand{
 
@@ -40,7 +40,14 @@ export interface Predicate extends BlockCommand{
    * Method to implement for evaluating the condition
    */
   evaluation: (grid, unit) => boolean
-
+  /**
+   * Whether or not to negate the value from the evaluation function
+   */
+  negate: boolean;
+  /**
+   * How this predicate conjuncts with other predicates (and/or). & for and, | for or
+   */
+  conjunction: string;
 }
 
 /**
@@ -63,8 +70,8 @@ export interface ConditionalBlock extends BlockCommand{
   /**
    * the Predicate object representing the condition of the conditional statement
    */
-  condition: Predicate;
-  
+  conditions: Array<Predicate>;
+
   /**
    * The Array of TerminalBlock objects representing the sections within the conditional
    */

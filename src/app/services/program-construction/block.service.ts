@@ -58,7 +58,7 @@ export class BlockService {
    * @param command The BlockCommand to check
    */
   isConditional(command: BlockCommand): command is ConditionalBlock {
-    return (<ConditionalBlock>command).condition !== undefined;
+    return (<ConditionalBlock>command).conditions !== undefined;
   }
 
   /**

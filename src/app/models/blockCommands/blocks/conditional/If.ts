@@ -6,7 +6,7 @@ import { EndElseIf } from '../terminal/EndElseIf';
 
 /**
  * ConditionalBlock representing an If statement
- * See block-command.ts for specific documentation 
+ * See block-command.ts for specific documentation
  * on properties and methods
  */
 export class If implements ConditionalBlock {
@@ -15,7 +15,7 @@ export class If implements ConditionalBlock {
   static asCode = (predicate: Predicate) => `if(${predicate.getAsCode()}){`;
   static id: string = btoa(If.name);
 
-  condition: Predicate = new EmptyPredicate();
+  conditions: Array<Predicate> = [new EmptyPredicate()];
   terminal_blocks: Array<string> = [EndIf.label, EndElse.label, EndElseIf.label];
   indentationLevel: number;
 
@@ -28,7 +28,8 @@ export class If implements ConditionalBlock {
   }
 
   getAsCode(): string {
-    return If.asCode(this.condition);
+    //return If.asCode(this.condition);
+    return 'Not implemented yet';
   }
 
 }

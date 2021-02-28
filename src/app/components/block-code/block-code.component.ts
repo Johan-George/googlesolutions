@@ -50,7 +50,7 @@ export class BlockCodeComponent implements OnInit {
       let copy = Object.create(block);
       this.setIndentationLevel(event, block);
       if (this.blockService.isConditional(block)) {
-        copy.condition = Object.create(block.condition);
+        copy.condition = Object.create(block.conditions);
       }
       event.previousContainer.data.push(copy);
       transferArrayItem(event.previousContainer.data,
@@ -166,6 +166,19 @@ export class BlockCodeComponent implements OnInit {
     let codeReprs = RealCodeRepr.funcToRealCodeRepr(funcCode);
     for(let line of codeReprs){
       this.realCode.push(line);
+    }
+
+  }
+
+  updateConditions(negated, index){
+
+    let codeRepr = this.realCode[index + this.extraLinesAdded];
+    if(negated){
+      codeRepr.code = codeRepr.code.slice(0,3) + '!' + codeRepr.code.slice(3, codeRepr.code.length);
+    }else{
+      if(codeRepr.code.charAt(3) === '!'){
+        codeRepr.code = codeRepr.code.slice(0, 3) + codeRepr.code.slice(4, codeRepr.code.length);
+      }
     }
 
   }

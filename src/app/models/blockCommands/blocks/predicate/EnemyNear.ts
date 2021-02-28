@@ -12,6 +12,8 @@ export class EnemyNear implements Predicate {
   static id: string = btoa(EnemyNear.name);
   static asCode = 'enemyInRange(grid, me)'
   indentationLevel: number;
+  negate: boolean = false;
+  conjunction: string = '';
 
   evaluation(grid, unit): boolean {
     for(let x = 0; x < grid.length; x++){

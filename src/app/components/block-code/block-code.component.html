@@ -11,15 +11,27 @@
               cdkDrag cdkDragDisabled class="code-block-used"  [style.left]="(block.indentationLevel * 50) + 'px'">
       {{block.getLabel()}}
       <!-- If it is an if block show this: -->
-      {{isConditional(block) ? block.condition.getLabel(): ''}}
-      <mat-form-field appearance="fill" *ngIf="isConditional(block)">
-        <mat-label>Select Condition:</mat-label>
-        <mat-select [(value)]="block.condition" #condition (selectionChange)="onChangeCondition(block, condition.value, i)">
-          <mat-option *ngFor="let predicate of predicates" [value]="predicate">
-            {{predicate.getLabel()}}
-          </mat-option>
-        </mat-select>
-      </mat-form-field>
+      {{isConditional(block) && block.conditions[0].negate ? 'Not' : ''}}
+      {{isConditional(block) ? block.conditions[0].getLabel(): ''}}
+
+      <div class="conditional-options" *ngIf="isConditional(block)">
+        <div *ngFor="let condition of block.conditions; let i = index">
+          <mat-form-field appearance="fill" *ngIf="isConditional(block)">
+            <mat-label>Select Condition:</mat-label>
+            <mat-select [(value)]="block.conditions[i]" (selectionChange)="onChangeCondition(block, condition, i)">
+              <mat-option *ngFor="let predicate of predicates" [value]="predicate">
+                {{predicate.getLabel()}}
+              </mat-option>
+            </mat-select>
+          </mat-form-field>
+
+          <mat-checkbox *ngIf="isConditional(block)" name="negate" [(ngModel)]="condition.negate"
+                        (change)="updateConditions($event.checked, i)">
+            Negate condition (not)
+          </mat-checkbox>
+        </div>
+        
+      </div>
 
       <!-- If the block is not the when turn and end blocks -->
       <button *ngIf="!isEndBlock(block)" mat-button color="primary" (click)="onDeleteBlock(i)">
