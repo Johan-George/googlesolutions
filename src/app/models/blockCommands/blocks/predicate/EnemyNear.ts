@@ -8,9 +8,9 @@ import { Predicate } from '../../block-command';
  */
 export class EnemyNear implements Predicate {
 
-  static label: string = 'Enemy Near';
+  static label: string = 'Enemy In Range';
   static id: string = btoa(EnemyNear.name);
-  static asCode = 'enemyNear(grid, me)'
+  static asCode = 'enemyInRange(grid, me)'
   indentationLevel: number;
 
   evaluation(grid, unit): boolean {

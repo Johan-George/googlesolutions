@@ -38,7 +38,7 @@ export class RealCodeRepr{
 
 }
 //@ -> new line ^ -> tab (assuming we don't use @ or ^ in the actual code
-export const healthBelow30PercentFunc: string = 'function healthLessThan50Percent(you){@' +
+export const healthBelow30PercentFunc: string = 'function healthLessThan30Percent(you){@' +
   '^return ((you.health / you.maxHealth) * 100) < 30;' +
   '@' +
   '}'
