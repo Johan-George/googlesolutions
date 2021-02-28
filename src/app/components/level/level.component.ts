@@ -31,7 +31,6 @@ export class LevelComponent implements OnInit {
     this.loopservice.loadData("1","3").then(result => {
       if(this.loopservice.prepLoop()) {
         self.grid = self.loopservice.grid;
-        console.log(self.grid);
         let imageQueue = SpriteService.loadSpriteSheets();
         stage = new createjs.Stage('battlegrounds');
         imageQueue.on('complete', () => {

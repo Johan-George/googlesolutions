@@ -116,7 +116,6 @@ export class GameLoopServiceService {
 
       for (var x = 0; x < this.team1units.length; x++) {
         var u = this.team1units[x];
-        console.log(u);
         this.grid[u.location.x][u.location.y] = u;
       }
 
