@@ -8,6 +8,9 @@ import { BlockService } from 'src/app/services/program-construction/block.servic
 import { CodeService } from 'src/app/services/program-construction/code.service';
 import { ErrorComponent } from '../error/error.component';
 import { Else } from 'src/app/models/blockCommands/blocks/conditional/Else';
+import {enemyNearFunc, healthBelow30PercentFunc, RealCodeRepr} from '../../models/blockCommands/actual-code/RealCodeRepr';
+import {HealthBelow30Percent} from '../../models/blockCommands/blocks/predicate/HealthBelow30Percent';
+import {EnemyNear} from '../../models/blockCommands/blocks/predicate/EnemyNear';
 
 @Component({
   selector: 'app-block-code',
@@ -27,9 +30,16 @@ export class BlockCodeComponent implements OnInit {
 
   ];
 
+  realCode: Array<RealCodeRepr> = this.currentCode.map(block => new RealCodeRepr(block));
+  extraLinesAdded: number = 3;
+  hasHealthFunc = false;
+  hasEnemyNearFunc = false;
+
   constructor(private codeService: CodeService, private blockService: BlockService, private dialog: MatDialog) { }
 
   ngOnInit(): void {
+
+    this.initStarterCode();
   }
 
   onDrop(event) {
@@ -46,6 +56,7 @@ export class BlockCodeComponent implements OnInit {
       transferArrayItem(event.previousContainer.data,
         event.container.data,
         event.previousIndex, event.currentIndex);
+      this.realCode.splice(event.currentIndex + this.extraLinesAdded, 0, new RealCodeRepr(copy));
     }
 
 
@@ -53,6 +64,7 @@ export class BlockCodeComponent implements OnInit {
 
   onDeleteBlock(index) {
     this.currentCode.splice(index, 1);
+    this.realCode.splice(index + this.extraLinesAdded, 1);
     this.recalculateIndentation();
   }
 
@@ -73,8 +85,15 @@ export class BlockCodeComponent implements OnInit {
 
   }
 
-  onChangeCondition(block, value) {
+  onChangeCondition(block, value, index) {
     block.condition = value;
+    this.realCode[index + this.extraLinesAdded].code = block.getAsCode();
+    console.log('Here')
+    if(value.getLabel() === HealthBelow30Percent.label && !this.hasHealthFunc){
+      this.addFunctionToRealCode(healthBelow30PercentFunc);
+    }else if(value.getLabel() === EnemyNear.label && !this.hasEnemyNearFunc){
+      this.addFunctionToRealCode(enemyNearFunc);
+    }
   }
 
   isConditional(block) {
@@ -120,8 +139,33 @@ export class BlockCodeComponent implements OnInit {
 
       let block = this.currentCode[i];
       this.setIndentationLevel(null, block, i);
+      this.realCode[i + this.extraLinesAdded].indentationLevel = block.indentationLevel;
 
     }
 
   }
+
+  initStarterCode(){
+
+    let dataInit = new RealCodeRepr(null, 'let data = JSON.parse(turnEvent.data);');
+    dataInit.indentationLevel = 1;
+    this.realCode.splice(1, 0, dataInit);
+    let gridInit = new RealCodeRepr(null, 'let grid = data.grid;');
+    gridInit.indentationLevel = 1;
+    this.realCode.splice(2, 0, gridInit);
+    let unitInit = new RealCodeRepr(null, 'let me = data.unit;');
+    unitInit.indentationLevel = 1;
+    this.realCode.splice(this.extraLinesAdded, 0, unitInit);
+
+  }
+
+  addFunctionToRealCode(funcCode){
+
+    let codeReprs = RealCodeRepr.funcToRealCodeRepr(funcCode);
+    for(let line of codeReprs){
+      this.realCode.push(line);
+    }
+
+  }
+
 }

@@ -197,7 +197,7 @@ export class CodeService {
           i++;
         }
 
-        if (i === elseIfs.length) {
+        if (i === elseIfs.length && elseActions.length !== 0) {
           return elseActions[0](grid, unit);
         }
 
