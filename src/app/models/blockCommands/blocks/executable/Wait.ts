@@ -10,7 +10,7 @@ export class Wait implements Executable {
 
   static label: string = 'Wait';
   static id: string = btoa(Wait.name);
-  static asCode = 'wait();';
+  static asCode = 'this.postMessage({result: \'Wait\'});';
   indentationLevel: number;
 
   execute(grid, unit): GameAction {

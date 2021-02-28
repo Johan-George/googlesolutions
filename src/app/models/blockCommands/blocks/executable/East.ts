@@ -12,7 +12,7 @@ export class East implements Executable {
 
   static label: string = 'Go east';
   static id: string = btoa(East.name);
-  static asCode = 'east();';
+  static asCode = 'this.postMessage({result: \'East\'});';
   indentationLevel: number;
 
   constructor() {}

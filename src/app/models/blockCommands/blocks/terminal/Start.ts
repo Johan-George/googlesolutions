@@ -2,7 +2,7 @@ import { TerminalBlock } from '../../block-command';
 
 /**
  * TerminalBlock representing the start of the code
- * See block-command.ts for specific documentation 
+ * See block-command.ts for specific documentation
  * on properties and methods
  */
 export class Start implements TerminalBlock {
@@ -21,7 +21,7 @@ export class Start implements TerminalBlock {
   }
 
   getAsCode(): string {
-    return 'function startTurn(grid, unit) {';
+    return 'this.onmessage = function (turnEvent){';
   }
 
 }
