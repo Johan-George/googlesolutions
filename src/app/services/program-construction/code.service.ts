@@ -274,6 +274,7 @@ export class CodeService {
     let condition = (grid, unit) => {
 
       for(let evaluation of evaluations){
+
         if(evaluation.negate){
           if(evaluation.evaluation(grid, unit)){
             return false;
@@ -298,7 +299,8 @@ export class CodeService {
         if(i === 1 && conditions[i].conjunction === '|'){
           condition = (grid, unit) => {
             i++;
-            return conditions[0].evaluation(grid, unit) || this.convertToSingleCondition(conditions, i).evaluation(grid, unit);
+            return conditions[0].negate ? !conditions[0].evaluation(grid, unit) : conditions[0].evaluation(grid, unit)
+              || this.convertToSingleCondition(conditions, i).evaluation(grid, unit);
           }
         }else{
 
