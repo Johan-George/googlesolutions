@@ -87,11 +87,11 @@ export class BlockCodeComponent implements OnInit {
 
   }
 
-  onChangeCondition(block, value, index) {
+  onChangeCondition(block, value, index, blockIndex) {
     let conjunction = block.conditions[index].conjunction;
     block.conditions[index] = value;
     block.conditions[index].conjunction = conjunction;
-    this.realCode[index + this.extraLinesAdded].code = block.getAsCode();
+    this.realCode[blockIndex + this.extraLinesAdded].code = block.getAsCode();
     if(value.getLabel() === HealthBelow30Percent.label && !this.hasHealthFunc){
       this.addFunctionToRealCode(healthBelow30PercentFunc);
       this.hasHealthFunc = true;
@@ -173,19 +173,6 @@ export class BlockCodeComponent implements OnInit {
 
   }
 
-  updateConditions(negated, index){
-
-    let codeRepr = this.realCode[index + this.extraLinesAdded];
-    if(negated){
-      codeRepr.code = codeRepr.code.slice(0,3) + '!' + codeRepr.code.slice(3, codeRepr.code.length);
-    }else{
-      if(codeRepr.code.charAt(3) === '!'){
-        codeRepr.code = codeRepr.code.slice(0, 3) + codeRepr.code.slice(4, codeRepr.code.length);
-      }
-    }
-
-  }
-
   addCondition(conditions){
 
     conditions.push(new EmptyPredicate());
@@ -199,6 +186,12 @@ export class BlockCodeComponent implements OnInit {
   deleteCondition(conditions, index){
 
     conditions.splice(index, 1);
+
+  }
+
+  onNegateToggle(index){
+
+    this.realCode[index + this.extraLinesAdded].code = this.currentCode[index].getAsCode();
 
   }
 

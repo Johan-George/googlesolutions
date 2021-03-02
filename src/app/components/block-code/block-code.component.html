@@ -15,23 +15,23 @@
 <!--      {{isConditional(block) ? block.conditions[0].getLabel(): ''}}-->
 
       <div class="conditional-options-wrapper" *ngIf="isConditional(block)">
-        <div *ngFor="let condition of block.conditions; let i = index" class="conditional-options">
-          <div *ngIf="i > 0" class="further-conditions">
+        <div *ngFor="let condition of block.conditions; let j = index" class="conditional-options">
+          <div *ngIf="j > 0" class="further-conditions">
             <button mat-button (click)="deleteCondition(block.conditions, i)">
               <mat-icon>close</mat-icon>
             </button>
-            <mat-radio-group class="and-or" (change)="setConjunction(block.conditions[i], $event.value)">
+            <mat-radio-group class="and-or" (change)="setConjunction(block.conditions[j], $event.value)">
               <mat-radio-button value="&" [checked]="condition.conjunction === '&'" >And</mat-radio-button>
               <mat-radio-button value="|" [checked]="condition.conjunction === '|'" >Or</mat-radio-button>
             </mat-radio-group>
           </div>
           <p class="condition-label">
-            {{block.conditions[i].negate ? 'Not' : ''}}
-            {{block.conditions[i].getLabel()}}
+            {{block.conditions[j].negate ? 'Not' : ''}}
+            {{block.conditions[j].getLabel()}}
           </p>
           <mat-form-field appearance="fill" *ngIf="isConditional(block)">
             <mat-label>Select Condition:</mat-label>
-            <mat-select [value]="block.conditions[i]" (selectionChange)="onChangeCondition(block, $event.value, i)">
+            <mat-select [value]="block.conditions[j]" (selectionChange)="onChangeCondition(block, $event.value, j, i)">
               <mat-option *ngFor="let predicate of predicates" [value]="blockService.cloneBlock(predicate)">
                 {{predicate.getLabel()}}
               </mat-option>
@@ -39,7 +39,7 @@
           </mat-form-field>
 
           <mat-checkbox *ngIf="isConditional(block)" name="negate" [(ngModel)]="condition.negate"
-                        (change)="updateConditions($event.checked, i)">
+                        (change)="onNegateToggle(i)">
             Negate condition (not)
           </mat-checkbox>
         </div>

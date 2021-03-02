@@ -12,13 +12,29 @@ import { EndElseIf } from '../terminal/EndElseIf';
 export class If implements ConditionalBlock {
 
   static label: string = 'If';
-  static asCode = (predicate: Predicate) => `if(${predicate.getAsCode()}){`;
   static id: string = btoa(If.name);
 
   conditions: Array<Predicate> = [new EmptyPredicate()];
   terminal_blocks: Array<string> = [EndIf.label, EndElse.label, EndElseIf.label];
   indentationLevel: number;
   condition: Predicate = new EmptyPredicate();
+
+  static asCode(conditions: Array<Predicate>){
+
+    let code = 'if(';
+    for(let condition of conditions){
+      if(condition.conjunction !== ''){
+        code += ` ${condition.conjunction + condition.conjunction} `;
+      }
+      if(condition.negate){
+        code += '!'
+      }
+      code += condition.getAsCode();
+    }
+    code += '){';
+    return code;
+
+  };
 
   getId(): string {
     return If.id;
@@ -29,8 +45,7 @@ export class If implements ConditionalBlock {
   }
 
   getAsCode(): string {
-    //return If.asCode(this.condition);
-    return 'Not implemented yet';
+    return If.asCode(this.conditions);
   }
 
 }
