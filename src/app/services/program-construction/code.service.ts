@@ -274,7 +274,6 @@ export class CodeService {
     let condition = (grid, unit) => {
 
       for(let evaluation of evaluations){
-
         if(evaluation.negate){
           if(evaluation.evaluation(grid, unit)){
             return false;

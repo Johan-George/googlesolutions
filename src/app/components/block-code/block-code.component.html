@@ -16,17 +16,22 @@
 
       <div class="conditional-options-wrapper" *ngIf="isConditional(block)">
         <div *ngFor="let condition of block.conditions; let i = index" class="conditional-options">
-          <mat-radio-group aria-label="And/Or" class="and-or" *ngIf="i > 0" [(ngModel)]="condition.conjunction">
-            <mat-radio-button value="&">And</mat-radio-button>
-            <mat-radio-button value="|">Or</mat-radio-button>
-          </mat-radio-group>
+          <div *ngIf="i > 0" class="further-conditions">
+            <button mat-button (click)="deleteCondition(block.conditions, i)">
+              <mat-icon>close</mat-icon>
+            </button>
+            <mat-radio-group class="and-or" (change)="setConjunction(block.conditions[i], $event.value)">
+              <mat-radio-button value="&" [checked]="condition.conjunction === '&'" >And</mat-radio-button>
+              <mat-radio-button value="|" [checked]="condition.conjunction === '|'" >Or</mat-radio-button>
+            </mat-radio-group>
+          </div>
           <p class="condition-label">
             {{block.conditions[i].negate ? 'Not' : ''}}
             {{block.conditions[i].getLabel()}}
           </p>
           <mat-form-field appearance="fill" *ngIf="isConditional(block)">
             <mat-label>Select Condition:</mat-label>
-            <mat-select [(value)]="block.conditions[i].label" (selectionChange)="onChangeCondition(block, $event.value, i)">
+            <mat-select [value]="block.conditions[i]" (selectionChange)="onChangeCondition(block, $event.value, i)">
               <mat-option *ngFor="let predicate of predicates" [value]="blockService.cloneBlock(predicate)">
                 {{predicate.getLabel()}}
               </mat-option>

@@ -80,3 +80,8 @@
   .condition-label{
     display: block;
   }
+
+  .further-conditions{
+    position: relative;
+    right: 40px;
+  }

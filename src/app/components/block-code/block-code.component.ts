@@ -88,7 +88,10 @@ export class BlockCodeComponent implements OnInit {
   }
 
   onChangeCondition(block, value, index) {
+    let conjunction = block.conditions[index].conjunction;
     block.conditions[index] = value;
+    block.conditions[index].conjunction = conjunction;
+    console.log(block.conditions[index].conjunction);
     this.realCode[index + this.extraLinesAdded].code = block.getAsCode();
     if(value.getLabel() === HealthBelow30Percent.label && !this.hasHealthFunc){
       this.addFunctionToRealCode(healthBelow30PercentFunc);
@@ -187,6 +190,16 @@ export class BlockCodeComponent implements OnInit {
   addCondition(conditions){
 
     conditions.push(new EmptyPredicate());
+
+  }
+
+  setConjunction(predicate, conj){
+    predicate.conjunction = conj;
+  }
+
+  deleteCondition(conditions, index){
+
+    conditions.splice(index, 1);
 
   }
 
