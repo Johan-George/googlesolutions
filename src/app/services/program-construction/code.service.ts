@@ -1,13 +1,14 @@
-import { Injectable } from '@angular/core';
-import { BlockCommand, ConditionalBlock, Executable, Predicate } from 'src/app/models/blockCommands/block-command';
-import { Else } from 'src/app/models/blockCommands/blocks/conditional/Else';
-import { ElseIf } from 'src/app/models/blockCommands/blocks/conditional/ElseIf';
-import { If } from 'src/app/models/blockCommands/blocks/conditional/If';
-import { EmptyPredicate } from 'src/app/models/blockCommands/blocks/predicate/EmptyPredicate';
-import { End } from 'src/app/models/blockCommands/blocks/terminal/End';
-import { Start } from 'src/app/models/blockCommands/blocks/terminal/Start';
-import { GameAction } from 'src/app/models/game/GameAction';
-import { BlockService } from './block.service';
+import {Injectable} from '@angular/core';
+import {BlockCommand, ConditionalBlock, Executable, Predicate} from 'src/app/models/blockCommands/block-command';
+import {Else} from 'src/app/models/blockCommands/blocks/conditional/Else';
+import {ElseIf} from 'src/app/models/blockCommands/blocks/conditional/ElseIf';
+import {If} from 'src/app/models/blockCommands/blocks/conditional/If';
+import {EmptyPredicate} from 'src/app/models/blockCommands/blocks/predicate/EmptyPredicate';
+import {End} from 'src/app/models/blockCommands/blocks/terminal/End';
+import {Start} from 'src/app/models/blockCommands/blocks/terminal/Start';
+import {GameAction} from 'src/app/models/game/GameAction';
+import {BlockService} from './block.service';
+import {CompoundPredicate} from '../../models/blockCommands/blocks/predicate/CompoundPredicate';
 
 @Injectable({
   providedIn: 'root'
@@ -96,6 +97,7 @@ export class CodeService {
 
         let ids = rep.split('_');
         let conditional: ConditionalBlock = <ConditionalBlock>this.blockService.getById(ids[0]);
+        // To fix
         conditional.conditions[0] = <Predicate>this.blockService.getById(ids[1]);
         commands.push(conditional);
 
@@ -115,13 +117,14 @@ export class CodeService {
    */
   createConditionalFunction(i, commands: Array<BlockCommand>, executable_count) {
 
-    let condition = (<ConditionalBlock>commands[i]).conditions[0];
+    this.compileConditions(<ConditionalBlock>commands[i]);
+    let condition = (<ConditionalBlock>commands[i]).condition;
     let global_executables = executable_count;
     let local_executables = 0;
 
-    if(condition.getLabel() === EmptyPredicate.label){
-      throw new Error('An if block is missing a condition');
-    }
+    // if(condition.getLabel() === EmptyPredicate.label){
+    //   throw new Error('An if block is missing a condition');
+    // }
 
     let terminal_blocks = (<ConditionalBlock>commands[i]).terminal_blocks;
     let elseIfs = [];
@@ -145,11 +148,7 @@ export class CodeService {
         i++;
 
       } else if (commands[i].getLabel() === ElseIf.label) {
-
-        if((<ConditionalBlock>commands[i]).conditions[0].getLabel() === EmptyPredicate.label){
-          throw new Error('An Else if block is missing a condition');
-        }
-
+        this.compileConditions((<ConditionalBlock>commands[i]));
         let next = this.parseElseIfOrElse(i, commands, global_executables);
         elseIfs.push([next[1], next[2]])
         i = next[0];
@@ -217,7 +216,7 @@ export class CodeService {
     let local_executables = 0;
 
     if (commands[i].getLabel() === ElseIf.label) {
-      condition = (<ConditionalBlock>commands[i]).conditions[0];
+      condition = (<ConditionalBlock>commands[i]).condition;
     }
 
     let conditional_actions: Array<(grid, unit) => GameAction> = [];
@@ -248,6 +247,80 @@ export class CodeService {
     }
 
     return [i, condition, conditional_actions];
+  }
+
+  compileConditions(conditional: ConditionalBlock){
+
+    for(let condition of conditional.conditions){
+      if(condition.getLabel() === EmptyPredicate.label){
+        throw new Error('Conditional Block is missing a condition');
+      }
+    }
+
+    conditional.condition = this.convertToSingleCondition(conditional.conditions);
+
+  }
+
+  convertToSingleCondition(conditions: Array<Predicate>, index:number=0): Predicate{
+
+    let evaluations = [conditions[index]];
+    let i = index + 1;
+    while(i < conditions.length && conditions[i].conjunction === '&'){
+
+      evaluations.push(conditions[i]);
+      i++;
+
+    }
+    let condition = (grid, unit) => {
+
+      for(let evaluation of evaluations){
+
+        if(evaluation.negate){
+          if(evaluation.evaluation(grid, unit)){
+            return false;
+          }
+        }else{
+          if(!evaluation.evaluation(grid, unit)){
+            return false;
+          }
+        }
+      }
+      return true;
+
+    };
+    if(i !== conditions.length){
+
+      if(conditions[i].conjunction !== '|'){
+
+        throw new Error('Unrecognized conjunction');
+
+      }else{
+
+        if(i === 1 && conditions[i].conjunction === '|'){
+          condition = (grid, unit) => {
+            i++;
+            return conditions[0].evaluation(grid, unit) || this.convertToSingleCondition(conditions, i).evaluation(grid, unit);
+          }
+        }else{
+
+          // If I don't do this there will be infinite recursion because it will think I'm trying to make a recursive call inside
+          let cond = condition;
+
+          condition = (grid, unit) => {
+
+            return cond(grid, unit) || this.convertToSingleCondition(conditions, i).evaluation(grid, unit);
+
+          }
+        }
+      }
+
+    }
+
+    let result = new CompoundPredicate();
+    result.evaluation = condition;
+
+    return result;
+
   }
 
 }

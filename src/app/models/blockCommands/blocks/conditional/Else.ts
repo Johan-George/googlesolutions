@@ -17,6 +17,7 @@ export class Else implements ConditionalBlock, TerminalBlock {
   terminal_blocks: Array<string> = [EndElse.label];
   indentationLevel: number;
   terminate: number = null;
+  condition: Predicate = new EmptyPredicate();
 
   getId(): string {
     return Else.id;

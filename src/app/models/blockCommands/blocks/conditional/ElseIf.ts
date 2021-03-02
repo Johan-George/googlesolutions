@@ -18,6 +18,7 @@ export class ElseIf implements ConditionalBlock, TerminalBlock {
   terminal_blocks: Array<string> = [ElseIf.label, EndElseIf.label, Else.label];
   indentationLevel: number;
   terminate: number = null;
+  condition: Predicate = new EmptyPredicate();
 
   getId(): string {
     return ElseIf.id;

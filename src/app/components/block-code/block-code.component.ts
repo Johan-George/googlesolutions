@@ -11,6 +11,8 @@ import { Else } from 'src/app/models/blockCommands/blocks/conditional/Else';
 import {enemyNearFunc, healthBelow30PercentFunc, RealCodeRepr} from '../../models/blockCommands/actual-code/RealCodeRepr';
 import {HealthBelow30Percent} from '../../models/blockCommands/blocks/predicate/HealthBelow30Percent';
 import {EnemyNear} from '../../models/blockCommands/blocks/predicate/EnemyNear';
+import {EmptyPredicate} from '../../models/blockCommands/blocks/predicate/EmptyPredicate';
+import {Unit} from '../../models/game/units/Unit';
 
 @Component({
   selector: 'app-block-code',
@@ -35,7 +37,7 @@ export class BlockCodeComponent implements OnInit {
   hasHealthFunc = false;
   hasEnemyNearFunc = false;
 
-  constructor(private codeService: CodeService, private blockService: BlockService, private dialog: MatDialog) { }
+  constructor(private codeService: CodeService, public blockService: BlockService, private dialog: MatDialog) { }
 
   ngOnInit(): void {
 
@@ -73,10 +75,10 @@ export class BlockCodeComponent implements OnInit {
     try {
       let compiled = this.codeService.compileToExecutableCode(this.currentCode);
       for (let fn of compiled) {
-        fn([], []);
+        console.log(fn([], new Unit()));
       }
 
-      let serialized = this.codeService.serializeBlocks(this.currentCode);
+      // let serialized = this.codeService.serializeBlocks(this.currentCode);
 
     } catch (err) {
       console.log(err);
@@ -86,9 +88,8 @@ export class BlockCodeComponent implements OnInit {
   }
 
   onChangeCondition(block, value, index) {
-    block.condition = value;
+    block.conditions[index] = value;
     this.realCode[index + this.extraLinesAdded].code = block.getAsCode();
-    console.log('Here')
     if(value.getLabel() === HealthBelow30Percent.label && !this.hasHealthFunc){
       this.addFunctionToRealCode(healthBelow30PercentFunc);
       this.hasHealthFunc = true;
@@ -180,6 +181,12 @@ export class BlockCodeComponent implements OnInit {
         codeRepr.code = codeRepr.code.slice(0, 3) + codeRepr.code.slice(4, codeRepr.code.length);
       }
     }
+
+  }
+
+  addCondition(conditions){
+
+    conditions.push(new EmptyPredicate());
 
   }
 

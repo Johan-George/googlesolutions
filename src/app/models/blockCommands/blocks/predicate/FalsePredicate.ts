@@ -9,7 +9,7 @@ import { Predicate } from '../../block-command';
 export class FalsePredicate implements Predicate {
 
   static id: string = btoa(FalsePredicate.name);
-  static label: string = 'No Condition Selected';
+  static label: string = 'false';
   static asCode = 'false';
   indentationLevel: number;
   negate: boolean = false;

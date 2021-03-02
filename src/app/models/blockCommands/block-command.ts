@@ -73,6 +73,11 @@ export interface ConditionalBlock extends BlockCommand{
   conditions: Array<Predicate>;
 
   /**
+   * The final condition once you combine all the predicates with ands + ors
+   */
+  condition: Predicate;
+
+  /**
    * The Array of TerminalBlock objects representing the sections within the conditional
    */
   terminal_blocks: Array<string>;

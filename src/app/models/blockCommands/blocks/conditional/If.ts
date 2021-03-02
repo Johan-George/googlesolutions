@@ -18,6 +18,7 @@ export class If implements ConditionalBlock {
   conditions: Array<Predicate> = [new EmptyPredicate()];
   terminal_blocks: Array<string> = [EndIf.label, EndElse.label, EndElseIf.label];
   indentationLevel: number;
+  condition: Predicate = new EmptyPredicate();
 
   getId(): string {
     return If.id;
