@@ -22,6 +22,7 @@ import { SigninPageComponent } from './components/signin-page/signin-page.compon
 import { TestComponent } from './components/test/test.component';
 import { LevelComponent } from './components/level/level.component';
 import { PageheaderComponent } from './components/pageheader/pageheader.component';
+import { ProfilepagesComponent } from './components/profilepages/profilepages.component';
 
 const firebaseConfig = {
   apiKey: "AIzaSyB25gxYu7PkMvnjKhisCzPP62grU_OEMLU",
@@ -40,7 +41,8 @@ const firebaseConfig = {
     SigninPageComponent,
     TestComponent,
     LevelComponent,
-    PageheaderComponent
+    PageheaderComponent,
+    ProfilepagesComponent
   ],
   imports: [
     BrowserModule,
