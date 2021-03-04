@@ -315,10 +315,10 @@ export class CodeService {
    * @param index The index to start iterating from
    */
   convertToSingleCondition(conditions: Array<Predicate>, index:number=0): Predicate{
+    //debugger;
     if(conditions.length === 1){
       return conditions[0];
     }
-
     let evaluations = [conditions[index]];
     let i = index + 1;
     while(i < conditions.length && conditions[i].conjunction === '&'){
@@ -327,6 +327,7 @@ export class CodeService {
       i++;
 
     }
+    console.log(evaluations);
     let condition = (grid, unit) => {
 
       for(let evaluation of evaluations){
@@ -344,7 +345,7 @@ export class CodeService {
       return true;
 
     };
-    if(i !== conditions.length){
+    if(i < conditions.length){
 
       if(conditions[i].conjunction !== '|'){
 
@@ -352,23 +353,13 @@ export class CodeService {
 
       }else{
 
-        if(i === 1 && conditions[i].conjunction === '|'){
-          condition = (grid, unit) => {
-            i++;
-            return conditions[0].negate ? !conditions[0].evaluation(grid, unit) : conditions[0].evaluation(grid, unit)
-              || this.convertToSingleCondition(conditions, i).evaluation(grid, unit);
-          }
-        }else{
+        // If I don't do this there will be infinite recursion because it will think I'm trying to make a recursive call inside
+        let cond = condition;
 
-          // If I don't do this there will be infinite recursion because it will think I'm trying to make a recursive call inside
-          let cond = condition;
-
-          condition = (grid, unit) => {
-
-            return cond(grid, unit) || this.convertToSingleCondition(conditions, i).evaluation(grid, unit);
-
-          }
+        condition = (grid, unit) => {
+          return cond(grid, unit) || this.convertToSingleCondition(conditions, i).evaluation(grid, unit);
         }
+
       }
 
     }
