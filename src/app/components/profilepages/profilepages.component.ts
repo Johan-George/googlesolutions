@@ -5,11 +5,12 @@ import { Component, OnInit } from '@angular/core';
   templateUrl: './profilepages.component.html',
   styleUrls: ['./profilepages.component.css']
 })
-export class ProfilepagesComponent implements OnInit {
+export class ProfilepagesComponent {
+
+  username: string = "User";
+  levelStatus: string = "Level: 9000+";
+  profileDescription: string = "I am a weirdo";
 
   constructor() { }
-
-  ngOnInit(): void {
-  }
 
 }
