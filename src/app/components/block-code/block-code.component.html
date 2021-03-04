@@ -20,7 +20,7 @@
             <button mat-button (click)="deleteCondition(block.conditions, i)">
               <mat-icon>close</mat-icon>
             </button>
-            <mat-radio-group class="and-or" (change)="setConjunction(block.conditions[j], $event.value)">
+            <mat-radio-group class="and-or" (change)="setConjunction(block.conditions[j], $event.value, i)">
               <mat-radio-button value="&" [checked]="condition.conjunction === '&'" >And</mat-radio-button>
               <mat-radio-button value="|" [checked]="condition.conjunction === '|'" >Or</mat-radio-button>
             </mat-radio-group>
@@ -39,7 +39,7 @@
           </mat-form-field>
 
           <mat-checkbox *ngIf="isConditional(block)" name="negate" [(ngModel)]="condition.negate"
-                        (change)="onNegateToggle(i)">
+                        (change)="refreshCode(i)">
             Negate condition (not)
           </mat-checkbox>
         </div>

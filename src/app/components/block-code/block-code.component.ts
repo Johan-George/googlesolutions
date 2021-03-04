@@ -78,7 +78,13 @@ export class BlockCodeComponent implements OnInit {
         console.log(fn([], new Unit()));
       }
 
-      // let serialized = this.codeService.serializeBlocks(this.currentCode);
+      let serialized = this.codeService.serializeBlocks(this.currentCode);
+      console.log(serialized);
+      let deserialized = this.codeService.deserializeToBlocks(serialized);
+      console.log(deserialized);
+      for(let fn of this.codeService.compileToExecutableCode(deserialized)){
+        console.log(fn([], new Unit()))
+      }
 
     } catch (err) {
       console.log(err);
@@ -91,7 +97,7 @@ export class BlockCodeComponent implements OnInit {
     let conjunction = block.conditions[index].conjunction;
     block.conditions[index] = value;
     block.conditions[index].conjunction = conjunction;
-    this.realCode[blockIndex + this.extraLinesAdded].code = block.getAsCode();
+    this.refreshCode(blockIndex);
     if(value.getLabel() === HealthBelow30Percent.label && !this.hasHealthFunc){
       this.addFunctionToRealCode(healthBelow30PercentFunc);
       this.hasHealthFunc = true;
@@ -179,17 +185,19 @@ export class BlockCodeComponent implements OnInit {
 
   }
 
-  setConjunction(predicate, conj){
+  setConjunction(predicate, conj, index){
     predicate.conjunction = conj;
+    this.refreshCode(index);
   }
 
   deleteCondition(conditions, index){
 
     conditions.splice(index, 1);
+    this.refreshCode(index);
 
   }
 
-  onNegateToggle(index){
+  refreshCode(index){
 
     this.realCode[index + this.extraLinesAdded].code = this.currentCode[index].getAsCode();
 

@@ -8,6 +8,7 @@ export class CompoundPredicate implements Predicate{
   conjunction: string;
   indentationLevel: number;
   negate: boolean;
+  static id: string =  btoa(CompoundPredicate.name);
 
   evaluation(grid, unit): boolean {
     return false;
@@ -18,7 +19,7 @@ export class CompoundPredicate implements Predicate{
   }
 
   getId(): string {
-    return '';
+    return CompoundPredicate.id;
   }
 
   getLabel(): string {

@@ -70,14 +70,21 @@ export class CodeService {
     let repr: Array<string> = [];
 
     for (let command of commands) {
-
       if (!this.blockService.isConditional(command)) {
         repr.push(String(command.getId()));
-        console.log(command.getLabel() + " turned into " + command.getId().toString());
       } else {
-        repr.push(String(command.getId() + '_'
-          + command.conditions[0].getId()));
-          console.log(command.getLabel() + " turned into " + command.getId().toString());
+        if((command as ConditionalBlock).condition.getId() !== CompoundPredicate.id){
+          repr.push(String(command.getId() + '_'
+            + command.condition.getId()));
+        }else{
+          let conditional = (command as ConditionalBlock);
+          let serialized = command.getId() + '_' + (conditional.conditions[0].negate ? '!' : '') + conditional.conditions[0].getId();
+          for(let i = 1; i < conditional.conditions.length; i++){
+            let condition = conditional.conditions[i];
+            serialized += (condition.conjunction + (condition.negate ? '!' : '') + condition.getId());
+          }
+          repr.push(serialized);
+        }
       }
 
     }
@@ -97,9 +104,50 @@ export class CodeService {
 
         let ids = rep.split('_');
         let conditional: ConditionalBlock = <ConditionalBlock>this.blockService.getById(ids[0]);
-        // To fix
-        conditional.conditions[0] = <Predicate>this.blockService.getById(ids[1]);
-        commands.push(conditional);
+        // Make the list empty because it starts off with an empty predicate
+        conditional.conditions = [];
+        if(ids[1].includes('&') || ids[1].includes('|')){
+
+          let start = -1;
+          let complexCondition = ids[1];
+          let nextCondition = 0;
+          while(nextCondition !== -1){
+
+            let nextAnd = complexCondition.indexOf('&', start + 1);
+            let nextOr = complexCondition.indexOf('|', start + 1);
+            if(nextOr !== -1){
+              if(nextAnd < nextOr && nextAnd !== -1){
+                nextCondition = nextAnd;
+              }else{
+                nextCondition = nextOr;
+              }
+            }else if(nextAnd !== -1){
+              nextCondition = nextAnd;
+            }else{
+              nextCondition = -1;
+            }
+
+            let conjunction = start !== -1 ? complexCondition[start] : '';
+            let id = complexCondition.slice(start + 1, nextCondition !== -1 ? nextCondition: complexCondition.length);
+            let negate = false;
+            start = nextCondition;
+            if(id.charAt(0) === '!'){
+              negate = true;
+              id = id.slice(1, id.length);
+            }
+            let condition = this.blockService.getById(id);
+            (condition as Predicate).negate = negate;
+            (condition as Predicate).conjunction = conjunction;
+            conditional.conditions.push(condition as Predicate);
+
+          }
+
+          commands.push(conditional);
+
+        }else{
+          conditional.conditions[0] = <Predicate>this.blockService.getById(ids[1]);
+          commands.push(conditional);
+        }
 
       } else {
         commands.push(this.blockService.getById(rep));
@@ -261,7 +309,15 @@ export class CodeService {
 
   }
 
+  /**
+   * Converts the conditions of a complex conditional statement into a single predicate.
+   * @param conditions The predicates used for a complex conditional statement
+   * @param index The index to start iterating from
+   */
   convertToSingleCondition(conditions: Array<Predicate>, index:number=0): Predicate{
+    if(conditions.length === 1){
+      return conditions[0];
+    }
 
     let evaluations = [conditions[index]];
     let i = index + 1;

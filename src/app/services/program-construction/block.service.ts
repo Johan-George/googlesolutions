@@ -21,6 +21,7 @@ import {TextAction1} from '../../models/blockCommands/blocks/executable/TestActi
 import {TextAction2} from '../../models/blockCommands/blocks/executable/TestAction2';
 import {TruePredicate} from '../../models/blockCommands/blocks/predicate/TruePredicate';
 import {FalsePredicate} from '../../models/blockCommands/blocks/predicate/FalsePredicate';
+import {CompoundPredicate} from '../../models/blockCommands/blocks/predicate/CompoundPredicate';
 
 @Injectable({
   providedIn: 'root'
@@ -121,8 +122,14 @@ export class BlockService {
         return new FalsePredicate();
       case EmptyPredicate.id:
         return new EmptyPredicate();
+      case CompoundPredicate.id:
+        return new CompoundPredicate();
+      case Start.id:
+        return new Start();
+      case End.id:
+        return new End();
       default:
-        throw new Error('Id not recognized.');
+        throw new Error(`Id of ${id} is not recognized.`);
 
     }
 
