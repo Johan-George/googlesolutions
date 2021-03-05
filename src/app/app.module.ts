@@ -11,6 +11,9 @@ import { DragDropModule } from '@angular/cdk/drag-drop';
 import { MatCardModule } from '@angular/material/card';
 import { MatSelectModule } from '@angular/material/select';
 import { MatDialogModule } from '@angular/material/dialog';
+import { MatCheckboxModule } from '@angular/material/checkbox';
+import { MatRadioModule } from '@angular/material/radio';
+import { FormsModule } from '@angular/forms';
 
 import { AngularFireModule } from '@angular/fire';
 import { AngularFirestoreModule } from '@angular/fire/firestore';
@@ -62,7 +65,10 @@ const firebaseConfig = {
     DragDropModule,
     MatCardModule,
     MatSelectModule,
-    MatDialogModule
+    MatDialogModule,
+    MatCheckboxModule,
+    MatRadioModule,
+    FormsModule
   ],
   providers: [],
   bootstrap: [AppComponent]

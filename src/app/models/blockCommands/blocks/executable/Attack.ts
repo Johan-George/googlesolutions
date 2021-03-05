@@ -12,7 +12,7 @@ export class Attack implements Executable {
 
   static label: string = 'Attack';
   static id: string = btoa(Attack.name);
-  static asCode = 'attack();';
+  static asCode = 'this.postMessage({result: \'Attack\'});';
   indentationLevel: number;
 
   execute(grid: Array<Array<Unit>>, unit: Unit): GameAction {

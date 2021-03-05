@@ -8,6 +8,11 @@ import { BlockService } from 'src/app/services/program-construction/block.servic
 import { CodeService } from 'src/app/services/program-construction/code.service';
 import { ErrorComponent } from '../error/error.component';
 import { Else } from 'src/app/models/blockCommands/blocks/conditional/Else';
+import {enemyNearFunc, healthBelow30PercentFunc, RealCodeRepr} from '../../models/blockCommands/actual-code/RealCodeRepr';
+import {HealthBelow30Percent} from '../../models/blockCommands/blocks/predicate/HealthBelow30Percent';
+import {EnemyNear} from '../../models/blockCommands/blocks/predicate/EnemyNear';
+import {EmptyPredicate} from '../../models/blockCommands/blocks/predicate/EmptyPredicate';
+import {Unit} from '../../models/game/units/Unit';
 
 @Component({
   selector: 'app-block-code',
@@ -27,9 +32,16 @@ export class BlockCodeComponent implements OnInit {
 
   ];
 
-  constructor(private codeService: CodeService, private blockService: BlockService, private dialog: MatDialog) { }
+  realCode: Array<RealCodeRepr> = this.currentCode.map(block => new RealCodeRepr(block));
+  extraLinesAdded: number = 3;
+  hasHealthFunc = false;
+  hasEnemyNearFunc = false;
+
+  constructor(private codeService: CodeService, public blockService: BlockService, private dialog: MatDialog) { }
 
   ngOnInit(): void {
+
+    this.initStarterCode();
   }
 
   onDrop(event) {
@@ -40,12 +52,13 @@ export class BlockCodeComponent implements OnInit {
       let copy = Object.create(block);
       this.setIndentationLevel(event, block);
       if (this.blockService.isConditional(block)) {
-        copy.condition = Object.create(block.condition);
+        copy.condition = Object.create(block.conditions);
       }
       event.previousContainer.data.push(copy);
       transferArrayItem(event.previousContainer.data,
         event.container.data,
         event.previousIndex, event.currentIndex);
+      this.realCode.splice(event.currentIndex + this.extraLinesAdded, 0, new RealCodeRepr(copy));
     }
 
 
@@ -53,6 +66,7 @@ export class BlockCodeComponent implements OnInit {
 
   onDeleteBlock(index) {
     this.currentCode.splice(index, 1);
+    this.realCode.splice(index + this.extraLinesAdded, 1);
     this.recalculateIndentation();
   }
 
@@ -61,10 +75,16 @@ export class BlockCodeComponent implements OnInit {
     try {
       let compiled = this.codeService.compileToExecutableCode(this.currentCode);
       for (let fn of compiled) {
-        fn([], []);
+        console.log(fn([], new Unit()));
       }
 
       let serialized = this.codeService.serializeBlocks(this.currentCode);
+      console.log(serialized);
+      let deserialized = this.codeService.deserializeToBlocks(serialized);
+      console.log(deserialized);
+      for(let fn of this.codeService.compileToExecutableCode(deserialized)){
+        console.log(fn([], new Unit()))
+      }
 
     } catch (err) {
       console.log(err);
@@ -73,8 +93,18 @@ export class BlockCodeComponent implements OnInit {
 
   }
 
-  onChangeCondition(block, value) {
-    block.condition = value;
+  onChangeCondition(block, value, index, blockIndex) {
+    let conjunction = block.conditions[index].conjunction;
+    block.conditions[index] = value;
+    block.conditions[index].conjunction = conjunction;
+    this.refreshCode(blockIndex);
+    if(value.getLabel() === HealthBelow30Percent.label && !this.hasHealthFunc){
+      this.addFunctionToRealCode(healthBelow30PercentFunc);
+      this.hasHealthFunc = true;
+    }else if(value.getLabel() === EnemyNear.label && !this.hasEnemyNearFunc){
+      this.addFunctionToRealCode(enemyNearFunc);
+      this.hasEnemyNearFunc = true;
+    }
   }
 
   isConditional(block) {
@@ -120,8 +150,57 @@ export class BlockCodeComponent implements OnInit {
 
       let block = this.currentCode[i];
       this.setIndentationLevel(null, block, i);
+      this.realCode[i + this.extraLinesAdded].indentationLevel = block.indentationLevel;
 
     }
 
   }
+
+  initStarterCode(){
+
+    let dataInit = new RealCodeRepr(null, 'let data = JSON.parse(turnEvent.data);');
+    dataInit.indentationLevel = 1;
+    this.realCode.splice(1, 0, dataInit);
+    let gridInit = new RealCodeRepr(null, 'let grid = data.grid;');
+    gridInit.indentationLevel = 1;
+    this.realCode.splice(2, 0, gridInit);
+    let unitInit = new RealCodeRepr(null, 'let me = data.unit;');
+    unitInit.indentationLevel = 1;
+    this.realCode.splice(this.extraLinesAdded, 0, unitInit);
+
+  }
+
+  addFunctionToRealCode(funcCode){
+
+    let codeReprs = RealCodeRepr.funcToRealCodeRepr(funcCode);
+    for(let line of codeReprs){
+      this.realCode.push(line);
+    }
+
+  }
+
+  addCondition(conditions){
+
+    conditions.push(new EmptyPredicate());
+
+  }
+
+  setConjunction(predicate, conj, index){
+    predicate.conjunction = conj;
+    this.refreshCode(index);
+  }
+
+  deleteCondition(conditions, index){
+
+    conditions.splice(index, 1);
+    this.refreshCode(index);
+
+  }
+
+  refreshCode(index){
+
+    this.realCode[index + this.extraLinesAdded].code = this.currentCode[index].getAsCode();
+
+  }
+
 }

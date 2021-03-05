@@ -34,9 +34,10 @@
 
   #actual-code{
     background-color: black;
-    width: 500px;
+    width: 600px;
     height: 200px;
     float: left;
+    font-size: 13px;
   }
 
   .code{
@@ -48,4 +49,39 @@
 
   .comment{
     color: #518058;
+  }
+
+  .tab{
+    margin-right: 50px;
+  }
+
+  .and-or{
+
+    display: inline-block;
+    margin-top: 5px;
+    margin-bottom: 20px;
+
+  }
+  .and-or mat-radio-button{
+    padding: 5px;
+  }
+
+  .conditional-options{
+
+    padding-bottom: 5px;
+    border-bottom: 1px solid #1c2541;
+
+  }
+
+  .add-condition{
+    margin-top: 10px;
+  }
+
+  .condition-label{
+    display: block;
+  }
+
+  .further-conditions{
+    position: relative;
+    right: 40px;
   }

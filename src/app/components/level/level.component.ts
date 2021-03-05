@@ -87,8 +87,8 @@ export class LevelComponent implements OnInit {
 
       this.placeOnScreen(unit);
       stage.addChild(unit.sprite);
-      // Assuming units of team 1 face left
-      if(unit.team === 1){
+      // Assuming units of team 2 face west
+      if(unit.team === 2){
 
         this.sprite.flipSpriteInPlace(unit);
 
@@ -122,7 +122,6 @@ export class LevelComponent implements OnInit {
 
     this.loading = "loading";
     var prom = this.loopservice.stepGame();
-
     prom.then(result => {
       this.lastAction = result as GameAction;
       this.loading = "done";
@@ -132,7 +131,6 @@ export class LevelComponent implements OnInit {
         this.placeOnGrid(this.lastAction.doer);
 
       }
-      //console.log(this.lastAction);
       if(this.lastAction.hasDied){
 
         let dead = this.lastAction.receiver
