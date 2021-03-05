@@ -22,7 +22,7 @@ export class ProfilepagesComponent {
     var self = this;
 
     if(!Auth.checkSigninStatus()) {
-      router.navigate(['']);
+      router.navigate(['/signin']);
     } else {
       db.getUserData(Auth.getUser().uid, function(result) {
         var usd: UserData;

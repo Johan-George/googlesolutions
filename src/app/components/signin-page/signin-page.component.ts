@@ -9,7 +9,7 @@ import { AuthyLoginService } from 'src/app/services/login/authy-login.service';
 export class SigninPageComponent {
 
   //Page Path to go to after log in successful
-  routeToAfterLogin: string = "";
+  routeToAfterLogin: string = "/profile";
 
   constructor(private authyService: AuthyLoginService) { 
     if(this.authyService.checkSigninStatus()) {
