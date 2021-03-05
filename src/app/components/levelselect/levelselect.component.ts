@@ -3,6 +3,7 @@ import { QueryDocumentSnapshot } from '@angular/fire/firestore';
 import { Router } from '@angular/router';
 import { LevelData } from 'src/app/models/database/DatabaseData';
 import { FirestoreDatabaseService } from 'src/app/services/database/firestore-database.service';
+import { AuthyLoginService } from 'src/app/services/login/authy-login.service';
 
 @Component({
   selector: 'app-levelselect',
@@ -20,7 +21,11 @@ export class LevelselectComponent {
 
   ldata: { id: string, completed: boolean }[] = [];
 
-  constructor(private router: Router, private db: FirestoreDatabaseService) {
+  constructor(private router: Router, private db: FirestoreDatabaseService, private auth: AuthyLoginService) {
+
+    if (!auth.checkSigninStatus()) {
+      router.navigate(['signin']);
+    }
 
     var self = this;
 
@@ -42,10 +47,36 @@ export class LevelselectComponent {
           }
         }
       }
-      self.loadingData = false;
-      if (self.ldata.length <= 0) {
-        self.noData = true;
-      }
+
+      db.getUserData(auth.getUser().uid, function (result) {
+
+        if (result == null) {
+          router.navigate(['profile']);
+        }
+
+        for (let l of result.CompletedLevels) {
+          for (let d of self.ldata) {
+            console.log("checking " + d.id);
+            if (self.levelSelect) {
+              if (d.id.substring(7, d.id.length) == l) {
+                d.completed = true;
+              }
+            } else {
+              if (("99" + d.id.substring(10, d.id.length)) == l) {
+                d.completed = true;
+              }
+            }
+
+          }
+        }
+
+        self.loadingData = false;
+        if (self.ldata.length <= 0) {
+          self.noData = true;
+        }
+      });
+
+
     });
   }
 

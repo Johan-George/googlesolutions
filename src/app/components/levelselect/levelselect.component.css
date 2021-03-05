@@ -59,7 +59,7 @@ img {
 .levelObject {
     height: fit-content;
     width: fit-content;
-    width: 33.33%;
+    width: 33.333%;
     display: inline-block;
 }
 
@@ -67,4 +67,12 @@ img {
     margin: 50px auto auto auto;
     display: block;
     text-align: center;
+}
+
+.highlightElement {
+    /* border-color: #2cdd3e;
+    border-width: 2px;
+    border-style: solid; */
+    opacity: 0.4;
+    filter: alpha(opacity=40);
 }

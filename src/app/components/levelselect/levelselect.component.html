@@ -14,7 +14,7 @@
         </div>
         <div *ngIf="!loadingData && !noData" class="colparent">
             <div *ngFor="let d of ldata" class="levelObject">
-                <img src="assets/maps/test map.png" alt="Image not found">
+                <img src="assets/maps/test map.png" alt="Image not found" [ngClass]="{'highlightElement': d.completed}">
                 <h2>{{d.id}}</h2>
             </div>
         </div>
