@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 import { AngularFirestore } from '@angular/fire/firestore';
 import { Observable } from 'rxjs';
 import { LevelData, ProgramData, UserData, UnitData, CodeType } from 'src/app/models/database/DatabaseData';
-import {AngularFireStorage} from '@angular/fire/storage';
+import { AngularFireStorage } from '@angular/fire/storage';
 
 
 @Injectable({
@@ -27,7 +27,7 @@ export class FirestoreDatabaseService {
    */
   private LEVEL_DATA = "Level_Data";
 
-  constructor(private db: AngularFirestore, private storage: AngularFireStorage) {}
+  constructor(private db: AngularFirestore, private storage: AngularFireStorage) { }
 
   /**
    * Sends a request to database for the specified document in the collection
@@ -35,7 +35,7 @@ export class FirestoreDatabaseService {
    * @param collection The collection the database is checking
    * @param documentname the document id that is being requested
    */
-  private queryDocument(collection: string, documentname: string) : Observable<any> {
+  private queryDocument(collection: string, documentname: string): Observable<any> {
     return this.db.collection(collection).doc(documentname).get();
   }
 
@@ -45,7 +45,7 @@ export class FirestoreDatabaseService {
    * @param collection the collection the database is checking
    * @param documentname the document id that is being request
    */
-  private deleteDocument(collection: string, documentname: string) : Promise<void> {
+  private deleteDocument(collection: string, documentname: string): Promise<void> {
     return this.db.collection(collection).doc(documentname).delete();
   }
 
@@ -57,7 +57,7 @@ export class FirestoreDatabaseService {
    * @param documentname the document id that is being update
    * @param data the data to update with
    */
-  private updateDocument(collection: string, documentname: string, data) : Promise<void> {
+  private updateDocument(collection: string, documentname: string, data): Promise<void> {
     return this.db.collection(collection).doc(documentname).set(data);
   }
 
@@ -68,15 +68,21 @@ export class FirestoreDatabaseService {
    * @param uid the user id you are getting data for
    * @param listenerFunction the function(ProgramData) that receives the request data
    */
-  public getUserData(uid:string, listenerFunction) {
+  public getUserData(uid: string, listenerFunction) {
     this.queryDocument(this.USER_DATA, uid).subscribe(result => {
-      var data = result.data();
+      if (result.exists()) {
+        var data = result.data();
         var ud: UserData = {
-          Username:data.Username,
+          Username: data.Username,
           CompletedLevels: data.CompletedLevels,
-          Programs: data.OwnedCodes
+          Programs: data.OwnedCodes,
+          Level: data.Level,
+          Description: data.description
         }
         listenerFunction(ud);
+      } else {
+        listenerFunction(null);
+      }
     })
   }
 
@@ -85,16 +91,18 @@ export class FirestoreDatabaseService {
    * @param cid the program id you are getting data for
    * @param listenerFunction the function(Programdata) that receives the request data
    */
-  public getProgramData(cid:string, listenerFunction) {
+  public getProgramData(cid: string, listenerFunction) {
     this.queryDocument(this.CODE_DATA, cid).subscribe(result => {
       var data = result.data();
 
       //gets array of units
       var units = [];
-      for(var x = 0; x < data.units.length; x++) {
-        var u: UnitData = {TroopType: data.units[x].type, CodeBlocks: data.units[x].blocks,
+      for (var x = 0; x < data.units.length; x++) {
+        var u: UnitData = {
+          TroopType: data.units[x].type, CodeBlocks: data.units[x].blocks,
           CodeType: CodeType[data.units[x].ctype as string], CodeFile: data.units[x].codeFile,
-          location: data.units[x].location};
+          location: data.units[x].location
+        };
 
         units.push(u);
       }
@@ -114,7 +122,7 @@ export class FirestoreDatabaseService {
    * @param cid the program id you are getting data for
    * @param listenerFunction the function(LevelData) that receives the request data
    */
-  public getLevelData(lid:string, listenerFunction) {
+  public getLevelData(lid: string, listenerFunction) {
     this.queryDocument(this.LEVEL_DATA, lid).subscribe(result => {
       var data = result.data();
 
@@ -133,7 +141,7 @@ export class FirestoreDatabaseService {
    */
   public getLevelProgram(lid: string, listenerFunction) {
     var self = this;
-    this.getLevelData(lid, function(data) {
+    this.getLevelData(lid, function (data) {
       self.getProgramData(data.ProgramId.toString(), listenerFunction);
     })
   }
@@ -144,14 +152,14 @@ export class FirestoreDatabaseService {
    * @param fileName the name you wish to save the file as
    * @param listenerFunction the function(Worker) that receives the request data
    */
-  public getUserCodeFromStorage(storageRef, fileName, listenerFunction){
+  public getUserCodeFromStorage(storageRef, fileName, listenerFunction) {
 
     let ref = this.storage.ref(storageRef);
     ref.getDownloadURL().subscribe(
       res => {
         let xhr = new XMLHttpRequest();
         xhr.responseType = 'text';
-        xhr.onload = function(event) {
+        xhr.onload = function (event) {
           let code = xhr.response;
           let file = new File([code], fileName, {
             type: "text/javascript",
@@ -176,11 +184,13 @@ export class FirestoreDatabaseService {
    * @param uid the id of the user you are trying to change
    * @param ud the UserData object to place into database
    */
-  public setUserData(uid: string, ud: UserData) : Promise<void> {
+  public setUserData(uid: string, ud: UserData): Promise<void> {
     return this.updateDocument(this.USER_DATA, uid, {
       Username: ud.Username,
       CompletedLevels: ud.CompletedLevels,
-      OwnedCodes: ud.Programs
+      OwnedCodes: ud.Programs,
+      Level: ud.Level,
+      description: ud.Description
     })
   }
 
@@ -190,12 +200,14 @@ export class FirestoreDatabaseService {
    * @param uid the id of the program you are trying to change
    * @param ud the ProgramData object to place into database
    */
-  public setProgramData(pid: string, pd: ProgramData) : Promise<void> {
+  public setProgramData(pid: string, pd: ProgramData): Promise<void> {
 
     var dbunit = [];
-    for(var x = 0; x < pd.Units.length; x++) {
-      dbunit.push({blocks: pd.Units[x].CodeBlocks, location: pd.Units[x].location, type: pd.Units[x].TroopType,
-      ctype: CodeType[pd.Units[x].CodeType], codeFile: pd.Units[x].CodeFile});
+    for (var x = 0; x < pd.Units.length; x++) {
+      dbunit.push({
+        blocks: pd.Units[x].CodeBlocks, location: pd.Units[x].location, type: pd.Units[x].TroopType,
+        ctype: CodeType[pd.Units[x].CodeType], codeFile: pd.Units[x].CodeFile
+      });
     }
 
     return this.updateDocument(this.CODE_DATA, pid, {
@@ -210,7 +222,7 @@ export class FirestoreDatabaseService {
    * Deletes program data from database
    * @param pid the program id to delete
    */
-  public deleteProgramData(pid: string) : Promise<void> {
+  public deleteProgramData(pid: string): Promise<void> {
     return this.deleteDocument(this.CODE_DATA, pid);
   }
 

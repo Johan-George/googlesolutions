@@ -6,6 +6,8 @@
  */
 export class UserData {
     Username: string
+    Level: number
+    Description: string
     CompletedLevels: number[]
     Programs: number[]
 }
