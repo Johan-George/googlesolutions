@@ -11,15 +11,44 @@
               cdkDrag cdkDragDisabled class="code-block-used"  [style.left]="(block.indentationLevel * 50) + 'px'">
       {{block.getLabel()}}
       <!-- If it is an if block show this: -->
-      {{isConditional(block) ? block.condition.getLabel(): ''}}
-      <mat-form-field appearance="fill" *ngIf="isConditional(block)">
-        <mat-label>Select Condition:</mat-label>
-        <mat-select [(value)]="block.condition" #condition (selectionChange)="onChangeCondition(block, condition.value, i)">
-          <mat-option *ngFor="let predicate of predicates" [value]="predicate">
-            {{predicate.getLabel()}}
-          </mat-option>
-        </mat-select>
-      </mat-form-field>
+<!--      {{isConditional(block) && block.conditions[0].negate ? 'Not' : ''}}-->
+<!--      {{isConditional(block) ? block.conditions[0].getLabel(): ''}}-->
+
+      <div class="conditional-options-wrapper" *ngIf="isConditional(block)">
+        <div *ngFor="let condition of block.conditions; let j = index" class="conditional-options">
+          <div *ngIf="j > 0" class="further-conditions">
+            <button mat-button (click)="deleteCondition(block.conditions, i)">
+              <mat-icon>close</mat-icon>
+            </button>
+            <mat-radio-group class="and-or" (change)="setConjunction(block.conditions[j], $event.value, i)">
+              <mat-radio-button value="&" [checked]="condition.conjunction === '&'" >And</mat-radio-button>
+              <mat-radio-button value="|" [checked]="condition.conjunction === '|'" >Or</mat-radio-button>
+            </mat-radio-group>
+          </div>
+          <p class="condition-label">
+            {{block.conditions[j].negate ? 'Not' : ''}}
+            {{block.conditions[j].getLabel()}}
+          </p>
+          <mat-form-field appearance="fill" *ngIf="isConditional(block)">
+            <mat-label>Select Condition:</mat-label>
+            <mat-select [value]="block.conditions[j]" (selectionChange)="onChangeCondition(block, $event.value, j, i)">
+              <mat-option *ngFor="let predicate of predicates" [value]="blockService.cloneBlock(predicate)">
+                {{predicate.getLabel()}}
+              </mat-option>
+            </mat-select>
+          </mat-form-field>
+
+          <mat-checkbox *ngIf="isConditional(block)" name="negate" [(ngModel)]="condition.negate"
+                        (change)="refreshCode(i)">
+            Negate condition (not)
+          </mat-checkbox>
+        </div>
+
+        <button mat-raised-button color="primary" (click)="addCondition(block.conditions)" class="add-condition">
+          add condition
+        </button>
+
+      </div>
 
       <!-- If the block is not the when turn and end blocks -->
       <button *ngIf="!isEndBlock(block)" mat-button color="primary" (click)="onDeleteBlock(i)">

@@ -17,11 +17,11 @@ import { EndElse } from 'src/app/models/blockCommands/blocks/terminal/EndElse';
 import { EndElseIf } from 'src/app/models/blockCommands/blocks/terminal/EndElseIf';
 import { EndIf } from 'src/app/models/blockCommands/blocks/terminal/Endif';
 import { Start } from 'src/app/models/blockCommands/blocks/terminal/Start';
-import {ElementSelectorsMigration} from '@angular/cdk/schematics/ng-update/migrations/element-selectors';
 import {TextAction1} from '../../models/blockCommands/blocks/executable/TestAction1';
 import {TextAction2} from '../../models/blockCommands/blocks/executable/TestAction2';
 import {TruePredicate} from '../../models/blockCommands/blocks/predicate/TruePredicate';
 import {FalsePredicate} from '../../models/blockCommands/blocks/predicate/FalsePredicate';
+import {CompoundPredicate} from '../../models/blockCommands/blocks/predicate/CompoundPredicate';
 
 @Injectable({
   providedIn: 'root'
@@ -40,7 +40,7 @@ export class BlockService {
   static placeableBlocks: Array<BlockCommand> = [
     new If(), new Attack(), new North(), new South(), new East(),
     new West(), new Wait(), new EndIf(), new Else(), new ElseIf(),
-    new EndElse(), new EndElseIf()
+    new EndElse(), new EndElseIf(), new TextAction2(), new TextAction1()
   ];
 
   /**
@@ -51,14 +51,15 @@ export class BlockService {
   /**
    * Array representing all Predicates avaliable
    */
-  static predicates: Array<Predicate> = [new EnemyNear(), new HealthBelow30Percent()];
+  static predicates: Array<Predicate> = [new EnemyNear(), new HealthBelow30Percent(),
+    new TruePredicate(), new FalsePredicate()];
 
   /**
    * returns true if the BlockCommand is a ConditionalBlock Object
    * @param command The BlockCommand to check
    */
   isConditional(command: BlockCommand): command is ConditionalBlock {
-    return (<ConditionalBlock>command).condition !== undefined;
+    return (<ConditionalBlock>command).conditions !== undefined;
   }
 
   /**
@@ -121,10 +122,22 @@ export class BlockService {
         return new FalsePredicate();
       case EmptyPredicate.id:
         return new EmptyPredicate();
+      case CompoundPredicate.id:
+        return new CompoundPredicate();
+      case Start.id:
+        return new Start();
+      case End.id:
+        return new End();
       default:
-        throw new Error('Id not recognized.');
+        throw new Error(`Id of ${id} is not recognized.`);
 
     }
+
+  }
+
+  cloneBlock(block: BlockCommand){
+
+    return Object.create(block);
 
   }
 

@@ -12,6 +12,8 @@ export class HealthBelow30Percent implements Predicate {
   static id: string = btoa(HealthBelow30Percent.name);
   static asCode = 'healthLessThan30Percent(me)'
   indentationLevel: number;
+  conjunction: string = '';
+  negate: boolean = false;
 
   evaluation(grid, unit): boolean {
     return ((unit.health / unit.maxHealth) * 100) < 30;

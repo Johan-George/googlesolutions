@@ -11,6 +11,8 @@ import { Else } from 'src/app/models/blockCommands/blocks/conditional/Else';
 import {enemyNearFunc, healthBelow30PercentFunc, RealCodeRepr} from '../../models/blockCommands/actual-code/RealCodeRepr';
 import {HealthBelow30Percent} from '../../models/blockCommands/blocks/predicate/HealthBelow30Percent';
 import {EnemyNear} from '../../models/blockCommands/blocks/predicate/EnemyNear';
+import {EmptyPredicate} from '../../models/blockCommands/blocks/predicate/EmptyPredicate';
+import {Unit} from '../../models/game/units/Unit';
 
 @Component({
   selector: 'app-block-code',
@@ -35,7 +37,7 @@ export class BlockCodeComponent implements OnInit {
   hasHealthFunc = false;
   hasEnemyNearFunc = false;
 
-  constructor(private codeService: CodeService, private blockService: BlockService, private dialog: MatDialog) { }
+  constructor(private codeService: CodeService, public blockService: BlockService, private dialog: MatDialog) { }
 
   ngOnInit(): void {
 
@@ -50,7 +52,7 @@ export class BlockCodeComponent implements OnInit {
       let copy = Object.create(block);
       this.setIndentationLevel(event, block);
       if (this.blockService.isConditional(block)) {
-        copy.condition = Object.create(block.condition);
+        copy.condition = Object.create(block.conditions);
       }
       event.previousContainer.data.push(copy);
       transferArrayItem(event.previousContainer.data,
@@ -73,10 +75,16 @@ export class BlockCodeComponent implements OnInit {
     try {
       let compiled = this.codeService.compileToExecutableCode(this.currentCode);
       for (let fn of compiled) {
-        fn([], []);
+        console.log(fn([], new Unit()));
       }
 
       let serialized = this.codeService.serializeBlocks(this.currentCode);
+      console.log(serialized);
+      let deserialized = this.codeService.deserializeToBlocks(serialized);
+      console.log(deserialized);
+      for(let fn of this.codeService.compileToExecutableCode(deserialized)){
+        console.log(fn([], new Unit()))
+      }
 
     } catch (err) {
       console.log(err);
@@ -85,10 +93,11 @@ export class BlockCodeComponent implements OnInit {
 
   }
 
-  onChangeCondition(block, value, index) {
-    block.condition = value;
-    this.realCode[index + this.extraLinesAdded].code = block.getAsCode();
-    console.log('Here')
+  onChangeCondition(block, value, index, blockIndex) {
+    let conjunction = block.conditions[index].conjunction;
+    block.conditions[index] = value;
+    block.conditions[index].conjunction = conjunction;
+    this.refreshCode(blockIndex);
     if(value.getLabel() === HealthBelow30Percent.label && !this.hasHealthFunc){
       this.addFunctionToRealCode(healthBelow30PercentFunc);
       this.hasHealthFunc = true;
@@ -167,6 +176,30 @@ export class BlockCodeComponent implements OnInit {
     for(let line of codeReprs){
       this.realCode.push(line);
     }
+
+  }
+
+  addCondition(conditions){
+
+    conditions.push(new EmptyPredicate());
+
+  }
+
+  setConjunction(predicate, conj, index){
+    predicate.conjunction = conj;
+    this.refreshCode(index);
+  }
+
+  deleteCondition(conditions, index){
+
+    conditions.splice(index, 1);
+    this.refreshCode(index);
+
+  }
+
+  refreshCode(index){
+
+    this.realCode[index + this.extraLinesAdded].code = this.currentCode[index].getAsCode();
 
   }
 
