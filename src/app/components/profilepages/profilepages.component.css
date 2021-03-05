@@ -9,12 +9,14 @@ h1{
     color: #2cdd3e;
     font-size: 40px;
     font-weight: 500;
+    font-family: Roboto;
 }
 
 h2{
     color: #2cdd3e;
     font-size: 25px;
     font-weight: 300;
+    font-family: Roboto;
 }
 
 .row {
@@ -57,6 +59,7 @@ h2{
 
     color: #2cdd3e;
     font-size: 18px;
+    font-family: Roboto;
 }
 
 #CodeArea {
@@ -83,6 +86,7 @@ h3 {
     text-align: center;
     color: #10c6f9;
     font-size: 20px;
+    font-family: Roboto;
 }
 
 #RightArea {
@@ -94,6 +98,7 @@ h3 {
 .ProgramButton {
     color: white;
     font-size: 20px;
+    font-family: Roboto;
     width: 100px;
     margin-bottom: 10px;
 }

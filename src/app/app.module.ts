@@ -14,11 +14,13 @@ import { MatDialogModule } from '@angular/material/dialog';
 import { MatCheckboxModule } from '@angular/material/checkbox';
 import { MatRadioModule } from '@angular/material/radio';
 import { FormsModule } from '@angular/forms';
+import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 
 import { AngularFireModule } from '@angular/fire';
 import { AngularFirestoreModule } from '@angular/fire/firestore';
 import { AngularFireAuthModule } from '@angular/fire/auth';
-import {AngularFireStorageModule} from '@angular/fire/storage';
+import { AngularFireStorageModule } from '@angular/fire/storage';
+
 import { BlockCodeComponent } from './components/block-code/block-code.component';
 import { ErrorComponent } from './components/error/error.component';
 import { SigninPageComponent } from './components/signin-page/signin-page.component';
@@ -26,7 +28,7 @@ import { TestComponent } from './components/test/test.component';
 import { LevelComponent } from './components/level/level.component';
 import { PageheaderComponent } from './components/pageheader/pageheader.component';
 import { ProfilepagesComponent } from './components/profilepages/profilepages.component';
-import { NewUserPageComponent } from './components/new-user-page/new-user-page.component';
+import { LevelselectComponent } from './components/levelselect/levelselect.component';
 
 const firebaseConfig = {
   apiKey: "AIzaSyB25gxYu7PkMvnjKhisCzPP62grU_OEMLU",
@@ -47,7 +49,7 @@ const firebaseConfig = {
     LevelComponent,
     PageheaderComponent,
     ProfilepagesComponent,
-    NewUserPageComponent
+    LevelselectComponent
   ],
   imports: [
     BrowserModule,
@@ -68,7 +70,8 @@ const firebaseConfig = {
     MatDialogModule,
     MatCheckboxModule,
     MatRadioModule,
-    FormsModule
+    FormsModule,
+    MatProgressSpinnerModule
   ],
   providers: [],
   bootstrap: [AppComponent]
