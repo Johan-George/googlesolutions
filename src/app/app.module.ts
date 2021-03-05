@@ -21,6 +21,7 @@ import { ErrorComponent } from './components/error/error.component';
 import { SigninPageComponent } from './components/signin-page/signin-page.component';
 import { TestComponent } from './components/test/test.component';
 import { LevelComponent } from './components/level/level.component';
+import { HomeComponent } from './components/home/home.component';
 
 const firebaseConfig = {
   apiKey: "AIzaSyB25gxYu7PkMvnjKhisCzPP62grU_OEMLU",
@@ -38,7 +39,8 @@ const firebaseConfig = {
     ErrorComponent,
     SigninPageComponent,
     TestComponent,
-    LevelComponent
+    LevelComponent,
+    HomeComponent
   ],
   imports: [
     BrowserModule,

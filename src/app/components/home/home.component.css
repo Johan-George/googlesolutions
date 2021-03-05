@@ -1,0 +1,40 @@
+
+h1 {
+    display: block;
+}
+
+.bigDave {
+    height: 100%;
+    width: fit-content;
+    margin-left: auto;
+    margin-right:auto;
+}
+
+.rightElement {
+    display: block;
+    float: left;
+    margin-left: 20px;
+    margin-bottom: 20px;
+    height: 30%;
+    
+}
+
+/* take all elements in right element */
+.rightElement > * {
+    margin: auto auto auto auto;
+    display: block;
+    text-align: center;
+    line-height: 100px;
+}
+
+.leftElement {
+    float: left;
+    display: block;
+    height: 80%;
+}
+
+.textBox {
+    text-align: center;
+    padding-top: 20%;
+    padding-bottom: 20%;
+}
