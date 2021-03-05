@@ -19,11 +19,15 @@
             <h1 id="ProgramLabel">Programs</h1>
             <div id="CodeArea">
                 <div id="CodeSelection">
-                    test
+                    <div *ngIf="codes.length > 0">
+                        <button mat-button *ngFor="let c of codes; let i = index " class="ProgramButton" (click)="changeSelected(i)">{{c.Name}}</button>
+                    </div>
+                    <div *ngIf="codes.length == 0"><button mat-button class="ProgramButton">No Programs Avaliable</button></div>
                 </div>
                 <section id="RightArea">
-                    <h3>test</h3>
-                    <div id="DisplayArea"> test </div>
+                    <h3><span *ngIf="selected < 0">No Program Selected</span><span *ngIf="selected >= 0">{{codes[selected].Name}}</span></h3>
+                    <div id="DisplayArea">
+                    </div>
                 </section>
             </div>
         </section>

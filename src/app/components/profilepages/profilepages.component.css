@@ -90,3 +90,10 @@ h3 {
     height: 460px;
     float: left;
 }
+
+.ProgramButton {
+    color: white;
+    font-size: 20px;
+    width: 100px;
+    margin-bottom: 10px;
+}

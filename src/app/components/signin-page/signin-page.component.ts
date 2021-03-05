@@ -12,7 +12,7 @@ export class SigninPageComponent {
   routeToAfterLogin: string = "";
 
   constructor(private authyService: AuthyLoginService) { 
-    if(this.authyService.checkSigninStatus(this.routeToAfterLogin)) {
+    if(this.authyService.checkSigninStatus()) {
       this.authyService.router.navigate([this.routeToAfterLogin]);
     }
   }

@@ -70,7 +70,7 @@ export class FirestoreDatabaseService {
    */
   public getUserData(uid: string, listenerFunction) {
     this.queryDocument(this.USER_DATA, uid).subscribe(result => {
-      if (result.exists()) {
+      if (result.exists) {
         var data = result.data();
         var ud: UserData = {
           Username: data.Username,

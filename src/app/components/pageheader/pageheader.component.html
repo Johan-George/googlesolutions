@@ -1,5 +1,6 @@
 <div style="background-color: #0b132b;">
     <button mat-button class="typebutton" routerLink="">SS</button>
-    <button mat-button id="Sign" class="typebutton" routerLink="signin">Sign in</button>
+    <button mat-button id="Sign" class="typebutton" routerLink="/signin" *ngIf="!loggedIn">Sign in</button>
+    <button mat-button id="Sign" class="typebutton" (click)="logout()" *ngIf="loggedIn">Sign out {{username}}</button>
     <hr style="margin-bottom: 0; background-color: #3a506b; height: 5px; border: none;">
 </div>
