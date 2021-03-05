@@ -1,0 +1,17 @@
+#Sign {
+    display: block;
+    float: right;
+}
+
+.typebutton {
+    margin: 20px 50px 20px 50px;
+
+    font-family: Roboto;
+    font-size: 20px;
+
+    color: #2cdd3e;
+}
+
+hr{
+    margin: 0 0 0 0;
+}

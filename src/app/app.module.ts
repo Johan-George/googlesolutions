@@ -11,8 +11,9 @@ import { DragDropModule } from '@angular/cdk/drag-drop';
 import { MatCardModule } from '@angular/material/card';
 import { MatSelectModule } from '@angular/material/select';
 import { MatDialogModule } from '@angular/material/dialog';
-import {MatCheckboxModule} from '@angular/material/checkbox';
-import {MatRadioModule} from '@angular/material/radio';
+import { MatCheckboxModule } from '@angular/material/checkbox';
+import { MatRadioModule } from '@angular/material/radio';
+import { FormsModule } from '@angular/forms';
 
 import { AngularFireModule } from '@angular/fire';
 import { AngularFirestoreModule } from '@angular/fire/firestore';
@@ -23,7 +24,9 @@ import { ErrorComponent } from './components/error/error.component';
 import { SigninPageComponent } from './components/signin-page/signin-page.component';
 import { TestComponent } from './components/test/test.component';
 import { LevelComponent } from './components/level/level.component';
-import {FormsModule} from '@angular/forms';
+import { PageheaderComponent } from './components/pageheader/pageheader.component';
+import { ProfilepagesComponent } from './components/profilepages/profilepages.component';
+import { NewUserPageComponent } from './components/new-user-page/new-user-page.component';
 
 const firebaseConfig = {
   apiKey: "AIzaSyB25gxYu7PkMvnjKhisCzPP62grU_OEMLU",
@@ -41,7 +44,10 @@ const firebaseConfig = {
     ErrorComponent,
     SigninPageComponent,
     TestComponent,
-    LevelComponent
+    LevelComponent,
+    PageheaderComponent,
+    ProfilepagesComponent,
+    NewUserPageComponent
   ],
   imports: [
     BrowserModule,

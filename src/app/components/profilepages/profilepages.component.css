@@ -1,0 +1,99 @@
+
+#backgrounddiv {
+    background-color: #0b132b;
+    margin-top: 0px;
+    overflow: auto;
+}
+
+h1{
+    color: #2cdd3e;
+    font-size: 40px;
+    font-weight: 500;
+}
+
+h2{
+    color: #2cdd3e;
+    font-size: 25px;
+    font-weight: 300;
+}
+
+.row {
+    margin: 100px auto 50px auto;
+    width: 80%;
+    display: flex
+}
+
+.verticalRow {
+    margin: 100px auto 50px auto;
+    width: fit-content;
+    width: 80%;
+}
+
+.SideCol {
+    margin: auto;
+    display: inline-block;
+    padding-left: 25px;
+    padding-right: 25px;
+}
+
+.verticalRowElement {
+    display: block;
+    margin: 0 auto 0 auto;
+    width: max-content;
+}
+
+.avatar {
+    width: 300px;
+    height: 300px;
+    border-radius: 50%;
+}
+
+#DescriptionBox {
+    background-color: #1c2541;
+
+    height: 200px;
+    width: 400px;
+    padding: 20px 40px 20px 40px ;
+
+    color: #2cdd3e;
+    font-size: 18px;
+}
+
+#CodeArea {
+    background-color: #1c2541;
+
+    height: 500px;
+    width: 940;
+
+    padding: 30px 30px 30px 30px;
+}
+
+#DisplayArea {
+    background-color: #3a506b;
+    width: 100%;
+    height: 100%;
+}
+
+#CodeSelection {
+    width: 130px;
+    float: left;
+}
+
+h3 {
+    text-align: center;
+    color: #10c6f9;
+    font-size: 20px;
+}
+
+#RightArea {
+    width: 810px;
+    height: 460px;
+    float: left;
+}
+
+.ProgramButton {
+    color: white;
+    font-size: 20px;
+    width: 100px;
+    margin-bottom: 10px;
+}
