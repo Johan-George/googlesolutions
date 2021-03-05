@@ -5,13 +5,16 @@ import { TestComponent } from './components/test/test.component';
 import {LevelComponent} from './components/level/level.component';
 import { SigninPageComponent } from './components/signin-page/signin-page.component';
 import { ProfilepagesComponent } from './components/profilepages/profilepages.component';
+import { LevelselectComponent } from './components/levelselect/levelselect.component';
 
 const routes: Routes = [
+  {path: 'signin', component: SigninPageComponent},
   {path: 'profile', component: ProfilepagesComponent},
   {path: 'code', component: BlockCodeComponent},
-  {path: 'debug', component:TestComponent},
+  {path: 'levelSelect', component:LevelselectComponent},
+  {path: 'tutorials', component:LevelselectComponent},
   {path: 'level', component: LevelComponent},
-  {path: 'signin', component: SigninPageComponent}
+  {path: 'debug', component:TestComponent},
 ];
 
 @NgModule({
