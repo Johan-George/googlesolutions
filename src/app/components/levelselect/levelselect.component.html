@@ -1,1 +1,23 @@
-<p>levelselect works!</p>
+<app-pageheader></app-pageheader>
+<div id="backgroundComponent">
+    <div id="containerElement">
+
+        <h1 *ngIf="levelSelect">Level Select</h1>
+        <h1 *ngIf="!levelSelect">Tutorial Select</h1>
+
+        <div *ngIf="loadingData" id="LoadingDiv">
+            <h1>Loading Level Data</h1>
+            <mat-spinner></mat-spinner>
+        </div>
+        <div *ngIf="!loadingData && noData">
+            <h1>We encountered a problem, please try again</h1>
+        </div>
+        <div *ngIf="!loadingData && !noData" class="colparent">
+            <div *ngFor="let d of ldata" class="levelObject">
+                <img src="assets/maps/test map.png" alt="Image not found">
+                <h2>{{d.id}}</h2>
+            </div>
+        </div>
+
+    </div>
+</div>

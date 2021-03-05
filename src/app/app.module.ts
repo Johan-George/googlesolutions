@@ -14,11 +14,13 @@ import { MatDialogModule } from '@angular/material/dialog';
 import { MatCheckboxModule } from '@angular/material/checkbox';
 import { MatRadioModule } from '@angular/material/radio';
 import { FormsModule } from '@angular/forms';
+import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 
 import { AngularFireModule } from '@angular/fire';
 import { AngularFirestoreModule } from '@angular/fire/firestore';
 import { AngularFireAuthModule } from '@angular/fire/auth';
-import {AngularFireStorageModule} from '@angular/fire/storage';
+import { AngularFireStorageModule } from '@angular/fire/storage';
+
 import { BlockCodeComponent } from './components/block-code/block-code.component';
 import { ErrorComponent } from './components/error/error.component';
 import { SigninPageComponent } from './components/signin-page/signin-page.component';
@@ -68,7 +70,8 @@ const firebaseConfig = {
     MatDialogModule,
     MatCheckboxModule,
     MatRadioModule,
-    FormsModule
+    FormsModule,
+    MatProgressSpinnerModule
   ],
   providers: [],
   bootstrap: [AppComponent]
