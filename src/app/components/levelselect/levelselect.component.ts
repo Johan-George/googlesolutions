@@ -9,7 +9,12 @@ import { Router } from '@angular/router';
 export class LevelselectComponent {
 
   constructor(router: Router) {
-
+    
+    if(router.url === '/tutorials') {
+      //load tutorials from data
+    } else {
+      //load levels from data
+    }
   }
 
 }

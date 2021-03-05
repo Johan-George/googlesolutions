@@ -61,6 +61,16 @@ export class FirestoreDatabaseService {
     return this.db.collection(collection).doc(documentname).set(data);
   }
 
+  /**
+   * Sends a request to database for getting all documents within a specified collection.
+   * returns an observable for the request
+   * @param collection the collection of documents we are getting
+   * @returns observable with status and data of the data
+   */
+  private queryDocumentsFromCollection(collection: string): Observable<any> {
+    return this.db.collection(collection).get();
+  }
+
   //getters
 
   /**
@@ -175,6 +185,16 @@ export class FirestoreDatabaseService {
       }
     )
 
+  }
+
+  /**
+   * Gets all level data document snapshots from the levels collection
+   * @param callback function to call on request complete. parameter will give a QuerySnapshot
+   */
+  public getAllLevels(callback) {
+    this.queryDocumentsFromCollection(this.LEVEL_DATA).subscribe(result => {
+      callback(result);
+    });
   }
 
   //setters
