@@ -1,87 +1,196 @@
+#content-wrapper{
+
+  width: 100%;
+  height: 100%;
+  display: flex;
+
+}
+
+#left-content{
+
+  margin-top: 50px;
+  flex-basis: 80%;
+  flex-grow: 4;
+  height: 100%;
+
+}
+
+#bottom-left-content{
+
+  height: 30%;
+  margin-top: 10px;
+
+}
+
+#top-left-content{
+
+  width: 100%;
+  height: 60%;
+
+}
+
+#top-left-content .tabs{
+
+  height: 7%;
+
+}
+
+#code-boundary{
+
+  background-color: #3A506B;
+  width: 95%;
+  height: 93%;
+
+  margin: 0 auto;
+  overflow-y: scroll;
+
+}
+
+#card-list-boundary{
+
+  background-color: #3A506B;
+  width: 95%;
+  height: 90%;
+  border-radius: 2px;
+  margin: 0 auto;
+
+}
+
+#right-content{
+
+  margin-top: 50px;
+  flex-basis: 20%;
+  flex-grow: 1;
+
+}
+
+
 .code-block-unused{
-    flex-grow: 1;
-    flex-shrink: 1;
-    flex-basis: 250px;
-  }
+  flex-grow: 1;
+  flex-shrink: 1;
+  flex-basis: 10%;
+  margin-left: 2px;
+}
 
-  #card-list{
-    width: 75%;
-    display: flex;
-    margin: 100px auto auto;
-  }
+#card-list{
+  width: 95%;
+  display: flex;
+  flex-direction: row;
+  position: relative;
+  margin: 0 auto;
+  top: 25%;
+}
 
-  #current-code-list{
-    width: 75%;
-    margin: auto;
-    text-align: center;
-  }
+.tabs{
 
-  .code-block-used{
-    background-color: #00ffff;
-    width: 250px;
-    position: relative;
-    margin: auto;
-  }
+  display: flex;
+  margin: 0 auto;
+  height: 15%;
+  width: 95%;
+  flex-direction: row;
 
-  .code-block-used:nth-child(2n){
-    background-color: #ff4000;
-  }
+}
 
-  #export{
-    margin: 100px auto;
-    display: block;
-  }
+.tab{
 
-  #actual-code{
-    background-color: black;
-    width: 600px;
-    height: 200px;
-    float: left;
-    font-size: 13px;
-  }
+  text-align: center;
+  color: #2CDD3E;
+  margin-right: 5px;
+  flex-basis: 10%;
+  border-radius: 2px;
+  height: 100%;
 
-  .code{
-    color: white;
-    position: relative;
-    margin-bottom: 0;
-  }
+}
+
+.tab-not-selected{
+
+  background-color: #1C2541;
+
+}
+
+.tab-selected{
+
+  background-color: #3A506B;
+
+}
+
+.tab h3{
+
+  font-family: codefont;
+  font-size: 10px;
+
+}
+
+#current-code-list{
+  width: 75%;
+  margin: auto;
+  text-align: center;
+}
+
+.code-block-used{
+  background-color: #00ffff;
+  width: 250px;
+  position: relative;
+  margin: auto;
+}
+
+.code-block-used:nth-child(2n){
+  background-color: #ff4000;
+}
+
+#export{
+  margin: 100px auto;
+  display: block;
+}
+
+#actual-code{
+  background-color: black;
+  width: 600px;
+  height: 200px;
+  float: left;
+  font-size: 13px;
+  overflow-y: scroll;
+}
+
+.code{
+  color: white;
+  position: relative;
+  margin-bottom: 0;
+}
 
 
-  .comment{
-    color: #518058;
-  }
+.comment{
+  color: #518058;
+}
 
-  .tab{
-    margin-right: 50px;
-  }
+.and-or{
 
-  .and-or{
+  display: inline-block;
+  margin-top: 5px;
+  margin-bottom: 20px;
 
-    display: inline-block;
-    margin-top: 5px;
-    margin-bottom: 20px;
+}
+.and-or mat-radio-button{
+  padding: 5px;
+}
 
-  }
-  .and-or mat-radio-button{
-    padding: 5px;
-  }
+.conditional-options{
 
-  .conditional-options{
+  padding-bottom: 5px;
+  border-bottom: 1px solid #1c2541;
 
-    padding-bottom: 5px;
-    border-bottom: 1px solid #1c2541;
+}
 
-  }
+.add-condition{
+  margin-top: 10px;
+}
 
-  .add-condition{
-    margin-top: 10px;
-  }
+.condition-label{
+  display: block;
+}
 
-  .condition-label{
-    display: block;
-  }
+.further-conditions{
+  position: relative;
+  right: 40px;
+}
 
-  .further-conditions{
-    position: relative;
-    right: 40px;
-  }

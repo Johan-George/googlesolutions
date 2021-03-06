@@ -25,12 +25,24 @@ export class BlockCodeComponent implements OnInit {
 
   predicates: Array<Predicate> = BlockService.predicates;
 
-  currentCode: Array<BlockCommand> = [
+  codeTabs: Array<Array<BlockCommand>> = [
 
-    new Start(),
-    new End()
+    [new Start(), new End()],
+    [new Start(), new End()],
+    [new Start(), new End()],
+    [new Start(), new End()]
 
   ];
+
+  currentCode: Array<BlockCommand> = this.codeTabs[0];
+
+  blockCategories: Array<any> = [
+
+    {type: 'Action', selected: true},
+    {type:'Conditional', selected: false}
+
+  ];
+  selectedCategory: any = this.blockCategories[0];
 
   realCode: Array<RealCodeRepr> = this.currentCode.map(block => new RealCodeRepr(block));
   extraLinesAdded: number = 3;
@@ -200,6 +212,46 @@ export class BlockCodeComponent implements OnInit {
   refreshCode(index){
 
     this.realCode[index + this.extraLinesAdded].code = this.currentCode[index].getAsCode();
+
+  }
+
+  refreshAllCode(){
+
+    this.realCode = [];
+    for(let block of this.currentCode){
+      this.realCode.push(new RealCodeRepr(block));
+    }
+    this.initStarterCode();
+
+  }
+
+  updateCategorySelected(index){
+
+    for(let category of this.blockCategories){
+
+      category.selected = false;
+
+    }
+    this.blockCategories[index].selected = true;
+    this.selectedCategory = this.blockCategories[index];
+
+
+  }
+
+  getBlocksOfSelectedCategory(){
+
+    if(this.selectedCategory === this.blockCategories[0]){
+      return BlockService.actionBlocks;
+    }else{
+      return BlockService.conditionalBlocks;
+    }
+
+  }
+
+  changeTab(tab){
+
+    this.currentCode = tab;
+    this.refreshAllCode();
 
   }
 
