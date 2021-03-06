@@ -10,3 +10,16 @@ body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; }
   font-family: codefont;
   src: url("/assets/fonts/code font/JetBrainsMono-Regular.ttf")
 }
+app-root {
+    height: 100%;
+    display: block;
+}
+
+.mat-progress-spinner circle, .mat-spinner circle {
+    stroke: #2cdd3e;
+}
+
+.fullpage {
+    height: 100%;
+    display: block;
+}
