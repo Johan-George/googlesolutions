@@ -25,6 +25,8 @@ export class BlockCodeComponent implements OnInit {
 
   predicates: Array<Predicate> = BlockService.predicates;
 
+  draggingCode: boolean = false;
+
   codeTabs: Array<Array<BlockCommand>> = [
 
     [new Start(), new End()],
@@ -259,6 +261,12 @@ export class BlockCodeComponent implements OnInit {
 
     this.currentCode = tab;
     this.refreshAllCode();
+
+  }
+
+  updateCodeDrag(){
+
+    this.draggingCode = !this.draggingCode;
 
   }
 

@@ -165,6 +165,16 @@
   font-family: codefont;
 }
 
+#run{
+
+  font-family: codefont;
+  background-color: #2cdd3e;
+  color: #038C1F;
+  top: 50%;
+  left: 90%;
+
+}
+
 #actual-code{
   background-color: black;
   width: 600px;
@@ -208,5 +218,11 @@
 .further-conditions{
   position: relative;
   right: 40px;
+}
+
+.drag-code{
+
+  border: 1px solid white;
+
 }
 
