@@ -6,10 +6,14 @@ import {SpriteConstants} from '../../services/SpriteConstants';
 import {CodeService} from '../../services/program-construction/code.service';
 import {GameLoopServiceService} from '../../services/game/gameloop/game-loop.service';
 import {GameAction} from '../../models/game/GameAction';
+import {LevelDataInterfaceService} from '../../services/game/levelDataInterface/level-data-interface.service';
 (<any>window).createjs = createjs;
 let stage;
-let tiles_on_side = 20;
-let canvas_length = 800;
+// TODO, makes these dynamic
+let tiles_on_x = LevelDataInterfaceService.TESTGRID_SIZE.x;
+let tiles_on_y = LevelDataInterfaceService.TESTGRID_SIZE.y
+let canvas_width = tiles_on_x * 40;
+let canvas_height = tiles_on_y * 40;
 
 @Component({
   selector: 'app-level',
@@ -22,6 +26,8 @@ export class LevelComponent implements OnInit {
   public loading: string = "loading";
   private lastAction: GameAction;
   private gameStart = false;
+  public width = canvas_width;
+  public height = canvas_height;
 
   constructor(private sprite: SpriteService, private code: CodeService, private loopservice: GameLoopServiceService) { }
 
@@ -35,7 +41,7 @@ export class LevelComponent implements OnInit {
         stage = new createjs.Stage('battlegrounds');
         imageQueue.on('complete', () => {
           let shape = new createjs.Shape();
-          shape.graphics.beginBitmapFill(imageQueue.getResult(SpriteConstants.testMap)).drawRect(0, 0, canvas_length, canvas_length);
+          shape.graphics.beginBitmapFill(imageQueue.getResult(SpriteConstants.testMap)).drawRect(0, 0, canvas_width, canvas_height);
           stage.addChild(shape);
           this.drawGrid();
           for(let row of self.grid){
@@ -100,8 +106,8 @@ export class LevelComponent implements OnInit {
 
   drawGrid(){
 
-    for(let i = 0; i < tiles_on_side;i++){
-      for(let j = 0; j < tiles_on_side; j++){
+    for(let i = 0; i < tiles_on_x;i++){
+      for(let j = 0; j < tiles_on_y; j++){
 
         let shape = new createjs.Shape();
 

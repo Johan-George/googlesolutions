@@ -13,8 +13,8 @@ import { Wait } from 'src/app/models/blockCommands/blocks/executable/Wait';
 })
 export class LevelDataInterfaceService {
 
-  private PLAYSPACE_SIZE = { x: 20, y: 20 };
-  private TESTGRID_SIZE = { x: 20, y: 20 };
+  public static PLAYSPACE_SIZE = { x: 15, y: 15 };
+  public static TESTGRID_SIZE = { x: 15, y: 10 };
 
   constructor(private database: FirestoreDatabaseService, private codeServ: CodeService) { }
 
@@ -24,7 +24,7 @@ export class LevelDataInterfaceService {
     var curUnitId = 0;
     return new Promise((resolutionFunc, rejectionFunc) => {
       var returnObject: { team1Units: Unit[], team2Units: Unit[], griddimensions: { x: number, y: number } } =
-        { team1Units: [], team2Units: [], griddimensions: this.PLAYSPACE_SIZE };
+        { team1Units: [], team2Units: [], griddimensions: LevelDataInterfaceService.PLAYSPACE_SIZE };
 
       this.database.getLevelProgram(levelid, function (prog: ProgramData) {
 
@@ -104,7 +104,7 @@ export class LevelDataInterfaceService {
       var result: { team1Units: Unit[], team2Units: Unit[], griddimensions: { x: number, y: number } } = {
         team1Units: [],
         team2Units: [testUnit],
-        griddimensions: this.TESTGRID_SIZE
+        griddimensions: LevelDataInterfaceService.TESTGRID_SIZE
       };
 
       var progPromises: Array<Promise<void>> = [];
