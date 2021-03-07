@@ -17,6 +17,9 @@
         <div cdkDrag cdkDropList cdkDropListOrientation="vertical" id="current-code-list" (cdkDropListDropped)="onDrop($event)"
              [cdkDropListData]="currentCode"  #yourCode="cdkDropList" cdkDragBoundary="#code-boundary">
           <mat-card *ngFor="let block of currentCode; let i = index"
+                    [class.executable-block]="!isEndBlock(block) && !isConditional(block) && !isTerminalBlock(block)"
+                    [class.end-code-block]="isEndBlock(block)"
+                    [class.conditional-code-block]="(isConditional(block) || isTerminalBlock(block)) && !isEndBlock(block)"
                     cdkDrag cdkDragDisabled class="code-block-used"  [style.left]="(block.indentationLevel * 50) + 'px'">
             {{block.getLabel()}}
             <div class="conditional-options-wrapper" *ngIf="isConditional(block)">
@@ -61,6 +64,13 @@
             </button>
           </mat-card>
         </div>
+        <button mat-raised-button color="primary" id="export" (click)="exportCode()">
+          Export code
+          <mat-icon>
+            create
+          </mat-icon>
+        </button>
+
       </div>
     </div>
 
@@ -79,19 +89,12 @@
         </div>
       </div>
     </div>
-
-    <button mat-button color="primary" id="export" (click)="exportCode()">
-      Export code
-      <mat-icon>
-        create
-      </mat-icon>
-    </button>
-
   </div>
 
   <div id="right-content">
+    <img src="assets/maps/test%20map.png" id="map" alt="place-holder-map">
     <div id="actual-code" [style.height]="200 + (realCode.length * 15) + 'px'">
-      <p class="comment">// This is your block code as actual javascript code!</p>
+      <p class="code">// This is your block code as actual javascript code!</p>
       <p class="code" *ngFor="let line of realCode" [style.left]="(line.indentationLevel * 10) + 'px'">
         {{line.code}}
       </p>

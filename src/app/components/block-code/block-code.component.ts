@@ -126,6 +126,13 @@ export class BlockCodeComponent implements OnInit {
   isEndBlock(block: BlockCommand) {
     return block.getLabel() === Start.label || block.getLabel() === End.label
   }
+
+  isTerminalBlock(block: BlockCommand){
+
+    return this.blockService.isTerminal(block);
+
+  }
+
   /*
    If the event argument is set to null, we assume you are doing it based on index, otherwise if index is null
    or not specified then we do it based on the event. The reason this is the way it is because when we drag the
