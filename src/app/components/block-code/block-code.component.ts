@@ -15,6 +15,7 @@ import {EmptyPredicate} from '../../models/blockCommands/blocks/predicate/EmptyP
 import {Unit} from '../../models/game/units/Unit';
 import {CodeType, ProgramData, UnitData} from '../../models/database/DatabaseData';
 import {Swordsman} from '../../models/game/units/Swordsman';
+import {Subject} from 'rxjs';
 
 @Component({
   selector: 'app-block-code',
@@ -27,8 +28,6 @@ export class BlockCodeComponent implements OnInit{
 
   predicates: Array<Predicate> = BlockService.predicates;
 
-  draggingCode: boolean = false;
-
   codeTabs: Array<Array<BlockCommand>> = [
 
     [new Start(), new End()],
@@ -37,6 +36,8 @@ export class BlockCodeComponent implements OnInit{
     [new Start(), new End()]
 
   ];
+
+  selected: boolean = false;
 
   currentCode: Array<BlockCommand> = this.codeTabs[0];
 
@@ -53,6 +54,7 @@ export class BlockCodeComponent implements OnInit{
   hasHealthFunc = false;
   hasEnemyNearFunc = false;
   programData: ProgramData;
+  run: Subject<boolean> = new Subject<boolean>();
 
   constructor(private codeService: CodeService, public blockService: BlockService, private dialog: MatDialog) { }
 
@@ -272,14 +274,30 @@ export class BlockCodeComponent implements OnInit{
 
   changeTab(tab){
 
+    this.selected = false;
     this.currentCode = tab;
     this.refreshAllCode();
 
   }
 
-  updateCodeDrag(){
+  updateSelected(){
 
-    this.draggingCode = !this.draggingCode;
+    this.selected = !this.selected;
+
+  }
+
+  addCodeToUnit(unit: Unit){
+
+    if(this.selected){
+      unit.activecode = this.currentCode;
+      this.updateSelected();
+    }
+
+  }
+
+  runTest(){
+
+    this.run.next(true);
 
   }
 

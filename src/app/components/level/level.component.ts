@@ -1,4 +1,4 @@
-import {Component, OnInit, AfterViewInit, Input} from '@angular/core';
+import {Component, OnInit, AfterViewInit, Input, Output, EventEmitter} from '@angular/core';
 import * as createjs from "createjs-module";
 import {SpriteService} from '../../services/game/sprite.service';
 import {Unit} from '../../models/game/units/Unit';
@@ -8,6 +8,7 @@ import {GameLoopServiceService} from '../../services/game/gameloop/game-loop.ser
 import {GameAction} from '../../models/game/GameAction';
 import {LevelDataInterfaceService} from '../../services/game/levelDataInterface/level-data-interface.service';
 import {ProgramData} from '../../models/database/DatabaseData';
+import {Subject} from 'rxjs';
 (<any>window).createjs = createjs;
 let stage;
 // TODO, makes these dynamic
@@ -33,6 +34,10 @@ export class LevelComponent implements OnInit {
   private testMode: boolean;
   @Input()
   private programData: ProgramData;
+  @Input()
+  private run: Subject<boolean>;
+  @Output()
+  private unitClickEvent: EventEmitter<Unit> = new EventEmitter<Unit>();
 
   constructor(private sprite: SpriteService, private code: CodeService, private loopservice: GameLoopServiceService) { }
 
@@ -44,6 +49,17 @@ export class LevelComponent implements OnInit {
     }else{
       throw new Error('display mode and program data must be defined in the component');
     }
+
+    if(this.run !== undefined){
+      this.run.subscribe(_ => {
+
+        if(!this.gameStart){
+          this.startGame();
+        }
+
+      });
+    }
+
   }
 
   loadGridData(programData){
@@ -213,15 +229,16 @@ export class LevelComponent implements OnInit {
   }
 
   onGridClick(event){
-    // console.log(event.pageX - event.target.offsetLeft);
-    // console.log(event.pageY - event.target.offsetTop);
     let location = {
       x: Math.floor((event.pageX - event.target.offsetLeft) / 40),
       y: Math.floor((event.pageY - event.target.offsetTop) / 40)
     };
     console.log(location);
-    console.log(this.grid[location.x][location.y]);
-
+    let unit = this.grid[location.x][location.y];
+    if(unit !== null){
+      this.unitClickEvent.emit(unit);
+      console.log(unit);
+    }
   }
 
 

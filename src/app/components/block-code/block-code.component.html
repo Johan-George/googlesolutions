@@ -16,11 +16,11 @@
       <div id="code-boundary">
         <div cdkDrag cdkDropList cdkDropListOrientation="vertical" id="current-code-list" (cdkDropListDropped)="onDrop($event)"
              [cdkDropListData]="currentCode"  #yourCode="cdkDropList" cdkDragBoundary="#code-boundary"
-             (cdkDragStarted)="updateCodeDrag()" (cdkDragEnded)="updateCodeDrag()">
+             (click)="updateSelected()">
           <mat-card *ngFor="let block of currentCode; let i = index"
                     [class.executable-block]="!isEndBlock(block) && !isConditional(block) && !isTerminalBlock(block)"
                     [class.end-code-block]="isEndBlock(block)"
-                    [class.drag-code]="draggingCode"
+                    [class.code-select]="selected"
                     [class.conditional-code-block]="(isConditional(block) || isTerminalBlock(block)) && !isEndBlock(block)"
                     cdkDrag cdkDragDisabled class="code-block-used"  [style.left]="(block.indentationLevel * 50) + 'px'">
             {{block.getLabel()}}
@@ -73,7 +73,7 @@
           </mat-icon>
         </button>
 
-        <button mat-raised-button id="run">
+        <button mat-raised-button id="run" (click)="runTest()">
           run
         </button>
 
@@ -98,7 +98,8 @@
   </div>
 
   <div id="right-content">
-    <app-level id="map" [testMode]="true" [programData]="programData"></app-level>
+    <app-level id="map" [testMode]="true" [programData]="programData" [run]="run"
+               (unitClickEvent)="addCodeToUnit($event)"></app-level>
     <div id="actual-code" [style.height]="200 + (realCode.length * 15) + 'px'">
       <p class="code">// This is your block code as actual javascript code!</p>
       <p class="code" *ngFor="let line of realCode" [style.left]="(line.indentationLevel * 10) + 'px'">
