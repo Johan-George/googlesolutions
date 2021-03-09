@@ -69,7 +69,6 @@ export class LevelComponent implements OnInit {
       let self = this;
       this.loopservice.loadTestData(programData).then(result => {
 
-
         self.gameInit();
 
       });
@@ -230,10 +229,9 @@ export class LevelComponent implements OnInit {
 
   onGridClick(event){
     let location = {
-      x: Math.floor((event.pageX - event.target.offsetLeft) / 40),
-      y: Math.floor((event.pageY - event.target.offsetTop) / 40)
+      x: Math.floor((event.pageY - event.target.offsetTop) / 40),
+      y: Math.floor((event.pageX - event.target.offsetLeft) / 40)
     };
-    console.log(location);
     let unit = this.grid[location.x][location.y];
     if(unit !== null){
       this.unitClickEvent.emit(unit);
