@@ -54,7 +54,9 @@ export class BlockCodeComponent implements OnInit{
   hasHealthFunc = false;
   hasEnemyNearFunc = false;
   programData: ProgramData;
+  tabIndex: number = 1;
   run: Subject<boolean> = new Subject<boolean>();
+  unitCodeChange: Subject<{unit: Unit, index: number}> = new Subject<{unit: Unit; index: number}>();
 
   constructor(private codeService: CodeService, public blockService: BlockService, private dialog: MatDialog) { }
 
@@ -272,10 +274,12 @@ export class BlockCodeComponent implements OnInit{
 
   }
 
-  changeTab(tab){
+  changeTab(tab, index){
 
     this.selected = false;
     this.currentCode = tab;
+    this.tabIndex = index + 1;
+    console.log(this.tabIndex);
     this.refreshAllCode();
 
   }
@@ -291,6 +295,7 @@ export class BlockCodeComponent implements OnInit{
     if(this.selected){
       unit.activecode = this.currentCode;
       this.updateSelected();
+      this.unitCodeChange.next({unit: unit, index: this.tabIndex});
     }
 
   }

@@ -6,7 +6,7 @@
 
     <div id="top-left-content">
       <div class="tabs">
-        <div *ngFor="let tab of codeTabs; let i = index" class="tab tab-not-selected" (click)="changeTab(tab)"
+        <div *ngFor="let tab of codeTabs; let i = index" class="tab tab-not-selected" (click)="changeTab(tab, i)"
              [class.tab-not-selected]="tab !== currentCode" [class.tab-selected]="tab === currentCode">
           <h3>
             {{i + 1}}
@@ -98,7 +98,7 @@
   </div>
 
   <div id="right-content">
-    <app-level id="map" [testMode]="true" [programData]="programData" [run]="run"
+    <app-level id="map" [testMode]="true" [programData]="programData" [run]="run" [unitCodeChange]="unitCodeChange"
                (unitClickEvent)="addCodeToUnit($event)"></app-level>
     <div id="actual-code" [style.height]="200 + (realCode.length * 15) + 'px'">
       <p class="code">// This is your block code as actual javascript code!</p>

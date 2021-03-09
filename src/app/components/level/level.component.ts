@@ -30,12 +30,15 @@ export class LevelComponent implements OnInit {
   private gameStart = false;
   public width = canvas_width;
   public height = canvas_height;
+  private codeIndexGraphics: Array<{number: createjs.Text, location: {x: number, y: number}}> = [];
   @Input()
   private testMode: boolean;
   @Input()
   private programData: ProgramData;
   @Input()
   private run: Subject<boolean>;
+  @Input()
+  private unitCodeChange: Subject<{unit: Unit, index: number}>;
   @Output()
   private unitClickEvent: EventEmitter<Unit> = new EventEmitter<Unit>();
 
@@ -56,6 +59,14 @@ export class LevelComponent implements OnInit {
         if(!this.gameStart){
           this.startGame();
         }
+
+      });
+    }
+    if(this.unitCodeChange !== undefined && this.testMode){
+      console.log('HERE');
+      this.unitCodeChange.subscribe(data => {
+
+        this.changeCodeIndexOfUnit(data.unit, data.index);
 
       });
     }
@@ -135,6 +146,15 @@ export class LevelComponent implements OnInit {
      */
     unit.sprite.x = (unit.location.x * SpriteConstants.spriteSize) + half_sprite_length;
     unit.sprite.y = (unit.location.y * SpriteConstants.spriteSize) + half_sprite_length;
+    if(this.testMode && !this.gameStart){
+      let number = new createjs.Text(`${unit.testCodeIndex !== undefined ? unit.testCodeIndex: ''}`,
+        "13px Roboto", "#7A3DB8");
+      number.x = unit.sprite.x + 10;
+      number.y = unit.sprite.y + 8;
+      let numberRep = {number: number, location: unit.location}
+      this.codeIndexGraphics.push(numberRep);
+      stage.addChild(number);
+    }
 
   }
 
@@ -217,6 +237,11 @@ export class LevelComponent implements OnInit {
   startGame(){
 
     this.step();
+    if(this.codeIndexGraphics.length !== 0){
+      for(let numGraphic of this.codeIndexGraphics){
+        stage.removeChild(numGraphic.number);
+      }
+    }
     this.gameStart = true;
 
   }
@@ -237,6 +262,22 @@ export class LevelComponent implements OnInit {
       this.unitClickEvent.emit(unit);
       console.log(unit);
     }
+  }
+
+  changeCodeIndexOfUnit(unit: Unit, index: number){
+
+    debugger;
+    unit.testCodeIndex = index;
+    for(let numRep of this.codeIndexGraphics){
+
+      if(numRep.location === unit.location){
+
+        numRep.number.text = `${index}`;
+
+      }
+
+    }
+
   }
 
 
