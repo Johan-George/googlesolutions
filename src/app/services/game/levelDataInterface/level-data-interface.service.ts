@@ -95,11 +95,11 @@ export class LevelDataInterfaceService {
   getGameInfoTesting(programData: ProgramData): Promise<{ team1Units: Unit[], team2Units: Unit[], griddimensions: { x: number, y: number } }> {
 
     return new Promise<{ team1Units: Unit[], team2Units: Unit[], griddimensions: { x: number, y: number } }>((resolutionFunc, rejectionFunc) => {
-      var testUnit: Unit = new Unit();
+      var testUnit: Unit = new Archer();
       testUnit.codeType = CodeType.BLOCK;
       testUnit.activecode = [new Wait()];
       testUnit.team = 2;
-      testUnit.location = { x: 19, y: 19 };
+      testUnit.location = { x: 9, y: 9 };
 
       var result: { team1Units: Unit[], team2Units: Unit[], griddimensions: { x: number, y: number } } = {
         team1Units: [],
@@ -150,7 +150,7 @@ export class LevelDataInterfaceService {
       case Archer.dbid:
         return new Archer();
       case Swordsman.dbid:
-        return new Swordsman;
+        return new Swordsman();
       default:
         return new Unit();
     }

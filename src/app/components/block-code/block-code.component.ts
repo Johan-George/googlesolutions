@@ -1,25 +1,27 @@
-import { Component, OnInit } from '@angular/core';
-import { transferArrayItem } from '@angular/cdk/drag-drop';
-import { MatDialog } from '@angular/material/dialog';
-import { BlockCommand, Predicate } from 'src/app/models/blockCommands/block-command';
-import { End } from 'src/app/models/blockCommands/blocks/terminal/End';
-import { Start } from 'src/app/models/blockCommands/blocks/terminal/Start';
-import { BlockService } from 'src/app/services/program-construction/block.service';
-import { CodeService } from 'src/app/services/program-construction/code.service';
-import { ErrorComponent } from '../error/error.component';
-import { Else } from 'src/app/models/blockCommands/blocks/conditional/Else';
+import {Component, OnInit} from '@angular/core';
+import {transferArrayItem} from '@angular/cdk/drag-drop';
+import {MatDialog} from '@angular/material/dialog';
+import {BlockCommand, Predicate} from 'src/app/models/blockCommands/block-command';
+import {End} from 'src/app/models/blockCommands/blocks/terminal/End';
+import {Start} from 'src/app/models/blockCommands/blocks/terminal/Start';
+import {BlockService} from 'src/app/services/program-construction/block.service';
+import {CodeService} from 'src/app/services/program-construction/code.service';
+import {ErrorComponent} from '../error/error.component';
+import {Else} from 'src/app/models/blockCommands/blocks/conditional/Else';
 import {enemyNearFunc, healthBelow30PercentFunc, RealCodeRepr} from '../../models/blockCommands/actual-code/RealCodeRepr';
 import {HealthBelow30Percent} from '../../models/blockCommands/blocks/predicate/HealthBelow30Percent';
 import {EnemyNear} from '../../models/blockCommands/blocks/predicate/EnemyNear';
 import {EmptyPredicate} from '../../models/blockCommands/blocks/predicate/EmptyPredicate';
 import {Unit} from '../../models/game/units/Unit';
+import {CodeType, ProgramData, UnitData} from '../../models/database/DatabaseData';
+import {Swordsman} from '../../models/game/units/Swordsman';
 
 @Component({
   selector: 'app-block-code',
   templateUrl: './block-code.component.html',
   styleUrls: ['./block-code.component.css']
 })
-export class BlockCodeComponent implements OnInit {
+export class BlockCodeComponent implements OnInit{
 
   codeBlocks: Array<BlockCommand> = BlockService.placeableBlocks;
 
@@ -50,13 +52,24 @@ export class BlockCodeComponent implements OnInit {
   extraLinesAdded: number = 3;
   hasHealthFunc = false;
   hasEnemyNearFunc = false;
+  programData: ProgramData;
 
   constructor(private codeService: CodeService, public blockService: BlockService, private dialog: MatDialog) { }
 
   ngOnInit(): void {
 
+    this.programData = new ProgramData();
+    this.programData.Name = 'Test';
+    let unit = new UnitData();
+    unit.CodeBlocks = ['RWFzdA=='];
+    unit.CodeType = CodeType.BLOCK;
+    unit.TroopType = Swordsman.dbid;
+    unit.location = {x: 1, y:1};
+    this.programData.Units = [unit];
     this.initStarterCode();
+
   }
+
 
   onDrop(event) {
 

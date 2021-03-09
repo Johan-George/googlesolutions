@@ -1,4 +1,4 @@
-import { Component, OnInit, AfterViewInit } from '@angular/core';
+import {Component, OnInit, AfterViewInit, Input} from '@angular/core';
 import * as createjs from "createjs-module";
 import {SpriteService} from '../../services/game/sprite.service';
 import {Unit} from '../../models/game/units/Unit';
@@ -7,6 +7,7 @@ import {CodeService} from '../../services/program-construction/code.service';
 import {GameLoopServiceService} from '../../services/game/gameloop/game-loop.service';
 import {GameAction} from '../../models/game/GameAction';
 import {LevelDataInterfaceService} from '../../services/game/levelDataInterface/level-data-interface.service';
+import {ProgramData} from '../../models/database/DatabaseData';
 (<any>window).createjs = createjs;
 let stage;
 // TODO, makes these dynamic
@@ -28,42 +29,85 @@ export class LevelComponent implements OnInit {
   private gameStart = false;
   public width = canvas_width;
   public height = canvas_height;
+  @Input()
+  private testMode: boolean;
+  @Input()
+  private programData: ProgramData;
 
   constructor(private sprite: SpriteService, private code: CodeService, private loopservice: GameLoopServiceService) { }
 
   ngOnInit(): void {
+    if(this.testMode !== undefined && this.programData !== undefined){
+
+      this.loadGridData(this.programData);
+
+    }else{
+      throw new Error('display mode and program data must be defined in the component');
+    }
+  }
+
+  loadGridData(programData){
+
+    if(this.testMode){
+
+      let self = this;
+      this.loopservice.loadTestData(programData).then(result => {
+
+
+        self.gameInit();
+
+      });
+
+    }else{
+      //run the game
+      tiles_on_x = LevelDataInterfaceService.PLAYSPACE_SIZE.x;
+      tiles_on_y = LevelDataInterfaceService.PLAYSPACE_SIZE.y
+      canvas_width = tiles_on_x * 40;
+      canvas_height = tiles_on_y * 40;
+      this.width = canvas_width;
+      this.height = canvas_height;
+      let self = this;
+      this.loopservice.loadData("1","3").then(result => {
+
+        self.gameInit();
+
+      });
+
+    }
+
+  }
+
+  gameInit(){
     var self = this;
-    //run the game
-    this.loopservice.loadData("1","3").then(result => {
-      if(this.loopservice.prepLoop()) {
-        self.grid = self.loopservice.grid;
-        let imageQueue = SpriteService.loadSpriteSheets();
-        stage = new createjs.Stage('battlegrounds');
-        imageQueue.on('complete', () => {
-          let shape = new createjs.Shape();
-          shape.graphics.beginBitmapFill(imageQueue.getResult(SpriteConstants.testMap)).drawRect(0, 0, canvas_width, canvas_height);
-          stage.addChild(shape);
-          this.drawGrid();
-          for(let row of self.grid){
-            this.sprite.initSpritesForAll(row, imageQueue);
-            self.placeAllOnScreen(row);
-          }
+    if(this.loopservice.prepLoop()) {
+      self.grid = self.loopservice.grid;
+      let imageQueue = SpriteService.loadSpriteSheets();
+      stage = new createjs.Stage('battlegrounds');
+      imageQueue.on('complete', () => {
+        let shape = new createjs.Shape();
+        shape.graphics.beginBitmapFill(imageQueue.getResult(SpriteConstants.testMap)).drawRect(0, 0, canvas_width, canvas_height);
+        stage.addChild(shape);
+        this.drawGrid();
+        for(let row of self.grid){
+          this.sprite.initSpritesForAll(row, imageQueue);
+          self.placeAllOnScreen(row);
+        }
 
-        })
-        let tickCount = 0;
-        createjs.Ticker.on('tick', _ => {
+      })
+      let tickCount = 0;
+      createjs.Ticker.on('tick', _ => {
 
-          stage.update();
-          tickCount += 1;
-          if(this.lastAction !== undefined && !(this.lastAction.actionId === "GameEnd2" || this.lastAction.actionId === "GameEnd1") && this.gameStart
-            && tickCount % 20 === 0 && this.loading === 'done'){
-            this.step();
-          }
+        stage.update();
+        tickCount += 1;
+        if(this.lastAction !== undefined && !(this.lastAction.actionId === "GameEnd2" || this.lastAction.actionId === "GameEnd1") && this.gameStart
+          && tickCount % 20 === 0 && this.loading === 'done'){
+          this.step();
+        }
 
-        });
-        this.loading = "done";
-      }
-    });
+      });
+      this.loading = "done";
+    }
+
   }
 
   placeOnScreen(unit: Unit){
@@ -165,6 +209,18 @@ export class LevelComponent implements OnInit {
   placeOnGrid(unit){
 
     this.grid[unit.location.x][unit.location.y] = unit;
+
+  }
+
+  onGridClick(event){
+    // console.log(event.pageX - event.target.offsetLeft);
+    // console.log(event.pageY - event.target.offsetTop);
+    let location = {
+      x: Math.floor((event.pageX - event.target.offsetLeft) / 40),
+      y: Math.floor((event.pageY - event.target.offsetTop) / 40)
+    };
+    console.log(location);
+    console.log(this.grid[location.x][location.y]);
 
   }
 
