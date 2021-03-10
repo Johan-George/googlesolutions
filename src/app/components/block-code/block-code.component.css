@@ -114,8 +114,8 @@
 .tabs{
 
   display: flex;
+  height: 20%;
   margin: 0 auto;
-  height: 15%;
   width: 95%;
   flex-direction: row;
 
@@ -158,20 +158,39 @@
 }
 
 #export{
-  display: block;
-  position: relative;
-  top: 60%;
-  left: 10px;
+
   font-family: codefont;
+  font-size: 12px;
+  margin-right: 5px;
+  flex-basis: 20%;
+  margin-left: auto;
+  text-align: center;
+  margin-bottom: 5px;
+  overflow-wrap: break-word;
 }
 
 #run{
 
   font-family: codefont;
+  font-size: 12px;
+  flex-basis: 10%;
+  text-align: center;
+  margin-bottom: 5px;
+
+}
+
+
+.run-test{
+
   background-color: #2cdd3e;
   color: #038C1F;
-  top: 50%;
-  left: 90%;
+
+}
+
+.test-running{
+
+  background-color: red;
+  color: #A4000F;
 
 }
 

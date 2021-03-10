@@ -66,16 +66,6 @@
             </button>
           </mat-card>
         </div>
-        <button mat-raised-button color="primary" id="export" (click)="exportCode()">
-          Export code
-          <mat-icon>
-            create
-          </mat-icon>
-        </button>
-
-        <button mat-raised-button id="run" (click)="runTest()">
-          run
-        </button>
 
       </div>
     </div>
@@ -86,6 +76,13 @@
              class="tab" [attr.id]="cat.type" [class.tab-selected]="cat.selected" (click)="updateCategorySelected(i)">
           <h3>{{cat.type}}</h3>
         </div>
+        <button mat-raised-button color="primary" id="export" (click)="exportCode()">
+          Export code
+        </button>
+        <button mat-raised-button id="run" (click)="runOrResetTest()"
+                [class.run-test]="!gameRun" [class.test-running]="gameRun">
+          {{gameRun ? 'reset' : 'run'}}
+        </button>
       </div>
       <div id="card-list-boundary">
         <div cdkDropList cdkDropListOrientation="horizontal" id="card-list" (cdkDropListDropped)="onDrop($event)"

@@ -31,6 +31,7 @@ export class LevelComponent implements OnInit {
   public width = canvas_width;
   public height = canvas_height;
   private codeIndexGraphics: Array<{number: createjs.Text, location: {x: number, y: number}}> = [];
+  private tickCount = 0;
   @Input()
   private testMode: boolean;
   @Input()
@@ -58,18 +59,30 @@ export class LevelComponent implements OnInit {
 
         if(!this.gameStart){
           this.startGame();
+        }else{
+          this.resetGame();
         }
 
       });
     }
     if(this.unitCodeChange !== undefined && this.testMode){
-      console.log('HERE');
       this.unitCodeChange.subscribe(data => {
 
         this.changeCodeIndexOfUnit(data.unit, data.index);
 
       });
     }
+
+    createjs.Ticker.on('tick', _ => {
+
+      stage.update();
+      this.tickCount += 1;
+      if(this.lastAction !== undefined && !(this.lastAction.actionId === "GameEnd2" || this.lastAction.actionId === "GameEnd1") && this.gameStart
+        && this.tickCount % 20 === 0 && this.loading === 'done'){
+        this.step();
+      }
+
+    });
 
   }
 
@@ -120,17 +133,6 @@ export class LevelComponent implements OnInit {
         }
 
       })
-      let tickCount = 0;
-      createjs.Ticker.on('tick', _ => {
-
-        stage.update();
-        tickCount += 1;
-        if(this.lastAction !== undefined && !(this.lastAction.actionId === "GameEnd2" || this.lastAction.actionId === "GameEnd1") && this.gameStart
-          && tickCount % 20 === 0 && this.loading === 'done'){
-          this.step();
-        }
-
-      });
       this.loading = "done";
     }
 
@@ -245,6 +247,14 @@ export class LevelComponent implements OnInit {
     this.gameStart = true;
 
   }
+  resetGame(){
+
+    this.gameStart = false;
+    this.loadGridData(this.programData);
+    this.tickCount = 0;
+    this.lastAction = undefined;
+
+  }
 
   placeOnGrid(unit){
 
@@ -266,7 +276,6 @@ export class LevelComponent implements OnInit {
 
   changeCodeIndexOfUnit(unit: Unit, index: number){
 
-    debugger;
     unit.testCodeIndex = index;
     for(let numRep of this.codeIndexGraphics){
 

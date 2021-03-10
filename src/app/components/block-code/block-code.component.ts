@@ -56,6 +56,7 @@ export class BlockCodeComponent implements OnInit{
   programData: ProgramData;
   tabIndex: number = 1;
   run: Subject<boolean> = new Subject<boolean>();
+  gameRun: boolean = false;
   unitCodeChange: Subject<{unit: Unit, index: number}> = new Subject<{unit: Unit; index: number}>();
 
   constructor(private codeService: CodeService, public blockService: BlockService, private dialog: MatDialog) { }
@@ -300,9 +301,11 @@ export class BlockCodeComponent implements OnInit{
 
   }
 
-  runTest(){
+  runOrResetTest(){
 
     this.run.next(true);
+    this.gameRun = !this.gameRun;
+    console.log(this.gameRun);
 
   }
 
