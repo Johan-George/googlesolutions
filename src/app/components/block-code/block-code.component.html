@@ -54,7 +54,7 @@
                 </mat-checkbox>
               </div>
 
-              <button mat-raised-button color="primary" (click)="addCondition(block.conditions)" class="add-condition">
+              <button mat-raised-button (click)="addCondition(block.conditions)" class="add-condition">
                 add condition
               </button>
 
@@ -71,13 +71,13 @@
     </div>
 
     <div id="bottom-left-content">
-      <div class="tabs">
+      <div class="tabs" id="lower-tabs">
         <div *ngFor="let cat of blockCategories; let i = index" [class.tab-not-selected]="!cat.selected"
              class="tab" [attr.id]="cat.type" [class.tab-selected]="cat.selected" (click)="updateCategorySelected(i)">
           <h3>{{cat.type}}</h3>
         </div>
         <button mat-raised-button color="primary" id="export" (click)="exportCode()">
-          Export code
+          save
         </button>
         <button mat-raised-button id="run" (click)="runOrResetTest()"
                 [class.run-test]="!gameRun" [class.test-running]="gameRun">

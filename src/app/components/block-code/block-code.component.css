@@ -147,7 +147,14 @@
 .tab h3{
 
   font-family: codefont;
-  font-size: 10px;
+  font-size: 11px;
+
+}
+
+#lower-tabs .tab h3{
+
+  position: relative;
+  top: 5px;
 
 }
 
@@ -162,10 +169,11 @@
   font-family: codefont;
   font-size: 12px;
   margin-right: 5px;
-  flex-basis: 20%;
+  flex-basis: 10%;
   margin-left: auto;
   text-align: center;
   margin-bottom: 5px;
+  background-color: #10C6F9;
   overflow-wrap: break-word;
 }
 
