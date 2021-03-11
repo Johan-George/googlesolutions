@@ -1,48 +1,80 @@
-import { Component, OnInit } from '@angular/core';
-import { transferArrayItem } from '@angular/cdk/drag-drop';
-import { MatDialog } from '@angular/material/dialog';
-import { BlockCommand, Predicate } from 'src/app/models/blockCommands/block-command';
-import { End } from 'src/app/models/blockCommands/blocks/terminal/End';
-import { Start } from 'src/app/models/blockCommands/blocks/terminal/Start';
-import { BlockService } from 'src/app/services/program-construction/block.service';
-import { CodeService } from 'src/app/services/program-construction/code.service';
-import { ErrorComponent } from '../error/error.component';
-import { Else } from 'src/app/models/blockCommands/blocks/conditional/Else';
+import {Component, OnInit} from '@angular/core';
+import {transferArrayItem} from '@angular/cdk/drag-drop';
+import {MatDialog} from '@angular/material/dialog';
+import {BlockCommand, Predicate} from 'src/app/models/blockCommands/block-command';
+import {End} from 'src/app/models/blockCommands/blocks/terminal/End';
+import {Start} from 'src/app/models/blockCommands/blocks/terminal/Start';
+import {BlockService} from 'src/app/services/program-construction/block.service';
+import {CodeService} from 'src/app/services/program-construction/code.service';
+import {ErrorComponent} from '../error/error.component';
+import {Else} from 'src/app/models/blockCommands/blocks/conditional/Else';
 import {enemyNearFunc, healthBelow30PercentFunc, RealCodeRepr} from '../../models/blockCommands/actual-code/RealCodeRepr';
 import {HealthBelow30Percent} from '../../models/blockCommands/blocks/predicate/HealthBelow30Percent';
 import {EnemyNear} from '../../models/blockCommands/blocks/predicate/EnemyNear';
 import {EmptyPredicate} from '../../models/blockCommands/blocks/predicate/EmptyPredicate';
 import {Unit} from '../../models/game/units/Unit';
+import {CodeType, ProgramData, UnitData} from '../../models/database/DatabaseData';
+import {Swordsman} from '../../models/game/units/Swordsman';
+import {Subject} from 'rxjs';
 
 @Component({
   selector: 'app-block-code',
   templateUrl: './block-code.component.html',
   styleUrls: ['./block-code.component.css']
 })
-export class BlockCodeComponent implements OnInit {
+export class BlockCodeComponent implements OnInit{
 
   codeBlocks: Array<BlockCommand> = BlockService.placeableBlocks;
 
   predicates: Array<Predicate> = BlockService.predicates;
 
-  currentCode: Array<BlockCommand> = [
+  codeTabs: Array<Array<BlockCommand>> = [
 
-    new Start(),
-    new End()
+    [new Start(), new End()],
+    [new Start(), new End()],
+    [new Start(), new End()],
+    [new Start(), new End()]
 
   ];
+
+  selected: boolean = false;
+
+  currentCode: Array<BlockCommand> = this.codeTabs[0];
+
+  blockCategories: Array<any> = [
+
+    {type: 'Action', selected: true},
+    {type:'Conditional', selected: false}
+
+  ];
+  selectedCategory: any = this.blockCategories[0];
 
   realCode: Array<RealCodeRepr> = this.currentCode.map(block => new RealCodeRepr(block));
   extraLinesAdded: number = 3;
   hasHealthFunc = false;
   hasEnemyNearFunc = false;
+  programData: ProgramData;
+  tabIndex: number = 1;
+  run: Subject<boolean> = new Subject<boolean>();
+  gameRun: boolean = false;
+  unitCodeChange: Subject<{unit: Unit, index: number}> = new Subject<{unit: Unit; index: number}>();
 
   constructor(private codeService: CodeService, public blockService: BlockService, private dialog: MatDialog) { }
 
   ngOnInit(): void {
 
+    this.programData = new ProgramData();
+    this.programData.Name = 'Test';
+    let unit = new UnitData();
+    unit.CodeBlocks = ['RWFzdA=='];
+    unit.CodeType = CodeType.BLOCK;
+    unit.TroopType = Swordsman.dbid;
+    unit.location = {x: 1, y:1};
+    this.programData.Units = [unit];
     this.initStarterCode();
+
   }
+
 
   onDrop(event) {
 
@@ -114,6 +146,13 @@ export class BlockCodeComponent implements OnInit {
   isEndBlock(block: BlockCommand) {
     return block.getLabel() === Start.label || block.getLabel() === End.label
   }
+
+  isTerminalBlock(block: BlockCommand){
+
+    return this.blockService.isTerminal(block);
+
+  }
+
   /*
    If the event argument is set to null, we assume you are doing it based on index, otherwise if index is null
    or not specified then we do it based on the event. The reason this is the way it is because when we drag the
@@ -200,6 +239,73 @@ export class BlockCodeComponent implements OnInit {
   refreshCode(index){
 
     this.realCode[index + this.extraLinesAdded].code = this.currentCode[index].getAsCode();
+
+  }
+
+  refreshAllCode(){
+
+    this.realCode = [];
+    for(let block of this.currentCode){
+      this.realCode.push(new RealCodeRepr(block));
+    }
+    this.initStarterCode();
+
+  }
+
+  updateCategorySelected(index){
+
+    for(let category of this.blockCategories){
+
+      category.selected = false;
+
+    }
+    this.blockCategories[index].selected = true;
+    this.selectedCategory = this.blockCategories[index];
+
+
+  }
+
+  getBlocksOfSelectedCategory(){
+
+    if(this.selectedCategory === this.blockCategories[0]){
+      return BlockService.actionBlocks;
+    }else{
+      return BlockService.conditionalBlocks;
+    }
+
+  }
+
+  changeTab(tab, index){
+
+    this.selected = false;
+    this.currentCode = tab;
+    this.tabIndex = index + 1;
+    console.log(this.tabIndex);
+    this.refreshAllCode();
+
+  }
+
+  updateSelected(){
+
+    this.selected = !this.selected;
+
+  }
+
+  addCodeToUnit(unit: Unit){
+
+    if(this.selected){
+      unit.activecode = this.currentCode;
+      this.updateSelected();
+      this.unitCodeChange.next({unit: unit, index: this.tabIndex});
+    }
+
+  }
+
+  runOrResetTest(){
+
+    this.run.next(true);
+    this.gameRun = !this.gameRun;
+    console.log(this.gameRun);
 
   }
 

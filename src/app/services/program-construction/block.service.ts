@@ -43,6 +43,16 @@ export class BlockService {
     new EndElse(), new EndElseIf(), new TextAction2(), new TextAction1()
   ];
 
+  static actionBlocks: Array<BlockCommand> = [
+    new North(), new South(), new East(),
+    new West(), new Wait(), new Attack()
+  ];
+
+  static conditionalBlocks: Array<BlockCommand> = [
+
+    new If(), new EndIf(), new Else(), new ElseIf(),
+    new EndElse(), new EndElseIf()
+  ];
   /**
    * Array representing all BlockCommands
    */

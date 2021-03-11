@@ -358,9 +358,9 @@ export class GameLoopServiceService {
   private create2DArray(x: number, y: number): Unit[][] {
     var arr: Unit[][] = [];
 
-    for (var row = 0; row < y; row++) {
+    for (var row = 0; row < x; row++) {
       arr[row] = [];
-      for (var col = 0; col < x; col++) {
+      for (var col = 0; col < y; col++) {
         arr[row][col] = null;
       }
     }
