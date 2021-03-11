@@ -48,6 +48,7 @@ export class Unit {
   sprite: createjs.Sprite;
   walk_frames: Array<number>;
   attack_frames: Array<number>;
+  testCodeIndex: number;
 
   constructor() {}
 
