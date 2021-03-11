@@ -139,7 +139,7 @@ export class GameLoopServiceService {
     var self = this;
     return Promise.race([this.baseStepPromise(), new Promise<GameAction>((resolve, reject) => {
       setTimeout(function(){
-        resolve(new GameAction("NoEvent", null, null, false));
+        resolve(new GameAction("RanOutOfTimeError", ((this.isTeam1Active) ? this.team1units : this.team2units)[this.unitIndex], null, false));
 
         if(self.workerRunning != null) {
           self.workerRunning.terminate();
