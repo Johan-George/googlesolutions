@@ -15,6 +15,7 @@ import { MatCheckboxModule } from '@angular/material/checkbox';
 import { MatRadioModule } from '@angular/material/radio';
 import { FormsModule } from '@angular/forms';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
+import { MatTableModule } from '@angular/material/table';
 
 import { AngularFireModule } from '@angular/fire';
 import { AngularFirestoreModule } from '@angular/fire/firestore';
@@ -28,9 +29,9 @@ import { TestComponent } from './components/test/test.component';
 import { LevelComponent } from './components/level/level.component';
 import { PageheaderComponent } from './components/pageheader/pageheader.component';
 import { ProfilepagesComponent } from './components/profilepages/profilepages.component';
-//import { NewUserPageComponent } from './components/new-user-page/new-user-page.component';
 import { DocsComponent } from './components/docs/docs.component';
 import { LevelselectComponent } from './components/levelselect/levelselect.component';
+import { LevelplayComponent } from './components/levelplay/levelplay.component';
 
 const firebaseConfig = {
   apiKey: "AIzaSyB25gxYu7PkMvnjKhisCzPP62grU_OEMLU",
@@ -52,7 +53,8 @@ const firebaseConfig = {
     PageheaderComponent,
     ProfilepagesComponent,
     DocsComponent,
-    LevelselectComponent
+    LevelselectComponent,
+    LevelplayComponent
   ],
   imports: [
     BrowserModule,
@@ -74,7 +76,8 @@ const firebaseConfig = {
     MatCheckboxModule,
     MatRadioModule,
     FormsModule,
-    MatProgressSpinnerModule
+    MatProgressSpinnerModule,
+    MatTableModule
   ],
   providers: [],
   bootstrap: [AppComponent]
