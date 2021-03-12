@@ -16,6 +16,8 @@ import {CodeType, ProgramData, UnitData} from '../../models/database/DatabaseDat
 import {Swordsman} from '../../models/game/units/Swordsman';
 import {Subject} from 'rxjs';
 import {ErrorComponent} from '../error/error.component';
+import {SetNameComponent} from '../set-name/set-name.component';
+import {FirestoreDatabaseService} from '../../services/database/firestore-database.service';
 
 @Component({
   selector: 'app-block-code',
@@ -62,7 +64,8 @@ export class BlockCodeComponent implements OnInit{
   unitCodeChange: Subject<{unit: Unit, index: number}> = new Subject<{unit: Unit; index: number}>();
   saveFormationsAndCode: Subject<boolean> = new Subject<boolean>();
 
-  constructor(private codeService: CodeService, public blockService: BlockService, private dialog: MatDialog) { }
+  constructor(private codeService: CodeService, public blockService: BlockService, private dialog: MatDialog,
+              private db: FirestoreDatabaseService) { }
 
   ngOnInit(): void {
 
@@ -139,7 +142,27 @@ export class BlockCodeComponent implements OnInit{
         }
       }
     }
-    console.log(this.programData);
+    let data = {
+
+      name: ''
+
+    };
+    let name_dia = this.dialog.open(SetNameComponent, {
+
+      data: data
+
+    });
+
+    name_dia.afterClosed().subscribe(_ => {
+
+      this.db.setProgramData(data.name, this.programData).then(
+        _ => {
+          console.log(data.name);
+        }
+      );
+
+    });
+
 
   }
 
