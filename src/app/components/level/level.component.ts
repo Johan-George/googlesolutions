@@ -40,8 +40,12 @@ export class LevelComponent implements OnInit {
   private run: Subject<boolean>;
   @Input()
   private unitCodeChange: Subject<{unit: Unit, index: number}>;
+  @Input()
+  private saveFormationsAndCode: Subject<boolean>;
   @Output()
   private unitClickEvent: EventEmitter<Unit> = new EventEmitter<Unit>();
+  @Output()
+  private saveStateEvent: EventEmitter<Unit[][]> = new EventEmitter<Unit[][]>();
 
   constructor(private sprite: SpriteService, private code: CodeService, private loopservice: GameLoopServiceService) { }
 
@@ -71,6 +75,19 @@ export class LevelComponent implements OnInit {
         this.changeCodeIndexOfUnit(data.unit, data.index);
 
       });
+    }
+
+    if(this.saveFormationsAndCode !== undefined){
+      this.saveFormationsAndCode.subscribe(_ => {
+
+        this.saveStateEvent.emit(this.grid);
+
+      });
+    }else{
+      if(this.testMode){
+        throw new Error('Save Formation And Code Subject must be defined in test mode');
+      }
+
     }
 
     createjs.Ticker.on('tick', _ => {
@@ -151,11 +168,75 @@ export class LevelComponent implements OnInit {
     if(this.testMode && !this.gameStart){
       let number = new createjs.Text(`${unit.testCodeIndex !== undefined ? unit.testCodeIndex: ''}`,
         "13px Roboto", "#7A3DB8");
-      number.x = unit.sprite.x + 10;
-      number.y = unit.sprite.y + 8;
+      let numberOffSetX = 10;
+      let numberOffSetY = 8;
+      number.x = unit.sprite.x + numberOffSetX;
+      number.y = unit.sprite.y + numberOffSetY;
       let numberRep = {number: number, location: unit.location}
       this.codeIndexGraphics.push(numberRep);
       stage.addChild(number);
+      // make the unit draggable to set formation
+      unit.sprite.on('pressmove', e => {
+
+        if(!this.gameStart && unit.team === 1){
+          // @ts-ignore
+          e.target.x = e.stageX;
+          // @ts-ignore
+          e.target.y = e.stageY;
+        }
+
+      });
+      // snap the dragged unit to the center of the nearest tile
+      unit.sprite.on('pressup', e => {
+
+        if(!this.gameStart && unit.team === 1){
+
+          //@ts-ignore
+          let sprite = e.target;
+          // @ts-ignore
+          let new_x = (Math.floor(e.stageX / 40) * 40) + half_sprite_length;
+          new_x = new_x < 400 ? new_x : 360 + half_sprite_length;
+          // @ts-ignore
+          let new_y = (Math.floor(e.stageY / 40) * 40) + half_sprite_length;
+
+          let new_location = {
+            x: Math.floor((new_x - half_sprite_length) / SpriteConstants.spriteSize),
+            y: Math.floor((new_y - half_sprite_length) / SpriteConstants.spriteSize)
+          }
+
+          console.log(new_location);
+          if(this.grid[new_location.x][new_location.y] === null){
+
+            this.grid[unit.location.x][unit.location.y] = null;
+            for(let numRep of this.codeIndexGraphics){
+
+              if(numRep.location === unit.location){
+
+                numRep.number.x = new_x + numberOffSetX;
+                numRep.number.y = new_y + numberOffSetY;
+                numRep.location = new_location;
+                break;
+
+              }
+
+            }
+            unit.location = new_location;
+            this.grid[unit.location.x][unit.location.y] = unit;
+            sprite.x = new_x;
+            sprite.y = new_y;
+
+          }else{
+
+            unit.sprite.x = (unit.location.x * SpriteConstants.spriteSize) + half_sprite_length;
+            unit.sprite.y = (unit.location.y * SpriteConstants.spriteSize) + half_sprite_length;
+
+          }
+          console.log(this.grid[unit.location.x][unit.location.y]);
+
+        }
+
+      });
+
     }
 
   }
@@ -202,6 +283,14 @@ export class LevelComponent implements OnInit {
       }
 
     }
+    let shape = new createjs.Shape();
+    shape.graphics.setStrokeDash([2,2]);
+    shape.graphics.setStrokeStyle(1)
+      .beginStroke('red')
+      .moveTo(400, 0)
+      .lineTo(400, canvas_height)
+      .endStroke();
+    stage.addChild(shape);
 
   }
 
@@ -264,13 +353,12 @@ export class LevelComponent implements OnInit {
 
   onGridClick(event){
     let location = {
-      x: Math.floor((event.pageY - event.target.offsetTop) / 40),
-      y: Math.floor((event.pageX - event.target.offsetLeft) / 40)
+      x: Math.floor((event.pageX - event.target.offsetLeft) / 40),
+      y: Math.floor((event.pageY - event.target.offsetTop) / 40)
     };
     let unit = this.grid[location.x][location.y];
-    if(unit !== null){
+    if(unit !== null && unit !== undefined){
       this.unitClickEvent.emit(unit);
-      console.log(unit);
     }
   }
 

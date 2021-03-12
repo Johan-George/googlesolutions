@@ -129,7 +129,7 @@ export class FirestoreDatabaseService {
 
   /**
    * function to get the data for a level from the database Must include a listener function(LevelData) for response
-   * @param cid the program id you are getting data for
+   * @param lid the program id you are getting data for
    * @param listenerFunction the function(LevelData) that receives the request data
    */
   public getLevelData(lid: string, listenerFunction) {
@@ -217,8 +217,8 @@ export class FirestoreDatabaseService {
   /**
    * Function that sets the data in the program collection database based on a ProgramData object
    * Returns the promise of the response
-   * @param uid the id of the program you are trying to change
-   * @param ud the ProgramData object to place into database
+   * @param pid the id of the program you are trying to change
+   * @param pd the ProgramData object to place into database
    */
   public setProgramData(pid: string, pd: ProgramData): Promise<void> {
 

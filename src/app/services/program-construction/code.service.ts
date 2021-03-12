@@ -44,18 +44,24 @@ export class CodeService {
 
       } else if (commands[i].getLabel() === ElseIf.label) {
 
-        throw new Error('Else If without If');
+        throw new Error(CodeErrorFormatters.ELSE_IF_WITHOUT_IF(i + 1));
 
       } else if (this.blockService.isTerminal(commands[i])) {
 
         if (!(commands[i].getLabel() === Start.label || commands[i].getLabel() === End.label)) {
-          throw new Error('Added terminal block without a sequence to terminate');
+          if(commands[i].getLabel() === Else.label){
+
+            throw new Error(CodeErrorFormatters.ELSE_WITHOUT_IF(i + 1));
+
+          }else{
+            throw new Error(CodeErrorFormatters.ADDED_TERMINAL_WITHOUT_SEQUENCE(i + 1));
+          }
         }
 
       }
 
       if(executable_count > 1){
-        throw new Error('Only allowed one action per turn');
+        throw new Error(CodeErrorFormatters.ONLY_ONE_ACTION());
       }
 
     }
@@ -165,10 +171,11 @@ export class CodeService {
    */
   createConditionalFunction(i, commands: Array<BlockCommand>, executable_count) {
 
-    this.compileConditions(<ConditionalBlock>commands[i]);
+    this.compileConditions(<ConditionalBlock>commands[i], i);
     let condition = (<ConditionalBlock>commands[i]).condition;
     let global_executables = executable_count;
     let local_executables = 0;
+    let start = i;
 
     // if(condition.getLabel() === EmptyPredicate.label){
     //   throw new Error('An if block is missing a condition');
@@ -185,7 +192,7 @@ export class CodeService {
     while (!terminal_blocks.includes(commands[i].getLabel())) {
 
       if (commands[i].getLabel() === End.label) {
-        throw new Error('Blocks not closed properly');
+        throw new Error(CodeErrorFormatters.CONDITIONAL_NOT_CLOSED(start + 1));
       }
 
       if (commands[i].getLabel() === If.label) {
@@ -196,7 +203,7 @@ export class CodeService {
         i++;
 
       } else if (commands[i].getLabel() === ElseIf.label) {
-        this.compileConditions((<ConditionalBlock>commands[i]));
+        this.compileConditions((<ConditionalBlock>commands[i]), i);
         let next = this.parseElseIfOrElse(i, commands, global_executables);
         elseIfs.push([next[1], next[2]])
         i = next[0];
@@ -216,7 +223,7 @@ export class CodeService {
       }
       if(global_executables + local_executables > 1){
 
-        throw new Error('Only one action allowed per turn');
+        throw new Error(CodeErrorFormatters.ONLY_ONE_ACTION());
 
       }
     }
@@ -262,6 +269,7 @@ export class CodeService {
     let condition = null;
     let global_executables = executable_count;
     let local_executables = 0;
+    let start = i;
 
     if (commands[i].getLabel() === ElseIf.label) {
       condition = (<ConditionalBlock>commands[i]).condition;
@@ -273,7 +281,7 @@ export class CodeService {
     while (!(terminal_blocks.includes(commands[i].getLabel()))) {
 
       if (commands[i].getLabel() === End.label) {
-        throw new Error('Blocks not closed properly');
+        throw new Error(CodeErrorFormatters.CONDITIONAL_NOT_CLOSED(start + 1));
       }
 
       if (commands[i].getLabel() === If.label) {
@@ -290,18 +298,19 @@ export class CodeService {
 
     if(local_executables + global_executables > 1){
 
-      throw new Error('Only one action allowed per turn');
+      throw new Error(CodeErrorFormatters.ONLY_ONE_ACTION());
 
     }
 
     return [i, condition, conditional_actions];
   }
 
-  compileConditions(conditional: ConditionalBlock){
+  compileConditions(conditional: ConditionalBlock, blockIndex){
 
-    for(let condition of conditional.conditions){
+    for(let i = 0; i < conditional.conditions.length; i++){
+      let condition = conditional.conditions[i];
       if(condition.getLabel() === EmptyPredicate.label){
-        throw new Error('Conditional Block is missing a condition');
+        throw new Error(CodeErrorFormatters.MISSING_CONDITIONS(blockIndex + 1));
       }
     }
 
@@ -349,7 +358,7 @@ export class CodeService {
 
       if(conditions[i].conjunction !== '|'){
 
-        throw new Error('Unrecognized conjunction');
+        throw new Error(CodeErrorFormatters.SOMETHING_WENT_WRONG());
 
       }else{
 
@@ -368,6 +377,52 @@ export class CodeService {
     result.evaluation = condition;
 
     return result;
+
+  }
+
+}
+
+class CodeErrorFormatters{
+
+  static ELSE_WITHOUT_IF = function(index){
+
+    return `Else If without If at block ${index}`;
+
+  }
+
+  static MISSING_CONDITIONS = function(index){
+
+    return `Conditional Block is missing a condition at block ${index}`;
+
+  }
+
+  static ONLY_ONE_ACTION = function(){
+
+    return 'Only one action allowed per turn';
+
+  }
+
+  static CONDITIONAL_NOT_CLOSED = function(index){
+
+    return `Conditional not closed properly for block ${index}`;
+
+  }
+
+  static ELSE_IF_WITHOUT_IF = function(index){
+
+    return `Else if without if at block ${index}`;
+
+  }
+
+  static ADDED_TERMINAL_WITHOUT_SEQUENCE = function(index){
+
+    return `Added terminal block without sequence to terminate at block ${index}`;
+
+  }
+
+  static SOMETHING_WENT_WRONG = function(){
+
+    return 'Something probably went wrong on our end! Please send a bug report.';
 
   }
 

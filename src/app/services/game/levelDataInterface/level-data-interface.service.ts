@@ -99,7 +99,7 @@ export class LevelDataInterfaceService {
       testUnit.codeType = CodeType.BLOCK;
       testUnit.activecode = [new Wait()];
       testUnit.team = 2;
-      testUnit.location = { x: 9, y: 9 };
+      testUnit.location = { x: 10, y: 9 };
 
       var result: { team1Units: Unit[], team2Units: Unit[], griddimensions: { x: number, y: number } } = {
         team1Units: [],
@@ -114,7 +114,7 @@ export class LevelDataInterfaceService {
       for (var x = 0; x < programData.Units.length; x++) {
         var u: Unit = this.newUnitOnType(programData.Units[x].TroopType);
         u.id = curUnitId++;
-        u.team = 2;
+        u.team = 1;
         u.location = programData.Units[x].location;
         if (programData.Units[x].CodeType == CodeType.BLOCK) {
           u.codeType = CodeType.BLOCK;
