@@ -6,16 +6,21 @@ import {End} from 'src/app/models/blockCommands/blocks/terminal/End';
 import {Start} from 'src/app/models/blockCommands/blocks/terminal/Start';
 import {BlockService} from 'src/app/services/program-construction/block.service';
 import {CodeService} from 'src/app/services/program-construction/code.service';
-import {ErrorComponent} from '../error/error.component';
 import {Else} from 'src/app/models/blockCommands/blocks/conditional/Else';
 import {enemyNearFunc, healthBelow30PercentFunc, RealCodeRepr} from '../../models/blockCommands/actual-code/RealCodeRepr';
 import {HealthBelow30Percent} from '../../models/blockCommands/blocks/predicate/HealthBelow30Percent';
 import {EnemyNear} from '../../models/blockCommands/blocks/predicate/EnemyNear';
 import {EmptyPredicate} from '../../models/blockCommands/blocks/predicate/EmptyPredicate';
 import {Unit} from '../../models/game/units/Unit';
-import {CodeType, ProgramData, UnitData} from '../../models/database/DatabaseData';
+import {CodeType, ProgramData, UnitData, UserData} from '../../models/database/DatabaseData';
 import {Swordsman} from '../../models/game/units/Swordsman';
 import {Subject} from 'rxjs';
+import {ErrorComponent} from '../error/error.component';
+import {SetNameComponent} from '../set-name/set-name.component';
+import {FirestoreDatabaseService} from '../../services/database/firestore-database.service';
+import {AuthyLoginService} from '../../services/login/authy-login.service';
+import {Router} from '@angular/router';
+import {InfoComponent} from '../info/info.component';
 
 @Component({
   selector: 'app-block-code',
@@ -36,6 +41,8 @@ export class BlockCodeComponent implements OnInit{
     [new Start(), new End()]
 
   ];
+
+  verified: Array<boolean> = this.codeTabs.map(_ => false);
 
   selected: boolean = false;
 
@@ -58,20 +65,36 @@ export class BlockCodeComponent implements OnInit{
   run: Subject<boolean> = new Subject<boolean>();
   gameRun: boolean = false;
   unitCodeChange: Subject<{unit: Unit, index: number}> = new Subject<{unit: Unit; index: number}>();
+  saveFormationsAndCode: Subject<boolean> = new Subject<boolean>();
 
-  constructor(private codeService: CodeService, public blockService: BlockService, private dialog: MatDialog) { }
+  constructor(private codeService: CodeService, public blockService: BlockService, private dialog: MatDialog,
+              private db: FirestoreDatabaseService, private auth: AuthyLoginService, private router: Router) { }
 
   ngOnInit(): void {
 
-    this.programData = new ProgramData();
-    this.programData.Name = 'Test';
-    let unit = new UnitData();
-    unit.CodeBlocks = ['RWFzdA=='];
-    unit.CodeType = CodeType.BLOCK;
-    unit.TroopType = Swordsman.dbid;
-    unit.location = {x: 1, y:1};
-    this.programData.Units = [unit];
-    this.initStarterCode();
+    if(this.auth.checkSigninStatus()){
+
+      this.programData = new ProgramData();
+      this.programData.Name = 'Test';
+      let unit = new UnitData();
+      unit.CodeBlocks = ['RWFzdA=='];
+      unit.CodeType = CodeType.BLOCK;
+      unit.TroopType = Swordsman.dbid;
+      unit.location = {x: 1, y:2};
+      this.programData.Units = [unit];
+      this.initStarterCode();
+
+    }else{
+
+      this.router.navigate(['signin']);
+
+    }
+  }
+
+  unverifyCode(){
+
+    this.verified[this.tabIndex - 1] = false;
+    this.selected = false;
 
   }
 
@@ -80,6 +103,7 @@ export class BlockCodeComponent implements OnInit{
 
     if (event.container.data === this.currentCode &&
       event.currentIndex != 0 && !(event.currentIndex >= this.currentCode.length)) {
+      this.unverifyCode();
       let block = event.previousContainer.data[event.previousIndex];
       let copy = Object.create(block);
       this.setIndentationLevel(event, block);
@@ -97,6 +121,7 @@ export class BlockCodeComponent implements OnInit{
   }
 
   onDeleteBlock(index) {
+    this.unverifyCode();
     this.currentCode.splice(index, 1);
     this.realCode.splice(index + this.extraLinesAdded, 1);
     this.recalculateIndentation();
@@ -104,24 +129,89 @@ export class BlockCodeComponent implements OnInit{
 
   exportCode() {
 
-    try {
-      let compiled = this.codeService.compileToExecutableCode(this.currentCode);
-      for (let fn of compiled) {
-        console.log(fn([], new Unit()));
-      }
+    this.saveFormationsAndCode.next(true);
 
-      let serialized = this.codeService.serializeBlocks(this.currentCode);
-      console.log(serialized);
-      let deserialized = this.codeService.deserializeToBlocks(serialized);
-      console.log(deserialized);
-      for(let fn of this.codeService.compileToExecutableCode(deserialized)){
-        console.log(fn([], new Unit()))
-      }
 
-    } catch (err) {
-      console.log(err);
-      this.dialog.open(ErrorComponent, { data: err.message })
+  }
+
+  saveState(state: Unit[][]){
+
+    this.programData = new ProgramData();
+    this.programData.Name = 'Test';
+    this.programData.Verified = true;
+    this.programData.Units = [];
+    for(let row of state){
+      for(let tile of row){
+        if(tile != null && tile.team === 1){
+          let unit = new UnitData();
+          unit.TroopType = btoa(tile.constructor.name);
+          console.log(unit.TroopType);
+          unit.CodeType = CodeType.BLOCK;
+          unit.CodeBlocks = this.codeService.serializeBlocks(tile.activecode);
+          unit.location = tile.location;
+          this.programData.Units.push(unit);
+        }
+      }
     }
+    let data = {
+
+      name: '',
+      cancelled: false
+
+    };
+    let name_dia = this.dialog.open(SetNameComponent, {
+
+      data: data
+
+    });
+
+    name_dia.afterClosed().subscribe(_ => {
+      if(data.name !== '' && !data.cancelled){
+        let self = this;
+        self.programData.Name = data.name;
+        let id = 0;
+        function getRandomInt(max) {
+          return Math.floor(Math.random() * Math.floor(max));
+        }
+        function setProgram(id){
+          self.db.doesProgramExist(`${id}`, result => {
+
+            if(result){
+              let id = getRandomInt(200);
+              setProgram(id);
+            }else{
+              self.db.setProgramData(`${id}`, self.programData).then(_ => {
+                let uid = self.auth.getUser().uid;
+                self.db.getUserData(uid, result => {
+
+                  let user: UserData = result;
+                  user.Programs.push(id);
+                  self.db.setUserData(uid, user).then(
+                    _ => {
+                      self.dialog.open(InfoComponent, {data: 'Code and formation saved successfully!'})
+                    }
+                  ).catch(
+
+                    _ => {
+
+                      self.dialog.open(ErrorComponent,
+                        {data: 'Whoops! Something went wrong on our end. Please try again or send a bug report'});
+
+                    }
+
+                  );
+
+                })
+              });
+
+            }
+
+          });
+        }
+        setProgram(id);
+      }
+    });
+
 
   }
 
@@ -129,6 +219,7 @@ export class BlockCodeComponent implements OnInit{
     let conjunction = block.conditions[index].conjunction;
     block.conditions[index] = value;
     block.conditions[index].conjunction = conjunction;
+    this.unverifyCode();
     this.refreshCode(blockIndex);
     if(value.getLabel() === HealthBelow30Percent.label && !this.hasHealthFunc){
       this.addFunctionToRealCode(healthBelow30PercentFunc);
@@ -277,10 +368,10 @@ export class BlockCodeComponent implements OnInit{
 
   changeTab(tab, index){
 
-    this.selected = false;
+
     this.currentCode = tab;
     this.tabIndex = index + 1;
-    console.log(this.tabIndex);
+    this.unverifyCode();
     this.refreshAllCode();
 
   }
@@ -291,10 +382,42 @@ export class BlockCodeComponent implements OnInit{
 
   }
 
+  onSelectBlockCode(event){
+
+    event.preventDefault();
+    this.updateSelected();
+    this.verifyCode();
+
+  }
+
+  verifyCode(){
+
+    if(!this.verified[this.tabIndex - 1]){
+      try{
+        this.codeService.compileToExecutableCode(this.currentCode);
+        this.verified[this.tabIndex - 1] = true;
+      }catch(error){
+        let dialog = this.dialog.open(ErrorComponent, {
+
+          data: error.message
+
+        });
+        dialog.afterClosed().subscribe(_ => {
+
+          this.updateSelected();
+
+        });
+
+      }
+
+    }
+
+  }
+
   addCodeToUnit(unit: Unit){
 
-    if(this.selected){
-      unit.activecode = this.currentCode;
+    if(this.selected && this.verified[this.tabIndex - 1]){
+      unit.activecode = [...this.currentCode];
       this.updateSelected();
       this.unitCodeChange.next({unit: unit, index: this.tabIndex});
     }

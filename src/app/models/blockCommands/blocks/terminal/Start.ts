@@ -7,7 +7,7 @@ import { TerminalBlock } from '../../block-command';
  */
 export class Start implements TerminalBlock {
 
-  static label: string = 'When Start';
+  static label: string = 'When Turn';
   static id: string = btoa(Start.name);
   terminate: number = null;
   indentationLevel: number = 0;

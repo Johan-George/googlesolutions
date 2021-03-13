@@ -29,9 +29,15 @@ import { TestComponent } from './components/test/test.component';
 import { LevelComponent } from './components/level/level.component';
 import { PageheaderComponent } from './components/pageheader/pageheader.component';
 import { ProfilepagesComponent } from './components/profilepages/profilepages.component';
+import {MatInputModule} from '@angular/material/input';
+//import { NewUserPageComponent } from './components/new-user-page/new-user-page.component';
 import { DocsComponent } from './components/docs/docs.component';
 import { LevelselectComponent } from './components/levelselect/levelselect.component';
+import { SetNameComponent } from './components/set-name/set-name.component';
+import {MatFormFieldModule} from '@angular/material/form-field';
 import { LevelplayComponent } from './components/levelplay/levelplay.component';
+import { InfoComponent } from './components/info/info.component';
+
 
 const firebaseConfig = {
   apiKey: "AIzaSyB25gxYu7PkMvnjKhisCzPP62grU_OEMLU",
@@ -54,12 +60,15 @@ const firebaseConfig = {
     ProfilepagesComponent,
     DocsComponent,
     LevelselectComponent,
-    LevelplayComponent
+    SetNameComponent,
+    LevelplayComponent,
+    InfoComponent
   ],
   imports: [
     BrowserModule,
     AppRoutingModule,
     BrowserAnimationsModule,
+    FormsModule,
 
     //firebase
     AngularFireModule.initializeApp(firebaseConfig),
@@ -75,9 +84,13 @@ const firebaseConfig = {
     MatDialogModule,
     MatCheckboxModule,
     MatRadioModule,
+    MatFormFieldModule,
+    MatInputModule,
+    MatProgressSpinnerModule,
     FormsModule,
     MatProgressSpinnerModule,
     MatTableModule
+
   ],
   providers: [],
   bootstrap: [AppComponent]

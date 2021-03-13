@@ -35,7 +35,7 @@ export class LevelDataInterfaceService {
 
           var u: Unit = self.newUnitOnType(prog.Units[x].TroopType);
           u.id = curUnitId++;
-          u.team = 2;
+          u.team = 1;
           u.location = prog.Units[x].location;
           if (prog.Units[x].CodeType === CodeType.BLOCK) {
             u.codeType = CodeType.BLOCK;
@@ -48,7 +48,7 @@ export class LevelDataInterfaceService {
             //   //   console.log("loaded " + u.activecode)
             //   //   resolveP();
             //   // });
-              
+
             // }));
             progPromises.push(self.getStorageReadPromise(prog.Units[x].CodeFile.storageRef, prog.Units[x].CodeFile.filename, u));
           } else {
@@ -66,7 +66,7 @@ export class LevelDataInterfaceService {
 
             var u: Unit = self.newUnitOnType(playerProg.Units[x].TroopType);
             u.id = curUnitId++;
-            u.team = 1;
+            u.team = 2;
             u.location = playerProg.Units[x].location;
             if (playerProg.Units[x].CodeType == CodeType.BLOCK) {
               u.codeType = CodeType.BLOCK;
@@ -102,7 +102,7 @@ export class LevelDataInterfaceService {
       testUnit.codeType = CodeType.BLOCK;
       testUnit.activecode = [new Wait()];
       testUnit.team = 2;
-      testUnit.location = { x: 9, y: 9 };
+      testUnit.location = { x: 10, y: 9 };
 
       var result: { team1Units: Unit[], team2Units: Unit[], griddimensions: { x: number, y: number } } = {
         team1Units: [],
@@ -117,7 +117,7 @@ export class LevelDataInterfaceService {
       for (var x = 0; x < programData.Units.length; x++) {
         var u: Unit = this.newUnitOnType(programData.Units[x].TroopType);
         u.id = curUnitId++;
-        u.team = 2;
+        u.team = 1;
         u.location = programData.Units[x].location;
         if (programData.Units[x].CodeType == CodeType.BLOCK) {
           u.codeType = CodeType.BLOCK;

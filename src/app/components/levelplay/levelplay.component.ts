@@ -28,7 +28,7 @@ export class LevelplayComponent {
   @ViewChild("datalogTable", { read: ElementRef })
   datalogTable: ElementRef;
 
-  constructor(private route: ActivatedRoute,  private changeDetectorRefs: ChangeDetectorRef) { 
+  constructor(private route: ActivatedRoute,  private changeDetectorRefs: ChangeDetectorRef) {
     route.queryParams.subscribe(params => {
       this.levData = params.l;
       this.progData = params.p;
@@ -65,7 +65,7 @@ export class LevelplayComponent {
       break;
 
       case "Wait":
-        this.addActionToLog("Unit " + action.doer.id + "Waited");
+        this.addActionToLog("Unit " + action.doer.id + " Waited");
       break;
 
       case "North":
@@ -84,7 +84,7 @@ export class LevelplayComponent {
         this.addActionToLog("Unit " + action.doer.id + " moved " + action.actionId);
       break;
 
-      default: 
+      default:
         this.addActionToLog("Unexpected action: \"" + action.actionId + "\"" + action.doer.id);
     }
     this.changeDetectorRefs.detectChanges();
