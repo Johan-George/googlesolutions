@@ -139,7 +139,7 @@ export class GameLoopServiceService {
     var self = this;
     return Promise.race([this.baseStepPromise(), new Promise<GameAction>((resolve, reject) => {
       setTimeout(function(){
-        reject("Code Took too long");
+        resolve(new GameAction("RanOutOfTimeError", ((self.isTeam1Active) ? self.team1units : self.team2units)[self.unitIndex], null, false));
 
         if(self.workerRunning != null) {
           self.workerRunning.terminate();
@@ -177,6 +177,32 @@ export class GameLoopServiceService {
             currentCodeBlock = unit.activecode[this.codeIndex];
           } while (this.evalCodeBlock(currentCodeBlock, unit))
 
+          //check action integrity
+          var last = this.lastAction;
+
+          if (last == null) {
+            last = new GameAction("NoEvent", null, null, false);
+          }
+
+          this.lastAction = null;
+
+           //check for death
+           if(last.hasDied) {
+            var team: Unit[] = (last.receiver.team == 1) ? this.team1units : this.team2units;
+            var indexDead = team.indexOf(last.receiver);
+            if(indexDead >= 0 && indexDead < team.length) {
+              team.splice(indexDead, 1);
+
+              //adjust new code index
+              if(this.unitIndex > indexDead) {
+                this.codeIndex--;
+              }
+
+            } else {
+              console.log("You shouldnt be seeing this error message");
+            }
+          }
+
           //next unit
           var curTeam: Unit[] = (this.isTeam1Active) ? this.team1units : this.team2units;
 
@@ -190,15 +216,6 @@ export class GameLoopServiceService {
 
           this.currentConditions.clear();
 
-          //check action integrity
-          var last = this.lastAction;
-
-          if (last == null) {
-            last = new GameAction("NoEvent", null, null, false);
-          }
-
-          this.lastAction = null;
-
           successFunc(last);
         } else if(unit.codeType === CodeType.FILE) {
 
@@ -211,8 +228,32 @@ export class GameLoopServiceService {
 
           this.workerRunning.onmessage = function(event) {
 
-            if(!messageSent){
+            if (!messageSent) {
               self.workerRunning = null;
+
+              /*
+              Note the the convertWorkerMessageToAction never returns null. Instead if something goes
+              wrong it will return a default wait action.
+               */
+              var last = self.convertWorkerMessageToAction(event.data, self.grid, unit);
+              self.lastAction = last;
+
+              //check for death
+              if (last.hasDied) {
+                var team: Unit[] = (last.receiver.team == 1) ? self.team1units : self.team2units;
+                var indexDead = team.indexOf(last.receiver);
+                if (indexDead >= 0 && indexDead < team.length) {
+                  team.splice(indexDead, 1);
+
+                  //adjust new code index
+                  if (self.unitIndex > indexDead) {
+                    self.codeIndex--;
+                  }
+
+                } else {
+                  console.log("You shouldnt be seeing this error message");
+                }
+              }
 
               var curTeam: Unit[] = (self.isTeam1Active) ? self.team1units : self.team2units;
 
@@ -223,11 +264,7 @@ export class GameLoopServiceService {
                 self.unitIndex = 0;
                 self.isTeam1Active = !self.isTeam1Active;
               }
-              /*
-              Note the the convertWorkerMessageToAction never returns null. Instead if something goes
-              wrong it will return a default wait action.
-               */
-              self.lastAction = self.convertWorkerMessageToAction(event.data, self.grid, unit);
+
               successFunc(self.lastAction);
             }
             messageSent = true;
@@ -246,18 +283,33 @@ export class GameLoopServiceService {
               self.isTeam1Active = !self.isTeam1Active;
             }
 
-            rejectFunc("Written Code has encountered an error");
+            //rejectFunc("Written Code has encountered an error");
+            throw new Error("Written Code has encountered an error")
           }
 
         } else {
           //none type
-          rejectFunc("Unexpected Nonetype code");
+          throw new Error("Unexpected Nonetype code");
         }
 
       } catch (error) {
         last = null;
         //return new GameAction("Error", null, null, false);
-        console.log(error);
+        console.log("Error running unit index " + this.unitIndex.toString() + " on team " + this.isTeam1Active + " " + error);
+
+        //next unit
+        var curTeam: Unit[] = (this.isTeam1Active) ? this.team1units : this.team2units;
+
+        this.unitIndex++;
+        this.codeIndex = 0;
+        if (curTeam.length <= this.unitIndex) {
+          //no more units to run through switch sides
+          this.unitIndex = 0;
+          this.isTeam1Active = !this.isTeam1Active;
+        }
+
+        this.currentConditions.clear();
+
         successFunc(new GameAction("Error", null, null, false));
       }
     });

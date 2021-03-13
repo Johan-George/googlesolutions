@@ -15,6 +15,7 @@ import { MatCheckboxModule } from '@angular/material/checkbox';
 import { MatRadioModule } from '@angular/material/radio';
 import { FormsModule } from '@angular/forms';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
+import { MatTableModule } from '@angular/material/table';
 
 import { AngularFireModule } from '@angular/fire';
 import { AngularFirestoreModule } from '@angular/fire/firestore';
@@ -34,6 +35,8 @@ import { DocsComponent } from './components/docs/docs.component';
 import { LevelselectComponent } from './components/levelselect/levelselect.component';
 import { SetNameComponent } from './components/set-name/set-name.component';
 import {MatFormFieldModule} from '@angular/material/form-field';
+import { LevelplayComponent } from './components/levelplay/levelplay.component';
+
 
 const firebaseConfig = {
   apiKey: "AIzaSyB25gxYu7PkMvnjKhisCzPP62grU_OEMLU",
@@ -56,7 +59,8 @@ const firebaseConfig = {
     ProfilepagesComponent,
     DocsComponent,
     LevelselectComponent,
-    SetNameComponent
+    SetNameComponent,
+    LevelplayComponent
   ],
   imports: [
     BrowserModule,
@@ -80,7 +84,11 @@ const firebaseConfig = {
     MatRadioModule,
     MatFormFieldModule,
     MatInputModule,
-    MatProgressSpinnerModule
+    MatProgressSpinnerModule,
+    FormsModule,
+    MatProgressSpinnerModule,
+    MatTableModule
+
   ],
   providers: [],
   bootstrap: [AppComponent]

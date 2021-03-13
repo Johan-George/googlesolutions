@@ -46,6 +46,12 @@ export class LevelComponent implements OnInit {
   private unitClickEvent: EventEmitter<Unit> = new EventEmitter<Unit>();
   @Output()
   private saveStateEvent: EventEmitter<Unit[][]> = new EventEmitter<Unit[][]>();
+  @Input()
+  private gameLevelDataNum: string;
+  @Input()
+  private gamePlayerDataNum: string;
+  @Output()
+  private gameActionLogger: EventEmitter<GameAction> = new EventEmitter<GameAction>();
 
   constructor(private sprite: SpriteService, private code: CodeService, private loopservice: GameLoopServiceService) { }
 
@@ -92,11 +98,15 @@ export class LevelComponent implements OnInit {
 
     createjs.Ticker.on('tick', _ => {
 
-      stage.update();
-      this.tickCount += 1;
-      if(this.lastAction !== undefined && !(this.lastAction.actionId === "GameEnd2" || this.lastAction.actionId === "GameEnd1") && this.gameStart
-        && this.tickCount % 20 === 0 && this.loading === 'done'){
-        this.step();
+      if(stage !== undefined){
+
+        stage.update();
+        this.tickCount += 1;
+        if(this.lastAction !== undefined && !(this.lastAction.actionId === "GameEnd2" || this.lastAction.actionId === "GameEnd1") && this.gameStart
+          && this.tickCount % 20 === 0 && this.loading === 'done'){
+          this.step();
+        }
+
       }
 
     });
@@ -123,11 +133,14 @@ export class LevelComponent implements OnInit {
       this.width = canvas_width;
       this.height = canvas_height;
       let self = this;
-      this.loopservice.loadData("1","3").then(result => {
 
-        self.gameInit();
-
-      });
+      if (this.gameLevelDataNum !== undefined && this.gamePlayerDataNum !== undefined) {
+        this.loopservice.loadData(this.gameLevelDataNum, this.gamePlayerDataNum).then(result => {
+          self.gameInit();
+        });
+      } else {
+        throw new Error("a level number and program number for the player must be defined when not in test mode");
+      }
 
     }
 
@@ -301,6 +314,9 @@ export class LevelComponent implements OnInit {
     prom.then(result => {
       this.lastAction = result as GameAction;
       this.loading = "done";
+
+      this.gameActionLogger.emit(this.lastAction);
+
       if(!(this.lastAction.doer === null)){
 
         this.placeOnScreen(this.lastAction.doer);

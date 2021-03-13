@@ -62,6 +62,20 @@ export class FirestoreDatabaseService {
   }
 
   /**
+   * Checks if a document exists, returns a promise on the result
+   * @param collection the collection the documents we are checking
+   * @param documentname the document id to look for
+   * @returns promise with type boolean
+   */
+  private doesDocumentExist(collection: string, documentname: string): Promise<boolean> {
+    return new Promise<boolean>((resolve, reject) => {
+      this.db.collection(collection).doc(documentname).get().subscribe(result => {
+        resolve(result.exists);
+      });
+    });
+  }
+
+  /**
    * Sends a request to database for getting all documents within a specified collection.
    * returns an observable for the request
    * @param collection the collection of documents we are getting
@@ -193,6 +207,17 @@ export class FirestoreDatabaseService {
    */
   public getAllLevels(callback) {
     this.queryDocumentsFromCollection(this.LEVEL_DATA).subscribe(result => {
+      callback(result);
+    });
+  }
+
+  /**
+   * Checks if a program document exists in database, returns a callback with result
+   * @param pid the program id to get
+   * @param callback the callback function on request complete
+   */
+  public doesProgramExist(pid: string, callback) {
+    this.doesDocumentExist(this.CODE_DATA, pid).then((result) => {
       callback(result);
     });
   }

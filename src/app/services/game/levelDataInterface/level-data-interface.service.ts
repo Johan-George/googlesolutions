@@ -35,19 +35,22 @@ export class LevelDataInterfaceService {
 
           var u: Unit = self.newUnitOnType(prog.Units[x].TroopType);
           u.id = curUnitId++;
-          u.team = 2;
+          u.team = 1;
           u.location = prog.Units[x].location;
           if (prog.Units[x].CodeType === CodeType.BLOCK) {
             u.codeType = CodeType.BLOCK;
             u.activecode = self.deserializeBlockCode(prog.Units[x].CodeBlocks);
           } else if (prog.Units[x].CodeType === CodeType.FILE) {
             u.codeType = CodeType.FILE;
-            progPromises.push(new Promise((resolveP, rejectP) => {
-              self.database.getUserCodeFromStorage(prog.Units[x].CodeFile.storageRef, prog.Units[x].CodeFile.filename, function (data) {
-                u.activecode = data;
-                resolveP();
-              });
-            }));
+            // progPromises.push(new Promise((resolveP, rejectP) => {
+            //   // self.database.getUserCodeFromStorage(prog.Units[x].CodeFile.storageRef, prog.Units[x].CodeFile.filename, function (data) {
+            //   //   u.activecode = data;
+            //   //   console.log("loaded " + u.activecode)
+            //   //   resolveP();
+            //   // });
+
+            // }));
+            progPromises.push(self.getStorageReadPromise(prog.Units[x].CodeFile.storageRef, prog.Units[x].CodeFile.filename, u));
           } else {
             console.log("Illegal code type, continuing");
             continue;
@@ -63,7 +66,7 @@ export class LevelDataInterfaceService {
 
             var u: Unit = self.newUnitOnType(playerProg.Units[x].TroopType);
             u.id = curUnitId++;
-            u.team = 1;
+            u.team = 2;
             u.location = playerProg.Units[x].location;
             if (playerProg.Units[x].CodeType == CodeType.BLOCK) {
               u.codeType = CodeType.BLOCK;
@@ -164,6 +167,7 @@ export class LevelDataInterfaceService {
     var self = this;
     return new Promise<void>((resolveP, rejectP) => {
       self.database.getUserCodeFromStorage(storageRef, filename, function (data) {
+        console.log("recieved " + filename);
         passedunit.activecode = data;
         resolveP();
       })
