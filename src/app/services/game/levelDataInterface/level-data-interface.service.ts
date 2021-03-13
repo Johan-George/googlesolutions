@@ -35,7 +35,7 @@ export class LevelDataInterfaceService {
 
           var u: Unit = self.newUnitOnType(prog.Units[x].TroopType);
           u.id = curUnitId++;
-          u.team = 1;
+          u.team = 2;
           u.location = prog.Units[x].location;
           if (prog.Units[x].CodeType === CodeType.BLOCK) {
             u.codeType = CodeType.BLOCK;
@@ -66,7 +66,7 @@ export class LevelDataInterfaceService {
 
             var u: Unit = self.newUnitOnType(playerProg.Units[x].TroopType);
             u.id = curUnitId++;
-            u.team = 2;
+            u.team = 1;
             u.location = playerProg.Units[x].location;
             if (playerProg.Units[x].CodeType == CodeType.BLOCK) {
               u.codeType = CodeType.BLOCK;

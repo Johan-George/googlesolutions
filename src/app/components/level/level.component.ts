@@ -326,9 +326,9 @@ export class LevelComponent implements OnInit {
       if(this.lastAction.hasDied){
 
         let dead = this.lastAction.receiver
-        this.grid[dead.location.x][dead.location.y] = null;
+        // this.grid[dead.location.x][dead.location.y] = null;
         stage.removeChild(dead.sprite);
-        this.loopservice.deleteUnit(dead);
+        // this.loopservice.deleteUnit(dead);
         console.log('Death happened');
 
       }
