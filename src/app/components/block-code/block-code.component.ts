@@ -18,6 +18,8 @@ import {Subject} from 'rxjs';
 import {ErrorComponent} from '../error/error.component';
 import {SetNameComponent} from '../set-name/set-name.component';
 import {FirestoreDatabaseService} from '../../services/database/firestore-database.service';
+import {AuthyLoginService} from '../../services/login/authy-login.service';
+import {Router} from '@angular/router';
 
 @Component({
   selector: 'app-block-code',
@@ -65,20 +67,27 @@ export class BlockCodeComponent implements OnInit{
   saveFormationsAndCode: Subject<boolean> = new Subject<boolean>();
 
   constructor(private codeService: CodeService, public blockService: BlockService, private dialog: MatDialog,
-              private db: FirestoreDatabaseService) { }
+              private db: FirestoreDatabaseService, private auth: AuthyLoginService, private router: Router) { }
 
   ngOnInit(): void {
 
-    this.programData = new ProgramData();
-    this.programData.Name = 'Test';
-    let unit = new UnitData();
-    unit.CodeBlocks = ['RWFzdA=='];
-    unit.CodeType = CodeType.BLOCK;
-    unit.TroopType = Swordsman.dbid;
-    unit.location = {x: 1, y:2};
-    this.programData.Units = [unit];
-    this.initStarterCode();
+    if(this.auth.checkSigninStatus()){
 
+      this.programData = new ProgramData();
+      this.programData.Name = 'Test';
+      let unit = new UnitData();
+      unit.CodeBlocks = ['RWFzdA=='];
+      unit.CodeType = CodeType.BLOCK;
+      unit.TroopType = Swordsman.dbid;
+      unit.location = {x: 1, y:2};
+      this.programData.Units = [unit];
+      this.initStarterCode();
+
+    }else{
+
+      this.router.navigate(['signin']);
+
+    }
   }
 
   unverifyCode(){
@@ -134,7 +143,8 @@ export class BlockCodeComponent implements OnInit{
       for(let tile of row){
         if(tile != null && tile.team === 1){
           let unit = new UnitData();
-          unit.TroopType = btoa(unit.constructor.name);
+          unit.TroopType = btoa(tile.constructor.name);
+          console.log(unit.TroopType);
           unit.CodeType = CodeType.BLOCK;
           unit.CodeBlocks = this.codeService.serializeBlocks(tile.activecode);
           unit.location = tile.location;
@@ -154,14 +164,30 @@ export class BlockCodeComponent implements OnInit{
     });
 
     name_dia.afterClosed().subscribe(_ => {
-
-      this.db.setProgramData(data.name, this.programData).then(
-        _ => {
-          console.log(data.name);
+        let self = this;
+        self.programData.Name = data.name;
+        let id = 0;
+        function getRandomInt(max) {
+          return Math.floor(Math.random() * Math.floor(max));
         }
-      );
+        function setProgram(id){
+          self.db.doesProgramExist(`${id}`, result => {
 
-    });
+            if(result){
+              let id = getRandomInt(200);
+              setProgram(id);
+            }else{
+              self.db.setProgramData(`${id}`, self.programData).then(_ => {
+                    console.log('saved');
+              });
+
+            }
+
+          });
+        }
+        setProgram(id);
+      }
+    );
 
 
   }
