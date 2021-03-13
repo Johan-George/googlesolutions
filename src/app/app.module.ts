@@ -36,6 +36,7 @@ import { LevelselectComponent } from './components/levelselect/levelselect.compo
 import { SetNameComponent } from './components/set-name/set-name.component';
 import {MatFormFieldModule} from '@angular/material/form-field';
 import { LevelplayComponent } from './components/levelplay/levelplay.component';
+import { InfoComponent } from './components/info/info.component';
 
 
 const firebaseConfig = {
@@ -60,7 +61,8 @@ const firebaseConfig = {
     DocsComponent,
     LevelselectComponent,
     SetNameComponent,
-    LevelplayComponent
+    LevelplayComponent,
+    InfoComponent
   ],
   imports: [
     BrowserModule,

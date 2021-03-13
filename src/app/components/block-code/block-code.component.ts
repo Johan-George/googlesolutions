@@ -12,7 +12,7 @@ import {HealthBelow30Percent} from '../../models/blockCommands/blocks/predicate/
 import {EnemyNear} from '../../models/blockCommands/blocks/predicate/EnemyNear';
 import {EmptyPredicate} from '../../models/blockCommands/blocks/predicate/EmptyPredicate';
 import {Unit} from '../../models/game/units/Unit';
-import {CodeType, ProgramData, UnitData} from '../../models/database/DatabaseData';
+import {CodeType, ProgramData, UnitData, UserData} from '../../models/database/DatabaseData';
 import {Swordsman} from '../../models/game/units/Swordsman';
 import {Subject} from 'rxjs';
 import {ErrorComponent} from '../error/error.component';
@@ -20,6 +20,7 @@ import {SetNameComponent} from '../set-name/set-name.component';
 import {FirestoreDatabaseService} from '../../services/database/firestore-database.service';
 import {AuthyLoginService} from '../../services/login/authy-login.service';
 import {Router} from '@angular/router';
+import {InfoComponent} from '../info/info.component';
 
 @Component({
   selector: 'app-block-code',
@@ -180,7 +181,27 @@ export class BlockCodeComponent implements OnInit{
               setProgram(id);
             }else{
               self.db.setProgramData(`${id}`, self.programData).then(_ => {
-                console.log('saved');
+                let uid = self.auth.getUser().uid;
+                self.db.getUserData(uid, result => {
+
+                  let user: UserData = result;
+                  user.Programs.push(id);
+                  self.db.setUserData(uid, user).then(
+                    _ => {
+                      self.dialog.open(InfoComponent, {data: 'Code and formation saved successfully!'})
+                    }
+                  ).catch(
+
+                    _ => {
+
+                      self.dialog.open(ErrorComponent,
+                        {data: 'Whoops! Something went wrong on our end. Please try again or send a bug report'});
+
+                    }
+
+                  );
+
+                })
               });
 
             }
