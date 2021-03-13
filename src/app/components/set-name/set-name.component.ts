@@ -14,4 +14,19 @@ export class SetNameComponent implements OnInit {
   ngOnInit(): void {
   }
 
+  cancel(){
+
+    this.data.cancelled = true;
+    this.dialogRef.close();
+
+  }
+
+  enter(){
+
+    if(this.data.name !== ''){
+      this.dialogRef.close();
+    }
+
+  }
+
 }

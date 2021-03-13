@@ -154,7 +154,8 @@ export class BlockCodeComponent implements OnInit{
     }
     let data = {
 
-      name: ''
+      name: '',
+      cancelled: false
 
     };
     let name_dia = this.dialog.open(SetNameComponent, {
@@ -164,6 +165,7 @@ export class BlockCodeComponent implements OnInit{
     });
 
     name_dia.afterClosed().subscribe(_ => {
+      if(data.name !== '' && !data.cancelled){
         let self = this;
         self.programData.Name = data.name;
         let id = 0;
@@ -178,7 +180,7 @@ export class BlockCodeComponent implements OnInit{
               setProgram(id);
             }else{
               self.db.setProgramData(`${id}`, self.programData).then(_ => {
-                    console.log('saved');
+                console.log('saved');
               });
 
             }
@@ -187,7 +189,7 @@ export class BlockCodeComponent implements OnInit{
         }
         setProgram(id);
       }
-    );
+    });
 
 
   }
@@ -393,8 +395,8 @@ export class BlockCodeComponent implements OnInit{
 
   addCodeToUnit(unit: Unit){
 
-    if(this.selected){
-      unit.activecode = this.currentCode;
+    if(this.selected && this.verified[this.tabIndex - 1]){
+      unit.activecode = [...this.currentCode];
       this.updateSelected();
       this.unitCodeChange.next({unit: unit, index: this.tabIndex});
     }
