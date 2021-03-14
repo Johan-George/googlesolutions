@@ -18,7 +18,7 @@ const routes: Routes = [
   {path: 'play', component: LevelplayComponent},
   {path: 'signin', component: SigninPageComponent},
   {path: 'docs', component: DocsComponent},
-  {path: 'debug', component:TestComponent},
+  // {path: 'debug', component:TestComponent},
 ];
 
 @NgModule({

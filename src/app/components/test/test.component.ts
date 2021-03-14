@@ -45,24 +45,73 @@ export class TestComponent {
     //     Units: [{TroopType:1, CodeBlocks: cb, location: {x:1,y:1}, CodeType: CodeType.BLOCK,
     //           CodeFile: null}]});
     //
-    db.setProgramData("99", {Name: "TestSetup", Verified: true,
-      Units: [
-                {
-                  TroopType:Archer.dbid, 
-                  CodeBlocks: null, 
-                  location: {x:1,y:1}, 
-                  CodeType: CodeType.FILE, 
-                  CodeFile: {storageRef: "code/EnemyArcher.js", filename: "EnemyArcher.js"} 
-                },
-                {
-                  TroopType:Swordsman.dbid, 
-                  CodeBlocks: null, 
-                  location: {x:5,y:5}, 
-                  CodeType: CodeType.FILE, 
-                  CodeFile: {storageRef: "code/EnemySwordsmen.js", filename: "EnemySwordsmen.js"} 
-                }
-              ]}
-    );
+    // db.setProgramData("993", {Name: "Level3", Verified: true,
+    //   Units: [
+    //             // {
+    //             //   TroopType:Archer.dbid, 
+    //             //   CodeBlocks: null, 
+    //             //   location: {x:14,y:7}, 
+    //             //   CodeType: CodeType.FILE, 
+    //             //   CodeFile: {storageRef: "code/EnemyArcher.js", filename: "EnemyArcher.js"} 
+    //             // },
+    //             // {
+    //             //   TroopType:Archer.dbid, 
+    //             //   CodeBlocks: null, 
+    //             //   location: {x:14,y:10}, 
+    //             //   CodeType: CodeType.FILE, 
+    //             //   CodeFile: {storageRef: "code/EnemyArcher.js", filename: "EnemyArcher.js"} 
+    //             // },
+    //             // {
+    //             //   TroopType:Archer.dbid, 
+    //             //   CodeBlocks: null, 
+    //             //   location: {x:14,y:11}, 
+    //             //   CodeType: CodeType.FILE, 
+    //             //   CodeFile: {storageRef: "code/EnemyArcher.js", filename: "EnemyArcher.js"} 
+    //             // },
+    //             {
+    //               TroopType:Swordsman.dbid, 
+    //               CodeBlocks: null, 
+    //               location: {x:11,y:7}, 
+    //               CodeType: CodeType.FILE, 
+    //               CodeFile: {storageRef: "code/EnemySwordsmen.js", filename: "EnemySwordsmen.js"} 
+    //             },
+    //             {
+    //               TroopType:Swordsman.dbid, 
+    //               CodeBlocks: null, 
+    //               location: {x:12,y:8}, 
+    //               CodeType: CodeType.FILE, 
+    //               CodeFile: {storageRef: "code/EnemySwordsmen.js", filename: "EnemySwordsmen.js"} 
+    //             },
+    //             {
+    //               TroopType:Swordsman.dbid, 
+    //               CodeBlocks: null, 
+    //               location: {x:12,y:6}, 
+    //               CodeType: CodeType.FILE, 
+    //               CodeFile: {storageRef: "code/EnemySwordsmen.js", filename: "EnemySwordsmen.js"} 
+    //             },
+    //             {
+    //               TroopType:Swordsman.dbid, 
+    //               CodeBlocks: null, 
+    //               location: {x:13,y:5}, 
+    //               CodeType: CodeType.FILE, 
+    //               CodeFile: {storageRef: "code/EnemySwordsmen.js", filename: "EnemySwordsmen.js"} 
+    //             },
+    //             {
+    //               TroopType:Swordsman.dbid, 
+    //               CodeBlocks: null, 
+    //               location: {x:13,y:7}, 
+    //               CodeType: CodeType.FILE, 
+    //               CodeFile: {storageRef: "code/EnemySwordsmen.js", filename: "EnemySwordsmen.js"} 
+    //             },
+    //             {
+    //               TroopType:Swordsman.dbid, 
+    //               CodeBlocks: null, 
+    //               location: {x:13,y:9}, 
+    //               CodeType: CodeType.FILE, 
+    //               CodeFile: {storageRef: "code/EnemySwordsmen.js", filename: "EnemySwordsmen.js"} 
+    //             },
+    //           ]}
+    // );
 
     // var self = this;
 
