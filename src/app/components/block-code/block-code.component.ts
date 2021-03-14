@@ -41,6 +41,7 @@ export class BlockCodeComponent implements OnInit{
     [new Start(), new End()]
 
   ];
+  jsCodeTabs: Array<string> = this.codeBlocks.map(_ => '');
 
   verified: Array<boolean> = this.codeTabs.map(_ => false);
 
@@ -395,6 +396,13 @@ export class BlockCodeComponent implements OnInit{
 
   }
 
+  onSelectJsCode(event){
+
+    event.preventDefault();
+    this.updateSelected();
+
+  }
+
   verifyCode(){
 
     if(!this.verified[this.tabIndex - 1]){
@@ -440,6 +448,28 @@ export class BlockCodeComponent implements OnInit{
   switchEditorMode(){
 
     this.javascriptMode = !this.javascriptMode;
+    this.selected = false;
+
+  }
+
+  uploadJavascript(){
+
+    document.getElementById('file').click();
+
+  }
+
+  retrieveJavascriptCode(event){
+
+    let file = event.target.files[0];
+    console.log(event.target.files[0]);
+    let reader = new FileReader();
+    let self = this;
+    reader.onload = function(event) {
+      if (typeof event.target.result === 'string') {
+        self.jsCodeTabs[self.tabIndex - 1] = event.target.result;
+      }
+    };
+    reader.readAsText(file);
 
   }
 

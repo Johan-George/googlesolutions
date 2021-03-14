@@ -40,6 +40,12 @@
 
 }
 
+#code-boundary::-webkit-scrollbar {
+
+  display: none;
+
+}
+
 #card-list-boundary{
 
   background-color: #3A506B;
@@ -170,7 +176,8 @@
 
 }
 
-#options button{
+#options button,
+#options input{
 
   font-family: codefont;
   font-size: 10px;
@@ -268,6 +275,25 @@
 #map{
 
   overflow: scroll;
+
+}
+
+#user-js-code-console{
+
+  background-color: black;
+  font-size: 13px;
+  overflow-y: scroll;
+  width: 90%;
+  height: 90%;
+  margin: 25px auto;
+  position: relative;
+
+}
+
+#user-js-code{
+
+  font-family: codefont;
+  color: #2CDD3E;
 
 }
 

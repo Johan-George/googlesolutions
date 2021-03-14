@@ -13,7 +13,11 @@
           </h3>
         </div>
       </div>
-      <div id="code-boundary">
+      <div id="code-boundary" [style.scrollbar-width]="javascriptMode ? 'none': '5px'">
+        <div *ngIf="javascriptMode" id="user-js-code-console" (contextmenu)="onSelectJsCode($event)"
+            [class.code-select]="selected">
+          <pre><code id="user-js-code">{{jsCodeTabs[tabIndex - 1]}}</code></pre>
+        </div>
         <div cdkDrag cdkDropList cdkDropListOrientation="vertical" id="current-code-list" (cdkDropListDropped)="onDrop($event)"
              [cdkDropListData]="currentCode" #yourCode="cdkDropList" cdkDragBoundary="#code-boundary"
              [class.cdk-visually-hidden]="javascriptMode"
@@ -104,7 +108,8 @@
       <button mat-raised-button id="switch" (click)="switchEditorMode()">
         {{javascriptMode ? 'Switch to block code': 'Switch to js'}}
       </button>
-      <button mat-raised-button id="upload" *ngIf="javascriptMode">
+      <button mat-raised-button id="upload" *ngIf="javascriptMode" (click)="uploadJavascript()">
+        <input id="file" type='file' hidden accept=".js" (change)="retrieveJavascriptCode($event)" />
         upload code
       </button>
     </div>
