@@ -15,6 +15,7 @@ import { MatCheckboxModule } from '@angular/material/checkbox';
 import { MatRadioModule } from '@angular/material/radio';
 import { FormsModule } from '@angular/forms';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
+import { MatMenuModule } from '@angular/material/menu';
 import { MatTableModule } from '@angular/material/table';
 
 import { AngularFireModule } from '@angular/fire';
@@ -90,7 +91,6 @@ const firebaseConfig = {
     FormsModule,
     MatProgressSpinnerModule,
     MatTableModule
-
   ],
   providers: [],
   bootstrap: [AppComponent]

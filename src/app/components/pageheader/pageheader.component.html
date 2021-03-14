@@ -1,6 +1,11 @@
 <div style="background-color: #0b132b;">
     <button mat-button class="typebutton" routerLink="">SS</button>
     <button mat-button id="Sign" class="typebutton" routerLink="/signin" *ngIf="!loggedIn">Sign in</button>
-    <button mat-button id="Sign" class="typebutton" (click)="logout()" *ngIf="loggedIn">Sign out {{username}}</button>
+    <button mat-button id="Sign" class="typebutton" *ngIf="loggedIn" [matMenuTriggerFor]="profiledropdown">{{username}}</button>
+    <button mat-button id="Sign" class="typebutton" routerLink="/levelSelect" *ngIf="loggedIn">Level Select</button>
+    <mat-menu #profiledropdown="matMenu" xPosition="before">
+        <button mat-menu-item routerLink="/profile">Profile</button>
+        <button mat-menu-item (click)="logout()">Logout</button>
+    </mat-menu>
     <hr style="margin-bottom: 0; background-color: #3a506b; height: 5px; border: none;">
 </div>
