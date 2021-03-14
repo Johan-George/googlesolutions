@@ -41,7 +41,7 @@ export class BlockCodeComponent implements OnInit{
     [new Start(), new End()]
 
   ];
-  jsCodeTabs: Array<string> = this.codeBlocks.map(_ => '');
+  jsCodeTabs: Array<any> = this.codeBlocks.map(_ =>{return {content: '', file: null, ref: ''}});
 
   verified: Array<boolean> = this.codeTabs.map(_ => false);
 
@@ -429,8 +429,14 @@ export class BlockCodeComponent implements OnInit{
 
   addCodeToUnit(unit: Unit){
 
-    if(this.selected && this.verified[this.tabIndex - 1] && !this.javascriptMode){
-      unit.activecode = [...this.currentCode];
+    if(this.selected && ((this.verified[this.tabIndex - 1] && !this.javascriptMode) || this.javascriptMode)){
+      if(!this.javascriptMode){
+        unit.codeType = CodeType.BLOCK;
+        unit.activecode = [...this.currentCode];
+      }else{
+        unit.codeType = CodeType.FILE;
+        unit.activecode = new Worker(this.jsCodeTabs[this.tabIndex - 1].file);
+      }
       this.updateSelected();
       this.unitCodeChange.next({unit: unit, index: this.tabIndex});
     }
@@ -461,16 +467,18 @@ export class BlockCodeComponent implements OnInit{
   retrieveJavascriptCode(event){
 
     let file = event.target.files[0];
-    console.log(event.target.files[0]);
+
     let reader = new FileReader();
     let self = this;
     reader.onload = function(event) {
       if (typeof event.target.result === 'string') {
-        self.jsCodeTabs[self.tabIndex - 1] = event.target.result;
+        self.jsCodeTabs[self.tabIndex - 1].content = event.target.result;
+        self.jsCodeTabs[self.tabIndex - 1].file = window.URL.createObjectURL(file);
+        // TODO: set the ref variable of the file object to be the appropriate file location for firebase
+        console.log(file.name.slice(0, file.name.length - 3));
       }
     };
     reader.readAsText(file);
-
   }
 
 }

@@ -13,10 +13,10 @@
           </h3>
         </div>
       </div>
-      <div id="code-boundary" [style.scrollbar-width]="javascriptMode ? 'none': '5px'">
+      <div id="code-boundary" [style.scrollbar-width]="javascriptMode ? 'none': ''">
         <div *ngIf="javascriptMode" id="user-js-code-console" (contextmenu)="onSelectJsCode($event)"
             [class.code-select]="selected">
-          <pre><code id="user-js-code">{{jsCodeTabs[tabIndex - 1]}}</code></pre>
+          <pre><code id="user-js-code">{{jsCodeTabs[tabIndex - 1].content}}</code></pre>
         </div>
         <div cdkDrag cdkDropList cdkDropListOrientation="vertical" id="current-code-list" (cdkDropListDropped)="onDrop($event)"
              [cdkDropListData]="currentCode" #yourCode="cdkDropList" cdkDragBoundary="#code-boundary"
