@@ -62,6 +62,20 @@ export class FirestoreDatabaseService {
   }
 
   /**
+   * Checks if a document exists, returns a promise on the result
+   * @param collection the collection the documents we are checking
+   * @param documentname the document id to look for
+   * @returns promise with type boolean
+   */
+  private doesDocumentExist(collection: string, documentname: string): Promise<boolean> {
+    return new Promise<boolean>((resolve, reject) => {
+      this.db.collection(collection).doc(documentname).get().subscribe(result => {
+        resolve(result.exists);
+      });
+    });
+  }
+
+  /**
    * Sends a request to database for getting all documents within a specified collection.
    * returns an observable for the request
    * @param collection the collection of documents we are getting
@@ -129,7 +143,7 @@ export class FirestoreDatabaseService {
 
   /**
    * function to get the data for a level from the database Must include a listener function(LevelData) for response
-   * @param cid the program id you are getting data for
+   * @param lid the program id you are getting data for
    * @param listenerFunction the function(LevelData) that receives the request data
    */
   public getLevelData(lid: string, listenerFunction) {
@@ -197,6 +211,17 @@ export class FirestoreDatabaseService {
     });
   }
 
+  /**
+   * Checks if a program document exists in database, returns a callback with result
+   * @param pid the program id to get
+   * @param callback the callback function on request complete
+   */
+  public doesProgramExist(pid: string, callback) {
+    this.doesDocumentExist(this.CODE_DATA, pid).then((result) => {
+      callback(result);
+    });
+  }
+
   //setters
   /**
    * Function that sets the data in the user collection database based on a UserData object
@@ -217,8 +242,8 @@ export class FirestoreDatabaseService {
   /**
    * Function that sets the data in the program collection database based on a ProgramData object
    * Returns the promise of the response
-   * @param uid the id of the program you are trying to change
-   * @param ud the ProgramData object to place into database
+   * @param pid the id of the program you are trying to change
+   * @param pd the ProgramData object to place into database
    */
   public setProgramData(pid: string, pd: ProgramData): Promise<void> {
 

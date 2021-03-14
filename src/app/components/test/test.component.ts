@@ -10,6 +10,8 @@ import { EndElse } from 'src/app/models/blockCommands/blocks/terminal/EndElse';
 import { EndIf } from 'src/app/models/blockCommands/blocks/terminal/Endif';
 import { CodeType } from 'src/app/models/database/DatabaseData';
 import { GameAction } from 'src/app/models/game/GameAction';
+import { Archer } from 'src/app/models/game/units/Archer';
+import { Swordsman } from 'src/app/models/game/units/Swordsman';
 import { Unit } from 'src/app/models/game/units/Unit';
 import { FirestoreDatabaseService } from 'src/app/services/database/firestore-database.service';
 import { GameLoopServiceService } from 'src/app/services/game/gameloop/game-loop.service';
@@ -43,21 +45,36 @@ export class TestComponent {
     //     Units: [{TroopType:1, CodeBlocks: cb, location: {x:1,y:1}, CodeType: CodeType.BLOCK,
     //           CodeFile: null}]});
     //
-    // db.setProgramData("2", {Name: "Hello", Verified: true,
-    // Units: [{TroopType:1, CodeBlocks: null, location: {x:1,y:1}, CodeType: CodeType.FILE,
-    //       CodeFile: {storageRef: "code/app.js", filename: "app.js"} }]});
+    db.setProgramData("99", {Name: "TestSetup", Verified: true,
+      Units: [
+                {
+                  TroopType:Archer.dbid, 
+                  CodeBlocks: null, 
+                  location: {x:1,y:1}, 
+                  CodeType: CodeType.FILE, 
+                  CodeFile: {storageRef: "code/EnemyArcher.js", filename: "EnemyArcher.js"} 
+                },
+                {
+                  TroopType:Swordsman.dbid, 
+                  CodeBlocks: null, 
+                  location: {x:5,y:5}, 
+                  CodeType: CodeType.FILE, 
+                  CodeFile: {storageRef: "code/EnemySwordsmen.js", filename: "EnemySwordsmen.js"} 
+                }
+              ]}
+    );
 
-    var self = this;
+    // var self = this;
 
-    db.getProgramData("1", function (data) {
-      //run the game
-      loopservice.loadTestData(data).then(result => {
-        if (loopservice.prepLoop()) {
-          self.map = self.loopservice.grid;
-          this.loading = "done";
-        }
-      });
-    });
+    // db.getProgramData("1", function (data) {
+    //   //run the game
+    //   loopservice.loadTestData(data).then(result => {
+    //     if (loopservice.prepLoop()) {
+    //       self.map = self.loopservice.grid;
+    //       this.loading = "done";
+    //     }
+    //   });
+    // });
 
 
   }

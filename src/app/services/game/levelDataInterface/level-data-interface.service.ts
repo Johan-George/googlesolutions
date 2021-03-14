@@ -13,8 +13,8 @@ import { Wait } from 'src/app/models/blockCommands/blocks/executable/Wait';
 })
 export class LevelDataInterfaceService {
 
-  private PLAYSPACE_SIZE = { x: 20, y: 20 };
-  private TESTGRID_SIZE = { x: 20, y: 20 };
+  public static PLAYSPACE_SIZE = { x: 15, y: 15 };
+  public static TESTGRID_SIZE = { x: 15, y: 10 };
 
   constructor(private database: FirestoreDatabaseService, private codeServ: CodeService) { }
 
@@ -24,7 +24,7 @@ export class LevelDataInterfaceService {
     var curUnitId = 0;
     return new Promise((resolutionFunc, rejectionFunc) => {
       var returnObject: { team1Units: Unit[], team2Units: Unit[], griddimensions: { x: number, y: number } } =
-        { team1Units: [], team2Units: [], griddimensions: this.PLAYSPACE_SIZE };
+        { team1Units: [], team2Units: [], griddimensions: LevelDataInterfaceService.PLAYSPACE_SIZE };
 
       this.database.getLevelProgram(levelid, function (prog: ProgramData) {
 
@@ -42,12 +42,15 @@ export class LevelDataInterfaceService {
             u.activecode = self.deserializeBlockCode(prog.Units[x].CodeBlocks);
           } else if (prog.Units[x].CodeType === CodeType.FILE) {
             u.codeType = CodeType.FILE;
-            progPromises.push(new Promise((resolveP, rejectP) => {
-              self.database.getUserCodeFromStorage(prog.Units[x].CodeFile.storageRef, prog.Units[x].CodeFile.filename, function (data) {
-                u.activecode = data;
-                resolveP();
-              });
-            }));
+            // progPromises.push(new Promise((resolveP, rejectP) => {
+            //   // self.database.getUserCodeFromStorage(prog.Units[x].CodeFile.storageRef, prog.Units[x].CodeFile.filename, function (data) {
+            //   //   u.activecode = data;
+            //   //   console.log("loaded " + u.activecode)
+            //   //   resolveP();
+            //   // });
+
+            // }));
+            progPromises.push(self.getStorageReadPromise(prog.Units[x].CodeFile.storageRef, prog.Units[x].CodeFile.filename, u));
           } else {
             console.log("Illegal code type, continuing");
             continue;
@@ -95,16 +98,16 @@ export class LevelDataInterfaceService {
   getGameInfoTesting(programData: ProgramData): Promise<{ team1Units: Unit[], team2Units: Unit[], griddimensions: { x: number, y: number } }> {
 
     return new Promise<{ team1Units: Unit[], team2Units: Unit[], griddimensions: { x: number, y: number } }>((resolutionFunc, rejectionFunc) => {
-      var testUnit: Unit = new Unit();
+      var testUnit: Unit = new Archer();
       testUnit.codeType = CodeType.BLOCK;
       testUnit.activecode = [new Wait()];
       testUnit.team = 2;
-      testUnit.location = { x: 19, y: 19 };
+      testUnit.location = { x: 10, y: 9 };
 
       var result: { team1Units: Unit[], team2Units: Unit[], griddimensions: { x: number, y: number } } = {
         team1Units: [],
         team2Units: [testUnit],
-        griddimensions: this.TESTGRID_SIZE
+        griddimensions: LevelDataInterfaceService.TESTGRID_SIZE
       };
 
       var progPromises: Array<Promise<void>> = [];
@@ -114,7 +117,7 @@ export class LevelDataInterfaceService {
       for (var x = 0; x < programData.Units.length; x++) {
         var u: Unit = this.newUnitOnType(programData.Units[x].TroopType);
         u.id = curUnitId++;
-        u.team = 2;
+        u.team = 1;
         u.location = programData.Units[x].location;
         if (programData.Units[x].CodeType == CodeType.BLOCK) {
           u.codeType = CodeType.BLOCK;
@@ -150,7 +153,7 @@ export class LevelDataInterfaceService {
       case Archer.dbid:
         return new Archer();
       case Swordsman.dbid:
-        return new Swordsman;
+        return new Swordsman();
       default:
         return new Unit();
     }
@@ -164,6 +167,7 @@ export class LevelDataInterfaceService {
     var self = this;
     return new Promise<void>((resolveP, rejectP) => {
       self.database.getUserCodeFromStorage(storageRef, filename, function (data) {
+        console.log("recieved " + filename);
         passedunit.activecode = data;
         resolveP();
       })

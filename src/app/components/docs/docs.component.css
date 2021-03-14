@@ -1,0 +1,111 @@
+#main-content{
+
+  background-color: #141C34;
+  color: white;
+  width: 1188px;
+  margin: 0 auto;
+  padding: 0 20px;
+  display: flex;
+  justify-content: space-between;
+
+}
+
+#docs-content{
+
+  flex-grow: 3;
+  flex-basis: 85%;
+  padding-top: 54px;
+  overflow-x: auto;
+
+}
+
+#book-marks{
+
+  flex-grow: 1;
+  flex-basis: 15%;
+  padding: 54px 10px;
+  margin-right: 45px;
+  border-right: 1px solid white;
+
+}
+
+#book-marks h3{
+
+  font-size: 15px;
+
+}
+
+#book-marks a:hover{
+
+  color: #2CDD3E;
+
+}
+
+.link{
+
+  text-decoration: none;
+  color: #A4000F;
+
+}
+
+.link:hover{
+
+  color: #2CDD3E;
+
+}
+
+
+code{
+
+  color: #2CDD3E;
+  font-family: codefont;
+
+}
+
+table, th, td {
+  border: 1px solid white;
+  border-collapse: collapse;
+}
+
+table{
+
+  width: 500px;
+  margin-top: 20px;
+  margin-bottom: 20px;
+
+}
+
+th, td{
+
+  padding: 10px;
+
+}
+
+th{
+
+  text-align: center;
+
+}
+
+#main-header{
+
+  color: #2CDD3E;
+  margin: 100px auto 57px;
+  width: 1228px;
+
+}
+
+#title{
+
+  font-family: codefont;
+  font-size: 60px;
+
+}
+
+.page-ref{
+
+  text-decoration: none;
+  color: white;
+
+}
+

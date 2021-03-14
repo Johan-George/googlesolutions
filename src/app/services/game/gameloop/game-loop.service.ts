@@ -9,8 +9,8 @@ import { GameAction } from 'src/app/models/game/GameAction';
 import { Unit } from 'src/app/models/game/units/Unit';
 import { BlockService } from '../../program-construction/block.service';
 import { LevelDataInterfaceService } from '../levelDataInterface/level-data-interface.service';
-import {Wait} from '../../../models/blockCommands/blocks/executable/Wait';
-import {UnitReadOnly} from '../../../models/game/units/UnitReadOnly';
+import { Wait } from '../../../models/blockCommands/blocks/executable/Wait';
+import { UnitReadOnly } from '../../../models/game/units/UnitReadOnly';
 
 @Injectable({
   providedIn: 'root'
@@ -124,6 +124,11 @@ export class GameLoopServiceService {
         this.grid[u.location.x][u.location.y] = u;
       }
 
+      console.log("Team 1 Data");
+      console.log(JSON.stringify(this.team1units));
+      console.log(JSON.stringify(this.team2units));
+      console.log(JSON.stringify(this.grid));
+
     } catch (error) {
       console.log("Failed: " + error);
       return false;
@@ -137,15 +142,59 @@ export class GameLoopServiceService {
    */
   stepGame(): Promise<any> {
     var self = this;
-    return Promise.race([this.baseStepPromise(), new Promise<GameAction>((resolve, reject) => {
-      setTimeout(function(){
-        reject("Code Took too long");
+    // return Promise.race([this.baseStepPromise(), new Promise<GameAction>((resolve, reject) => {
+    //   setTimeout(function () {
 
-        if(self.workerRunning != null) {
-          self.workerRunning.terminate();
+    //     var curTeam: Unit[] = (self.isTeam1Active) ? self.team1units : self.team2units;
+
+    //     self.unitIndex++;
+    //     self.codeIndex = 0;
+    //     if (curTeam.length <= self.unitIndex) {
+    //       //no more units to run through switch sides
+    //       self.unitIndex = 0;
+    //       self.isTeam1Active = !self.isTeam1Active;
+    //     }
+
+    //     self.currentConditions.clear();
+
+    //     if (self.workerRunning != null) {
+    //       self.workerRunning.terminate();
+    //     }
+
+    //     resolve(new GameAction("RanOutOfTimeError", ((self.isTeam1Active) ? self.team1units : self.team2units)[self.unitIndex], null, false));
+
+
+    //   }, this.WORKER_TIMEOUT_TIME);
+    // })]);
+    return new Promise<any>((resolve, reject) => {
+
+      Promise.race([this.baseStepPromise(), new Promise<GameAction>((resolve, reject) => {
+        setTimeout(function() {
+          resolve(new GameAction("RanOutOfTimeError", ((self.isTeam1Active) ? self.team1units : self.team2units)[self.unitIndex], null, false));
+        }, this.WORKER_TIMEOUT_TIME);
+      })]).then(result => {
+        var resolvedAction = result as GameAction;
+
+        if (resolvedAction.actionId === "RanOutOfTimeError") {
+          var curTeam: Unit[] = (self.isTeam1Active) ? self.team1units : self.team2units;
+
+          self.unitIndex++;
+          self.codeIndex = 0;
+          if (curTeam.length <= self.unitIndex) {
+            //no more units to run through switch sides
+            self.unitIndex = 0;
+            self.isTeam1Active = !self.isTeam1Active;
+          }
+
+          self.currentConditions.clear();
+
+          if (self.workerRunning != null) {
+            self.workerRunning.terminate();
+          }
         }
-      }, this.WORKER_TIMEOUT_TIME);
-    })]);
+        resolve(result);
+      });
+    });
   }
 
   baseStepPromise(): Promise<GameAction> {
@@ -177,6 +226,33 @@ export class GameLoopServiceService {
             currentCodeBlock = unit.activecode[this.codeIndex];
           } while (this.evalCodeBlock(currentCodeBlock, unit))
 
+          //check action integrity
+          var last = this.lastAction;
+
+          if (last == null) {
+            last = new GameAction("NoEvent", null, null, false);
+          }
+
+          this.lastAction = null;
+
+          //check for death
+          if (last.hasDied) {
+            // var team: Unit[] = (last.receiver.team == 1) ? this.team1units : this.team2units;
+            // var indexDead = team.indexOf(last.receiver);
+            // if(indexDead >= 0 && indexDead < team.length) {
+            //   team.splice(indexDead, 1);
+
+            //   //adjust new code index
+            //   if(this.unitIndex > indexDead) {
+            //     this.codeIndex--;
+            //   }
+
+            // } else {
+            //   console.log("You shouldnt be seeing this error message");
+            // }
+            this.deleteUnit(last.receiver);
+          }
+
           //next unit
           var curTeam: Unit[] = (this.isTeam1Active) ? this.team1units : this.team2units;
 
@@ -190,29 +266,45 @@ export class GameLoopServiceService {
 
           this.currentConditions.clear();
 
-          //check action integrity
-          var last = this.lastAction;
-
-          if (last == null) {
-            last = new GameAction("NoEvent", null, null, false);
-          }
-
-          this.lastAction = null;
-
           successFunc(last);
-        } else if(unit.codeType === CodeType.FILE) {
+        } else if (unit.codeType === CodeType.FILE) {
 
           this.workerRunning = unit.activecode as Worker;
 
-          this.workerRunning.postMessage(JSON.stringify({grid: this.convertGridToReadOnly(this.grid), unit: new UnitReadOnly(unit)}));
+          this.workerRunning.postMessage(JSON.stringify({ grid: this.convertGridToReadOnly(this.grid), unit: new UnitReadOnly(unit) }));
 
           var self = this
           var messageSent = false;
 
-          this.workerRunning.onmessage = function(event) {
+          this.workerRunning.onmessage = function (event) {
 
-            if(!messageSent){
+            if (!messageSent) {
               self.workerRunning = null;
+
+              /*
+              Note the the convertWorkerMessageToAction never returns null. Instead if something goes
+              wrong it will return a default wait action.
+               */
+              var last = self.convertWorkerMessageToAction(event.data, self.grid, unit);
+              self.lastAction = last;
+
+              //check for death
+              if (last.hasDied) {
+                // var team: Unit[] = (last.receiver.team == 1) ? self.team1units : self.team2units;
+                // var indexDead = team.indexOf(last.receiver);
+                // if (indexDead >= 0 && indexDead < team.length) {
+                //   team.splice(indexDead, 1);
+
+                //   //adjust new code index
+                //   if (self.unitIndex > indexDead) {
+                //     self.codeIndex--;
+                //   }
+
+                // } else {
+                //   console.log("You shouldnt be seeing this error message");
+                // }
+                self.deleteUnit(last.receiver);
+              }
 
               var curTeam: Unit[] = (self.isTeam1Active) ? self.team1units : self.team2units;
 
@@ -223,17 +315,13 @@ export class GameLoopServiceService {
                 self.unitIndex = 0;
                 self.isTeam1Active = !self.isTeam1Active;
               }
-              /*
-              Note the the convertWorkerMessageToAction never returns null. Instead if something goes
-              wrong it will return a default wait action.
-               */
-              self.lastAction = self.convertWorkerMessageToAction(event.data, self.grid, unit);
+
               successFunc(self.lastAction);
             }
             messageSent = true;
           }
 
-          this.workerRunning.onerror = function(event) {
+          this.workerRunning.onerror = function (event) {
             self.workerRunning = null;
 
             var curTeam: Unit[] = (self.isTeam1Active) ? self.team1units : self.team2units;
@@ -246,18 +334,33 @@ export class GameLoopServiceService {
               self.isTeam1Active = !self.isTeam1Active;
             }
 
-            rejectFunc("Written Code has encountered an error");
+            //rejectFunc("Written Code has encountered an error");
+            throw new Error("Written Code has encountered an error")
           }
 
         } else {
           //none type
-          rejectFunc("Unexpected Nonetype code");
+          throw new Error("Unexpected Nonetype code");
         }
 
       } catch (error) {
         last = null;
         //return new GameAction("Error", null, null, false);
-        console.log(error);
+        console.log("Error running unit index " + this.unitIndex.toString() + " on team " + this.isTeam1Active + " " + error);
+
+        //next unit
+        var curTeam: Unit[] = (this.isTeam1Active) ? this.team1units : this.team2units;
+
+        this.unitIndex++;
+        this.codeIndex = 0;
+        if (curTeam.length <= this.unitIndex) {
+          //no more units to run through switch sides
+          this.unitIndex = 0;
+          this.isTeam1Active = !this.isTeam1Active;
+        }
+
+        this.currentConditions.clear();
+
         successFunc(new GameAction("Error", null, null, false));
       }
     });
@@ -330,14 +433,14 @@ export class GameLoopServiceService {
 
   }
 
-  private convertGridToReadOnly(grid: Unit[][]){
+  private convertGridToReadOnly(grid: Unit[][]) {
 
     let newGrid = [];
-    for (let row of grid){
+    for (let row of grid) {
       let newRow = [];
-      for(let el of row){
+      for (let el of row) {
 
-        if(el === null){
+        if (el === null) {
           newRow.push(el);
           continue;
         }
@@ -358,9 +461,9 @@ export class GameLoopServiceService {
   private create2DArray(x: number, y: number): Unit[][] {
     var arr: Unit[][] = [];
 
-    for (var row = 0; row < y; row++) {
+    for (var row = 0; row < x; row++) {
       arr[row] = [];
-      for (var col = 0; col < x; col++) {
+      for (var col = 0; col < y; col++) {
         arr[row][col] = null;
       }
     }
@@ -411,37 +514,38 @@ export class GameLoopServiceService {
    * @param unit the unit the user is controlling
    * @private
    */
-  private convertWorkerMessageToAction(data, grid, unit): GameAction{
+  private convertWorkerMessageToAction(data, grid, unit): GameAction {
 
     let action = data.result;
     try {
       let executable = this.blockServ.getById(btoa(action));
-      if(!(this.blockServ.isExecutable(executable))){
+      if (!(this.blockServ.isExecutable(executable))) {
         throw new Error();
-      }else{
+      } else {
         return executable.execute(grid, unit);
       }
 
-    }catch (err){
+    } catch (err) {
 
       return new Wait().execute(grid, unit);
 
     }
   }
 
-  deleteUnit(unit: Unit){
+  deleteUnit(unit: Unit) {
 
-    let team = unit.team === 1 ? this.team1units : this.team2units;
-    for(let i = 0; i < team.length; i++){
-
-      if(team[i].id === unit.id){
-
+    console.log("Deleting unit " + unit.id + " of team " + unit.team);
+    var team = (unit.team === 1 ? this.team1units : this.team2units);
+    console.log("Looked at team " + team + " of type " + JSON.stringify((team === this.team1units ? "1" : "2")));
+    for (let i = 0; i < team.length; i++) {
+      if (team[i].id === unit.id) {
+        console.log("Deleted unit " + unit.id + " at index " + i);
         team.splice(i);
-
       }
-
     }
 
+    this.grid[unit.location.x][unit.location.y] = null;
+    console.log("end");
   }
 
 }
