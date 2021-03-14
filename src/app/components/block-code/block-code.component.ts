@@ -66,6 +66,7 @@ export class BlockCodeComponent implements OnInit{
   gameRun: boolean = false;
   unitCodeChange: Subject<{unit: Unit, index: number}> = new Subject<{unit: Unit; index: number}>();
   saveFormationsAndCode: Subject<boolean> = new Subject<boolean>();
+  javascriptMode: boolean = false;
 
   constructor(private codeService: CodeService, public blockService: BlockService, private dialog: MatDialog,
               private db: FirestoreDatabaseService, private auth: AuthyLoginService, private router: Router) { }
@@ -384,9 +385,13 @@ export class BlockCodeComponent implements OnInit{
 
   onSelectBlockCode(event){
 
-    event.preventDefault();
-    this.updateSelected();
-    this.verifyCode();
+    if(!this.javascriptMode){
+
+      event.preventDefault();
+      this.updateSelected();
+      this.verifyCode();
+
+    }
 
   }
 
@@ -416,7 +421,7 @@ export class BlockCodeComponent implements OnInit{
 
   addCodeToUnit(unit: Unit){
 
-    if(this.selected && this.verified[this.tabIndex - 1]){
+    if(this.selected && this.verified[this.tabIndex - 1] && !this.javascriptMode){
       unit.activecode = [...this.currentCode];
       this.updateSelected();
       this.unitCodeChange.next({unit: unit, index: this.tabIndex});
@@ -429,6 +434,12 @@ export class BlockCodeComponent implements OnInit{
     this.run.next(true);
     this.gameRun = !this.gameRun;
     console.log(this.gameRun);
+
+  }
+
+  switchEditorMode(){
+
+    this.javascriptMode = !this.javascriptMode;
 
   }
 

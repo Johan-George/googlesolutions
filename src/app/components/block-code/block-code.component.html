@@ -4,8 +4,8 @@
 
   <div id="left-content">
 
-    <div id="top-left-content">
-      <div class="tabs">
+    <div id="top-left-content" [style.height]="javascriptMode ? '90%': '60%'">
+      <div class="tabs" [style.height]="javascriptMode ? '5%': '7%'">
         <div *ngFor="let tab of codeTabs; let i = index" class="tab tab-not-selected" (click)="changeTab(tab, i)"
              [class.tab-not-selected]="tab !== currentCode" [class.tab-selected]="tab === currentCode">
           <h3>
@@ -15,7 +15,8 @@
       </div>
       <div id="code-boundary">
         <div cdkDrag cdkDropList cdkDropListOrientation="vertical" id="current-code-list" (cdkDropListDropped)="onDrop($event)"
-             [cdkDropListData]="currentCode"  #yourCode="cdkDropList" cdkDragBoundary="#code-boundary"
+             [cdkDropListData]="currentCode" #yourCode="cdkDropList" cdkDragBoundary="#code-boundary"
+             [class.cdk-visually-hidden]="javascriptMode"
              (contextmenu)="onSelectBlockCode($event)">
           <mat-card *ngFor="let block of currentCode; let i = index"
                     [class.executable-block]="!isEndBlock(block) && !isConditional(block) && !isTerminalBlock(block)"
@@ -70,19 +71,12 @@
       </div>
     </div>
 
-    <div id="bottom-left-content">
+    <div id="bottom-left-content" *ngIf="!javascriptMode">
       <div class="tabs" id="lower-tabs">
         <div *ngFor="let cat of blockCategories; let i = index" [class.tab-not-selected]="!cat.selected"
              class="tab" [attr.id]="cat.type" [class.tab-selected]="cat.selected" (click)="updateCategorySelected(i)">
           <h3>{{cat.type}}</h3>
         </div>
-        <button mat-raised-button color="primary" id="export" (click)="exportCode()">
-          save
-        </button>
-        <button mat-raised-button id="run" (click)="runOrResetTest()"
-                [class.run-test]="!gameRun" [class.test-running]="gameRun">
-          {{gameRun ? 'reset' : 'run'}}
-        </button>
       </div>
       <div id="card-list-boundary">
         <div cdkDropList cdkDropListOrientation="horizontal" id="card-list" (cdkDropListDropped)="onDrop($event)"
@@ -99,7 +93,22 @@
                [saveFormationsAndCode]="saveFormationsAndCode"
                (unitClickEvent)="addCodeToUnit($event)"
                (saveStateEvent)="saveState($event)"></app-level>
-    <div id="actual-code" [style.height]="200 + (realCode.length * 15) + 'px'">
+    <div id="options">
+      <button mat-raised-button color="primary" id="export" (click)="exportCode()">
+        save
+      </button>
+      <button mat-raised-button id="run" (click)="runOrResetTest()"
+              [class.run-test]="!gameRun" [class.test-running]="gameRun">
+        {{gameRun ? 'reset' : 'run'}}
+      </button>
+      <button mat-raised-button id="switch" (click)="switchEditorMode()">
+        {{javascriptMode ? 'Switch to block code': 'Switch to js'}}
+      </button>
+      <button mat-raised-button id="upload" *ngIf="javascriptMode">
+        upload code
+      </button>
+    </div>
+    <div id="actual-code" [style.height]="200 + (realCode.length * 15) + 'px'" *ngIf="!javascriptMode">
       <p class="code">// This is your block code as actual javascript code!</p>
       <p class="code" *ngFor="let line of realCode" [style.left]="(line.indentationLevel * 10) + 'px'">
         {{line.code}}
