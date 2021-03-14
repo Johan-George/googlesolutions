@@ -38,6 +38,7 @@ import { SetNameComponent } from './components/set-name/set-name.component';
 import {MatFormFieldModule} from '@angular/material/form-field';
 import { LevelplayComponent } from './components/levelplay/levelplay.component';
 import { InfoComponent } from './components/info/info.component';
+import { ProgSelectDialogComponent } from './components/prog-select-dialog/prog-select-dialog.component';
 
 
 const firebaseConfig = {
@@ -63,7 +64,8 @@ const firebaseConfig = {
     LevelselectComponent,
     SetNameComponent,
     LevelplayComponent,
-    InfoComponent
+    InfoComponent,
+    ProgSelectDialogComponent
   ],
   imports: [
     BrowserModule,
@@ -90,7 +92,8 @@ const firebaseConfig = {
     MatProgressSpinnerModule,
     FormsModule,
     MatProgressSpinnerModule,
-    MatTableModule
+    MatTableModule,
+    MatMenuModule
   ],
   providers: [],
   bootstrap: [AppComponent]

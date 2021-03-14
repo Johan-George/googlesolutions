@@ -13,9 +13,9 @@
             <h1>We encountered a problem, please try again</h1>
         </div>
         <div *ngIf="!loadingData && !noData" class="colparent">
-            <div *ngFor="let d of ldata" class="levelObject">
+            <div *ngFor="let d of ldata; let i = index" class="levelObject">
                 <img src="assets/maps/test map.png" alt="Image not found" [ngClass]="{'highlightElement': d.completed}">
-                <button mat-button>{{d.id}}</button>
+                <button mat-button (click)="goToLevel(d.dbid)">{{d.id}}</button>
             </div>
         </div>
 
