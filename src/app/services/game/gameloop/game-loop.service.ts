@@ -285,6 +285,7 @@ export class GameLoopServiceService {
               Note the the convertWorkerMessageToAction never returns null. Instead if something goes
               wrong it will return a default wait action.
                */
+              console.log("Unit request " + event.data.result);
               var last = self.convertWorkerMessageToAction(event.data, self.grid, unit);
               self.lastAction = last;
 
@@ -324,15 +325,15 @@ export class GameLoopServiceService {
           this.workerRunning.onerror = function (event) {
             self.workerRunning = null;
 
-            var curTeam: Unit[] = (self.isTeam1Active) ? self.team1units : self.team2units;
+            // var curTeam: Unit[] = (self.isTeam1Active) ? self.team1units : self.team2units;
 
-            self.unitIndex++;
-            self.codeIndex = 0;
-            if (curTeam.length <= self.unitIndex) {
-              //no more units to run through switch sides
-              self.unitIndex = 0;
-              self.isTeam1Active = !self.isTeam1Active;
-            }
+            // self.unitIndex++;
+            // self.codeIndex = 0;
+            // if (curTeam.length <= self.unitIndex) {
+            //   //no more units to run through switch sides
+            //   self.unitIndex = 0;
+            //   self.isTeam1Active = !self.isTeam1Active;
+            // }
 
             //rejectFunc("Written Code has encountered an error");
             throw new Error("Written Code has encountered an error")

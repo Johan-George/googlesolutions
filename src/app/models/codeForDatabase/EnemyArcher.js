@@ -63,7 +63,7 @@ function isInBounds(location, grid) {
  */
 function locationValid(location, grid) {
 
-    return !locationOccupied(location, grid) && isInBounds(location, grid);
+    return isInBounds(location, grid) && !locationOccupied(location, grid);
 
 }
 
@@ -139,13 +139,13 @@ function getOppositeDirection(dir) {
 function getDirectionCoord(dir, you) {
     switch (dir) {
         case "West":
-            return { x: you.location.x + 1, y: you.location.y };
-        case "East":
             return { x: you.location.x - 1, y: you.location.y };
+        case "East":
+            return { x: you.location.x + 1, y: you.location.y };
         case "North":
-            return { x: you.location.x, y: you.location.y + 1 };
-        case "South":
             return { x: you.location.x, y: you.location.y - 1 };
+        case "South":
+            return { x: you.location.x, y: you.location.y + 1 };
         default:
             return { x: you.location.x - 1, y: you.location.y };
     }
