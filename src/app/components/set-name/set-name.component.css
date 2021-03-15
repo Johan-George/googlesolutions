@@ -16,16 +16,7 @@ h3{
 
   float: left;
   position: relative;
-  bottom: 20px;
-  width: 10px;
-  background-color: red;
-
-}
-
-#close{
-
-  display: block;
-  margin: 0 auto;
-  padding: 2px;
+  bottom: 15px;
+  right: 15px;
 
 }
