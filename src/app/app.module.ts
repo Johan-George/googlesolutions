@@ -37,7 +37,7 @@ import { SetNameComponent } from './components/set-name/set-name.component';
 import {MatFormFieldModule} from '@angular/material/form-field';
 import { LevelplayComponent } from './components/levelplay/levelplay.component';
 import { InfoComponent } from './components/info/info.component';
-
+import { HomeComponent } from './components/home/home.component';
 
 const firebaseConfig = {
   apiKey: "AIzaSyB25gxYu7PkMvnjKhisCzPP62grU_OEMLU",
@@ -63,6 +63,7 @@ const firebaseConfig = {
     SetNameComponent,
     LevelplayComponent,
     InfoComponent
+    HomeComponent
   ],
   imports: [
     BrowserModule,
