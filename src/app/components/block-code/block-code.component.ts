@@ -443,19 +443,29 @@ export class BlockCodeComponent implements OnInit{
   }
 
   addCodeToUnit(unit: Unit){
-
+    let invalidCode = false;
     if(this.selected && ((this.verified[this.tabIndex - 1] && !this.javascriptMode) || this.javascriptMode)){
       if(!this.javascriptMode){
-        unit.codeType = CodeType.BLOCK;
-        unit.activecode = [...this.currentCode];
+        if(this.verified[this.tabIndex - 1]){
+          unit.codeType = CodeType.BLOCK;
+          unit.activecode = [...this.currentCode];
+        }else{
+          invalidCode = true;
+        }
       }else{
-        unit.codeType = CodeType.FILE;
-        unit.activecode = new Worker(this.jsCodeTabs[this.tabIndex - 1].file);
-        unit.fileUrl = this.jsCodeTabs[this.tabIndex - 1].ref;
-        console.log(this.jsCodeTabs[this.tabIndex - 1].ref);
+        if(this.jsCodeTabs[this.tabIndex - 1].file !== null){
+          unit.codeType = CodeType.FILE;
+          unit.activecode = new Worker(this.jsCodeTabs[this.tabIndex - 1].file);
+          unit.fileUrl = this.jsCodeTabs[this.tabIndex - 1].ref;
+          console.log(this.jsCodeTabs[this.tabIndex - 1].ref);
+        }else{
+          invalidCode = true;
+        }
       }
       this.updateSelected();
-      this.unitCodeChange.next({unit: unit, index: this.tabIndex, color: this.javascriptMode ? '#7A3DB8' : '#A4000F'});
+      if(!invalidCode){
+        this.unitCodeChange.next({unit: unit, index: this.tabIndex, color: this.javascriptMode ? '#7A3DB8' : '#A4000F'});
+      }
     }
 
   }

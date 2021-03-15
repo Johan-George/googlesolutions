@@ -105,12 +105,15 @@
               [class.run-test]="!gameRun" [class.test-running]="gameRun">
         {{gameRun ? 'reset' : 'run'}}
       </button>
-      <button mat-raised-button id="switch" (click)="switchEditorMode()">
-        {{javascriptMode ? 'Switch to block code': 'Switch to js'}}
-      </button>
       <button mat-raised-button id="upload" *ngIf="javascriptMode" (click)="uploadJavascript()">
         <input id="file" type='file' hidden accept=".js" (change)="retrieveJavascriptCode($event)" />
         upload code
+      </button>
+      <button mat-raised-button id="help">
+        help
+      </button>
+      <button mat-raised-button id="switch" (click)="switchEditorMode()">
+        {{javascriptMode ? 'go to blocks': 'go to js'}}
       </button>
     </div>
     <div id="actual-code" [style.height]="200 + (realCode.length * 15) + 'px'" *ngIf="!javascriptMode">

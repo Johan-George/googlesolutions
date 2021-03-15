@@ -152,7 +152,7 @@
 .tab h3{
 
   font-family: codefont;
-  font-size: 11px;
+  font-size: 12px;
 
 }
 
@@ -176,11 +176,10 @@
 
 }
 
-#options button,
-#options input{
+#options button{
 
   font-family: codefont;
-  font-size: 10px;
+  font-size: 15px;
   margin-right: 5px;
   flex-basis: 10%;
   flex-grow: 1;
@@ -204,6 +203,12 @@
 #upload{
 
   background-color: #7A3DB8;
+
+}
+
+#help{
+
+  background-color: orange;
 
 }
 
