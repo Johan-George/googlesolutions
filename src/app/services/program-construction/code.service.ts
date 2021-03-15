@@ -1,13 +1,14 @@
-import { Injectable } from '@angular/core';
-import { BlockCommand, ConditionalBlock, Executable, Predicate } from 'src/app/models/blockCommands/block-command';
-import { Else } from 'src/app/models/blockCommands/blocks/conditional/Else';
-import { ElseIf } from 'src/app/models/blockCommands/blocks/conditional/ElseIf';
-import { If } from 'src/app/models/blockCommands/blocks/conditional/If';
-import { EmptyPredicate } from 'src/app/models/blockCommands/blocks/predicate/EmptyPredicate';
-import { End } from 'src/app/models/blockCommands/blocks/terminal/End';
-import { Start } from 'src/app/models/blockCommands/blocks/terminal/Start';
-import { GameAction } from 'src/app/models/game/GameAction';
-import { BlockService } from './block.service';
+import {Injectable} from '@angular/core';
+import {BlockCommand, ConditionalBlock, Executable, Predicate} from 'src/app/models/blockCommands/block-command';
+import {Else} from 'src/app/models/blockCommands/blocks/conditional/Else';
+import {ElseIf} from 'src/app/models/blockCommands/blocks/conditional/ElseIf';
+import {If} from 'src/app/models/blockCommands/blocks/conditional/If';
+import {EmptyPredicate} from 'src/app/models/blockCommands/blocks/predicate/EmptyPredicate';
+import {End} from 'src/app/models/blockCommands/blocks/terminal/End';
+import {Start} from 'src/app/models/blockCommands/blocks/terminal/Start';
+import {GameAction} from 'src/app/models/game/GameAction';
+import {BlockService} from './block.service';
+import {CompoundPredicate} from '../../models/blockCommands/blocks/predicate/CompoundPredicate';
 
 @Injectable({
   providedIn: 'root'
@@ -43,18 +44,24 @@ export class CodeService {
 
       } else if (commands[i].getLabel() === ElseIf.label) {
 
-        throw new Error('Else If without If');
+        throw new Error(CodeErrorFormatters.ELSE_IF_WITHOUT_IF(i + 1));
 
       } else if (this.blockService.isTerminal(commands[i])) {
 
         if (!(commands[i].getLabel() === Start.label || commands[i].getLabel() === End.label)) {
-          throw new Error('Added terminal block without a sequence to terminate');
+          if(commands[i].getLabel() === Else.label){
+
+            throw new Error(CodeErrorFormatters.ELSE_WITHOUT_IF(i + 1));
+
+          }else{
+            throw new Error(CodeErrorFormatters.ADDED_TERMINAL_WITHOUT_SEQUENCE(i + 1));
+          }
         }
 
       }
 
       if(executable_count > 1){
-        throw new Error('Only allowed one action per turn');
+        throw new Error(CodeErrorFormatters.ONLY_ONE_ACTION());
       }
 
     }
@@ -69,14 +76,21 @@ export class CodeService {
     let repr: Array<string> = [];
 
     for (let command of commands) {
-
       if (!this.blockService.isConditional(command)) {
         repr.push(String(command.getId()));
-        console.log(command.getLabel() + " turned into " + command.getId().toString());
       } else {
-        repr.push(String(command.getId() + '_'
-          + command.condition.getId()));
-          console.log(command.getLabel() + " turned into " + command.getId().toString());
+        if((command as ConditionalBlock).condition.getId() !== CompoundPredicate.id){
+          repr.push(String(command.getId() + '_'
+            + command.condition.getId()));
+        }else{
+          let conditional = (command as ConditionalBlock);
+          let serialized = command.getId() + '_' + (conditional.conditions[0].negate ? '!' : '') + conditional.conditions[0].getId();
+          for(let i = 1; i < conditional.conditions.length; i++){
+            let condition = conditional.conditions[i];
+            serialized += (condition.conjunction + (condition.negate ? '!' : '') + condition.getId());
+          }
+          repr.push(serialized);
+        }
       }
 
     }
@@ -96,8 +110,50 @@ export class CodeService {
 
         let ids = rep.split('_');
         let conditional: ConditionalBlock = <ConditionalBlock>this.blockService.getById(ids[0]);
-        conditional.condition = <Predicate>this.blockService.getById(ids[1]);
-        commands.push(conditional);
+        // Make the list empty because it starts off with an empty predicate
+        conditional.conditions = [];
+        if(ids[1].includes('&') || ids[1].includes('|')){
+
+          let start = -1;
+          let complexCondition = ids[1];
+          let nextCondition = 0;
+          while(nextCondition !== -1){
+
+            let nextAnd = complexCondition.indexOf('&', start + 1);
+            let nextOr = complexCondition.indexOf('|', start + 1);
+            if(nextOr !== -1){
+              if(nextAnd < nextOr && nextAnd !== -1){
+                nextCondition = nextAnd;
+              }else{
+                nextCondition = nextOr;
+              }
+            }else if(nextAnd !== -1){
+              nextCondition = nextAnd;
+            }else{
+              nextCondition = -1;
+            }
+
+            let conjunction = start !== -1 ? complexCondition[start] : '';
+            let id = complexCondition.slice(start + 1, nextCondition !== -1 ? nextCondition: complexCondition.length);
+            let negate = false;
+            start = nextCondition;
+            if(id.charAt(0) === '!'){
+              negate = true;
+              id = id.slice(1, id.length);
+            }
+            let condition = this.blockService.getById(id);
+            (condition as Predicate).negate = negate;
+            (condition as Predicate).conjunction = conjunction;
+            conditional.conditions.push(condition as Predicate);
+
+          }
+
+          commands.push(conditional);
+
+        }else{
+          conditional.conditions[0] = <Predicate>this.blockService.getById(ids[1]);
+          commands.push(conditional);
+        }
 
       } else {
         commands.push(this.blockService.getById(rep));
@@ -115,13 +171,15 @@ export class CodeService {
    */
   createConditionalFunction(i, commands: Array<BlockCommand>, executable_count) {
 
+    this.compileConditions(<ConditionalBlock>commands[i], i);
     let condition = (<ConditionalBlock>commands[i]).condition;
     let global_executables = executable_count;
     let local_executables = 0;
+    let start = i;
 
-    if(condition.getLabel() === EmptyPredicate.label){
-      throw new Error('An if block is missing a condition');
-    }
+    // if(condition.getLabel() === EmptyPredicate.label){
+    //   throw new Error('An if block is missing a condition');
+    // }
 
     let terminal_blocks = (<ConditionalBlock>commands[i]).terminal_blocks;
     let elseIfs = [];
@@ -134,7 +192,7 @@ export class CodeService {
     while (!terminal_blocks.includes(commands[i].getLabel())) {
 
       if (commands[i].getLabel() === End.label) {
-        throw new Error('Blocks not closed properly');
+        throw new Error(CodeErrorFormatters.CONDITIONAL_NOT_CLOSED(start + 1));
       }
 
       if (commands[i].getLabel() === If.label) {
@@ -145,11 +203,7 @@ export class CodeService {
         i++;
 
       } else if (commands[i].getLabel() === ElseIf.label) {
-
-        if((<ConditionalBlock>commands[i]).condition.getLabel() === EmptyPredicate.label){
-          throw new Error('An Else if block is missing a condition');
-        }
-
+        this.compileConditions((<ConditionalBlock>commands[i]), i);
         let next = this.parseElseIfOrElse(i, commands, global_executables);
         elseIfs.push([next[1], next[2]])
         i = next[0];
@@ -169,7 +223,7 @@ export class CodeService {
       }
       if(global_executables + local_executables > 1){
 
-        throw new Error('Only one action allowed per turn');
+        throw new Error(CodeErrorFormatters.ONLY_ONE_ACTION());
 
       }
     }
@@ -197,7 +251,7 @@ export class CodeService {
           i++;
         }
 
-        if (i === elseIfs.length) {
+        if (i === elseIfs.length && elseActions.length !== 0) {
           return elseActions[0](grid, unit);
         }
 
@@ -215,6 +269,7 @@ export class CodeService {
     let condition = null;
     let global_executables = executable_count;
     let local_executables = 0;
+    let start = i;
 
     if (commands[i].getLabel() === ElseIf.label) {
       condition = (<ConditionalBlock>commands[i]).condition;
@@ -226,7 +281,7 @@ export class CodeService {
     while (!(terminal_blocks.includes(commands[i].getLabel()))) {
 
       if (commands[i].getLabel() === End.label) {
-        throw new Error('Blocks not closed properly');
+        throw new Error(CodeErrorFormatters.CONDITIONAL_NOT_CLOSED(start + 1));
       }
 
       if (commands[i].getLabel() === If.label) {
@@ -243,11 +298,132 @@ export class CodeService {
 
     if(local_executables + global_executables > 1){
 
-      throw new Error('Only one action allowed per turn');
+      throw new Error(CodeErrorFormatters.ONLY_ONE_ACTION());
 
     }
 
     return [i, condition, conditional_actions];
+  }
+
+  compileConditions(conditional: ConditionalBlock, blockIndex){
+
+    for(let i = 0; i < conditional.conditions.length; i++){
+      let condition = conditional.conditions[i];
+      if(condition.getLabel() === EmptyPredicate.label){
+        throw new Error(CodeErrorFormatters.MISSING_CONDITIONS(blockIndex + 1));
+      }
+    }
+
+    conditional.condition = this.convertToSingleCondition(conditional.conditions);
+
+  }
+
+  /**
+   * Converts the conditions of a complex conditional statement into a single predicate.
+   * @param conditions The predicates used for a complex conditional statement
+   * @param index The index to start iterating from
+   */
+  convertToSingleCondition(conditions: Array<Predicate>, index:number=0): Predicate{
+    //debugger;
+    if(conditions.length === 1){
+      return conditions[0];
+    }
+    let evaluations = [conditions[index]];
+    let i = index + 1;
+    while(i < conditions.length && conditions[i].conjunction === '&'){
+
+      evaluations.push(conditions[i]);
+      i++;
+
+    }
+    console.log(evaluations);
+    let condition = (grid, unit) => {
+
+      for(let evaluation of evaluations){
+
+        if(evaluation.negate){
+          if(evaluation.evaluation(grid, unit)){
+            return false;
+          }
+        }else{
+          if(!evaluation.evaluation(grid, unit)){
+            return false;
+          }
+        }
+      }
+      return true;
+
+    };
+    if(i < conditions.length){
+
+      if(conditions[i].conjunction !== '|'){
+
+        throw new Error(CodeErrorFormatters.SOMETHING_WENT_WRONG());
+
+      }else{
+
+        // If I don't do this there will be infinite recursion because it will think I'm trying to make a recursive call inside
+        let cond = condition;
+
+        condition = (grid, unit) => {
+          return cond(grid, unit) || this.convertToSingleCondition(conditions, i).evaluation(grid, unit);
+        }
+
+      }
+
+    }
+
+    let result = new CompoundPredicate();
+    result.evaluation = condition;
+
+    return result;
+
+  }
+
+}
+
+class CodeErrorFormatters{
+
+  static ELSE_WITHOUT_IF = function(index){
+
+    return `Else If without If at block ${index}`;
+
+  }
+
+  static MISSING_CONDITIONS = function(index){
+
+    return `Conditional Block is missing a condition at block ${index}`;
+
+  }
+
+  static ONLY_ONE_ACTION = function(){
+
+    return 'Only one action allowed per turn';
+
+  }
+
+  static CONDITIONAL_NOT_CLOSED = function(index){
+
+    return `Conditional not closed properly for block ${index}`;
+
+  }
+
+  static ELSE_IF_WITHOUT_IF = function(index){
+
+    return `Else if without if at block ${index}`;
+
+  }
+
+  static ADDED_TERMINAL_WITHOUT_SEQUENCE = function(index){
+
+    return `Added terminal block without sequence to terminate at block ${index}`;
+
+  }
+
+  static SOMETHING_WENT_WRONG = function(){
+
+    return 'Something probably went wrong on our end! Please send a bug report.';
+
   }
 
 }

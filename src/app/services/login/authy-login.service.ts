@@ -15,7 +15,7 @@ export class AuthyLoginService {
 
   constructor(public afAuth: AngularFireAuth, public router: Router) { }
 
-  public checkSigninStatus(route: string) {
+  public checkSigninStatus() {
     if(AuthyLoginService.user == null) {
       
       var sessionData = sessionStorage.getItem(AuthyLoginService.SESSION_STORAGE_USER_ID);
@@ -72,6 +72,7 @@ export class AuthyLoginService {
   public logout() {
     this.afAuth.signOut().then(() => {
       AuthyLoginService.user = null;
+      sessionStorage.removeItem(AuthyLoginService.SESSION_STORAGE_USER_ID);
       console.log("User signout");
       this.router.navigate([""]);
     });

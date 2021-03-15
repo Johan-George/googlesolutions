@@ -8,10 +8,12 @@ import { Predicate } from '../../block-command';
  */
 export class HealthBelow30Percent implements Predicate {
 
-  static label: string = 'Health Below 30%';
+  static label: string = 'Health Less Than 30 Percent';
   static id: string = btoa(HealthBelow30Percent.name);
-  static asCode = 'healthBelow30Percent()'
+  static asCode = 'healthLessThan30Percent(me)'
   indentationLevel: number;
+  conjunction: string = '';
+  negate: boolean = false;
 
   evaluation(grid, unit): boolean {
     return ((unit.health / unit.maxHealth) * 100) < 30;

@@ -13,8 +13,8 @@ import { Wait } from 'src/app/models/blockCommands/blocks/executable/Wait';
 })
 export class LevelDataInterfaceService {
 
-  private PLAYSPACE_SIZE = { x: 20, y: 20 };
-  private TESTGRID_SIZE = { x: 20, y: 20 };
+  public static PLAYSPACE_SIZE = { x: 15, y: 15 };
+  public static TESTGRID_SIZE = { x: 15, y: 10 };
 
   constructor(private database: FirestoreDatabaseService, private codeServ: CodeService) { }
 
@@ -24,7 +24,7 @@ export class LevelDataInterfaceService {
     var curUnitId = 0;
     return new Promise((resolutionFunc, rejectionFunc) => {
       var returnObject: { team1Units: Unit[], team2Units: Unit[], griddimensions: { x: number, y: number } } =
-        { team1Units: [], team2Units: [], griddimensions: this.PLAYSPACE_SIZE };
+        { team1Units: [], team2Units: [], griddimensions: LevelDataInterfaceService.PLAYSPACE_SIZE };
 
       this.database.getLevelProgram(levelid, function (prog: ProgramData) {
 
@@ -37,17 +37,20 @@ export class LevelDataInterfaceService {
           u.id = curUnitId++;
           u.team = 2;
           u.location = prog.Units[x].location;
-          if (prog.Units[x].CodeType == CodeType.BLOCK) {
+          if (prog.Units[x].CodeType === CodeType.BLOCK) {
             u.codeType = CodeType.BLOCK;
             u.activecode = self.deserializeBlockCode(prog.Units[x].CodeBlocks);
-          } else if (prog.Units[x].CodeType == CodeType.FILE) {
+          } else if (prog.Units[x].CodeType === CodeType.FILE) {
             u.codeType = CodeType.FILE;
-            progPromises.push(new Promise((resolveP, rejectP) => {
-              self.database.getUserCodeFromStorage(prog.Units[x].CodeFile.storageRef, prog.Units[x].CodeFile.filename, function (data) {
-                u.activecode = data;
-                resolveP();
-              });
-            }));
+            // progPromises.push(new Promise((resolveP, rejectP) => {
+            //   // self.database.getUserCodeFromStorage(prog.Units[x].CodeFile.storageRef, prog.Units[x].CodeFile.filename, function (data) {
+            //   //   u.activecode = data;
+            //   //   console.log("loaded " + u.activecode)
+            //   //   resolveP();
+            //   // });
+
+            // }));
+            progPromises.push(self.getStorageReadPromise(prog.Units[x].CodeFile.storageRef, prog.Units[x].CodeFile.filename, u));
           } else {
             console.log("Illegal code type, continuing");
             continue;
@@ -70,12 +73,13 @@ export class LevelDataInterfaceService {
               u.activecode = self.deserializeBlockCode(playerProg.Units[x].CodeBlocks);
             } else if (playerProg.Units[x].CodeType == CodeType.FILE) {
               u.codeType = CodeType.FILE;
-              progPromises.push(new Promise((resolveP, rejectP) => {
-                self.database.getUserCodeFromStorage(playerProg.Units[x].CodeFile.storageRef, playerProg.Units[x].CodeFile.filename, function (data) {
-                  u.activecode = data;
-                  resolveP();
-                });
-              }));
+              // progPromises.push(new Promise((resolveP, rejectP) => {
+              //   self.database.getUserCodeFromStorage(playerProg.Units[x].CodeFile.storageRef, playerProg.Units[x].CodeFile.filename, function (data) {
+              //     u.activecode = data;
+              //     resolveP();
+              //   });
+              // }));
+              progPromises.push(self.getStorageReadPromise(playerProg.Units[x].CodeFile.storageRef, playerProg.Units[x].CodeFile.filename, u));
             } else {
               console.log("Illegal code type, continuing of type " + (playerProg.Units[x].CodeType.toString()));
               continue;
@@ -94,68 +98,80 @@ export class LevelDataInterfaceService {
   getGameInfoTesting(programData: ProgramData): Promise<{ team1Units: Unit[], team2Units: Unit[], griddimensions: { x: number, y: number } }> {
 
     return new Promise<{ team1Units: Unit[], team2Units: Unit[], griddimensions: { x: number, y: number } }>((resolutionFunc, rejectionFunc) => {
-      var testUnit: Unit = new Unit();
+      var testUnit: Unit = new Archer();
       testUnit.codeType = CodeType.BLOCK;
       testUnit.activecode = [new Wait()];
       testUnit.team = 2;
-      testUnit.location = { x: 19, y: 19 };
+      testUnit.location = { x: 10, y: 9 };
 
       var result: { team1Units: Unit[], team2Units: Unit[], griddimensions: { x: number, y: number } } = {
         team1Units: [],
         team2Units: [testUnit],
-        griddimensions: this.TESTGRID_SIZE
+        griddimensions: LevelDataInterfaceService.TESTGRID_SIZE
       };
 
       var progPromises: Array<Promise<void>> = [];
       var curUnitId = 0;
       var self = this;
 
-      for(var x = 0; x < programData.Units.length; x++) {
+      for (var x = 0; x < programData.Units.length; x++) {
         var u: Unit = this.newUnitOnType(programData.Units[x].TroopType);
-          u.id = curUnitId++;
-          u.team = 2;
-          u.location = programData.Units[x].location;
-          if (programData.Units[x].CodeType == CodeType.BLOCK) {
-            u.codeType = CodeType.BLOCK;
-            u.activecode = this.deserializeBlockCode(programData.Units[x].CodeBlocks);
-          } else if (programData.Units[x].CodeType == CodeType.FILE) {
-            u.codeType = CodeType.FILE;
-            progPromises.push(new Promise<void>((resolveP, rejectP) => {
-              self.database.getUserCodeFromStorage(programData.Units[x].CodeFile.storageRef, programData.Units[x].CodeFile.filename, function (data) {
-                u.activecode = data;
-                resolveP();
-              });
-            }));
-          } else {
-            console.log("Illegal code type, continuing");
-            continue;
-          }
+        u.id = curUnitId++;
+        u.team = 1;
+        u.location = programData.Units[x].location;
+        if (programData.Units[x].CodeType == CodeType.BLOCK) {
+          u.codeType = CodeType.BLOCK;
+          u.activecode = this.deserializeBlockCode(programData.Units[x].CodeBlocks);
+        } else if (programData.Units[x].CodeType == CodeType.FILE) {
+          u.codeType = CodeType.FILE;
+          // progPromises.push(new Promise<void>((resolveP, rejectP) => {
+          //   self.database.getUserCodeFromStorage(programData.Units[x].CodeFile.storageRef, programData.Units[x].CodeFile.filename, function (data) {
+          //     u.activecode = data;
+          //     resolveP();
+          //   });
+          //}));
+          progPromises.push(self.getStorageReadPromise(programData.Units[x].CodeFile.storageRef, programData.Units[x].CodeFile.filename, u));
+        } else {
+          console.log("Illegal code type, continuing");
+          continue;
+        }
 
-          result.team1Units.push(u);
+        result.team1Units.push(u);
 
-          Promise.all(progPromises).then(function (val) {
-            resolutionFunc(result);
-          });
+        Promise.all(progPromises).then(function (val) {
+          resolutionFunc(result);
+        });
       }
 
-  });
+    });
 
 
-}
+  }
 
   private newUnitOnType(id: string): Unit {
-  switch (id) {
-    case Archer.dbid:
-      return new Archer();
-    case Swordsman.dbid:
-      return new Swordsman;
-    default:
-      return new Unit();
+    switch (id) {
+      case Archer.dbid:
+        return new Archer();
+      case Swordsman.dbid:
+        return new Swordsman();
+      default:
+        return new Unit();
+    }
   }
-}
 
   private deserializeBlockCode(code: string[]): BlockCommand[] {
-  return this.codeServ.deserializeToBlocks(code);
-}
+    return this.codeServ.deserializeToBlocks(code);
+  }
+
+  private getStorageReadPromise(storageRef, filename, passedunit) {
+    var self = this;
+    return new Promise<void>((resolveP, rejectP) => {
+      self.database.getUserCodeFromStorage(storageRef, filename, function (data) {
+        console.log("recieved " + filename);
+        passedunit.activecode = data;
+        resolveP();
+      })
+    });
+  }
 
 }

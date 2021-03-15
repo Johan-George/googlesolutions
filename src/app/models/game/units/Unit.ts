@@ -39,6 +39,10 @@ export class Unit {
    * The code the that unit can run
    */
   codeType: CodeType = CodeType.NONE;
+  /**
+   * The url of the code file (if any) that the unit uses
+   */
+  fileUrl: string;
   activecode: any = [];
   maxHealth: number = 100;
   health: number = 100;
@@ -48,6 +52,7 @@ export class Unit {
   sprite: createjs.Sprite;
   walk_frames: Array<number>;
   attack_frames: Array<number>;
+  testCodeIndex: number;
 
   constructor() {}
 

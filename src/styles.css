@@ -1,15 +1,26 @@
 /* You can add global styles to this file, and also import other style files */
 
-html, body { height: 100%; }
+html, body { height: 100%; background-color: #0b132b; }
+body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; }
 
-body { 
-    max-width: 1000px;
-    margin: auto; 
-    font-family: Roboto, "Helvetica Neue", sans-serif; 
-    background-color: #0b132b;
-    color: #2cdd3e;
+html, body { height: 100%; }
+body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; }
+
+@font-face {
+  font-family: codefont;
+  src: url("/assets/fonts/code font/JetBrainsMonoNL-Regular.ttf")
 }
 
-p {
-    font-size: 20px;
+app-root {
+    height: 100%;
+    display: block;
+}
+
+.mat-progress-spinner circle, .mat-spinner circle {
+    stroke: #2cdd3e;
+}
+
+.fullpage {
+    height: 100%;
+    display: block;
 }

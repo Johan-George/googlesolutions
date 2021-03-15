@@ -4,10 +4,10 @@ import { Else } from 'src/app/models/blockCommands/blocks/conditional/Else';
 import { ElseIf } from 'src/app/models/blockCommands/blocks/conditional/ElseIf';
 import { If } from 'src/app/models/blockCommands/blocks/conditional/If';
 import { Attack } from 'src/app/models/blockCommands/blocks/executable/Attack';
-import { Backward } from 'src/app/models/blockCommands/blocks/executable/Backward';
-import { Forward } from 'src/app/models/blockCommands/blocks/executable/Forward';
-import { Left } from 'src/app/models/blockCommands/blocks/executable/Left';
-import { Right } from 'src/app/models/blockCommands/blocks/executable/Right';
+import { West } from 'src/app/models/blockCommands/blocks/executable/West';
+import { East } from 'src/app/models/blockCommands/blocks/executable/East';
+import { North } from 'src/app/models/blockCommands/blocks/executable/North';
+import { South } from 'src/app/models/blockCommands/blocks/executable/South';
 import { Wait } from 'src/app/models/blockCommands/blocks/executable/Wait';
 import { EmptyPredicate } from 'src/app/models/blockCommands/blocks/predicate/EmptyPredicate';
 import { EnemyNear } from 'src/app/models/blockCommands/blocks/predicate/EnemyNear';
@@ -17,11 +17,11 @@ import { EndElse } from 'src/app/models/blockCommands/blocks/terminal/EndElse';
 import { EndElseIf } from 'src/app/models/blockCommands/blocks/terminal/EndElseIf';
 import { EndIf } from 'src/app/models/blockCommands/blocks/terminal/Endif';
 import { Start } from 'src/app/models/blockCommands/blocks/terminal/Start';
-import {ElementSelectorsMigration} from '@angular/cdk/schematics/ng-update/migrations/element-selectors';
 import {TextAction1} from '../../models/blockCommands/blocks/executable/TestAction1';
 import {TextAction2} from '../../models/blockCommands/blocks/executable/TestAction2';
 import {TruePredicate} from '../../models/blockCommands/blocks/predicate/TruePredicate';
 import {FalsePredicate} from '../../models/blockCommands/blocks/predicate/FalsePredicate';
+import {CompoundPredicate} from '../../models/blockCommands/blocks/predicate/CompoundPredicate';
 
 @Injectable({
   providedIn: 'root'
@@ -38,11 +38,21 @@ export class BlockService {
    * Array of all BlockCommands that can be placed on the code designer
    */
   static placeableBlocks: Array<BlockCommand> = [
-    new If(), new Attack(), new Backward(), new Forward(), new Left(),
-    new Right(), new Wait(), new EndIf(), new Else(), new ElseIf(),
-    new EndElse(), new EndElseIf()
+    new If(), new Attack(), new North(), new South(), new East(),
+    new West(), new Wait(), new EndIf(), new Else(), new ElseIf(),
+    new EndElse(), new EndElseIf(), new TextAction2(), new TextAction1()
   ];
 
+  static actionBlocks: Array<BlockCommand> = [
+    new North(), new South(), new East(),
+    new West(), new Wait(), new Attack()
+  ];
+
+  static conditionalBlocks: Array<BlockCommand> = [
+
+    new If(), new EndIf(), new Else(), new ElseIf(),
+    new EndElse(), new EndElseIf()
+  ];
   /**
    * Array representing all BlockCommands
    */
@@ -51,14 +61,15 @@ export class BlockService {
   /**
    * Array representing all Predicates avaliable
    */
-  static predicates: Array<Predicate> = [new EnemyNear(), new HealthBelow30Percent()];
+  static predicates: Array<Predicate> = [new EnemyNear(), new HealthBelow30Percent(),
+    new TruePredicate(), new FalsePredicate()];
 
   /**
    * returns true if the BlockCommand is a ConditionalBlock Object
    * @param command The BlockCommand to check
    */
   isConditional(command: BlockCommand): command is ConditionalBlock {
-    return (<ConditionalBlock>command).condition !== undefined;
+    return (<ConditionalBlock>command).conditions !== undefined;
   }
 
   /**
@@ -87,14 +98,14 @@ export class BlockService {
         return new If();
       case Attack.id:
         return new Attack();
-      case Backward.id:
-        return new Backward();
-      case Forward.id:
-        return new Forward();
-      case Left.id:
-        return new Left();
-      case Right.id:
-        return new Right();
+      case North.id:
+        return new North();
+      case South.id:
+        return new South();
+      case East.id:
+        return new East();
+      case West.id:
+        return new West();
       case Wait.id:
         return new Wait();
       case ElseIf.id:
@@ -121,10 +132,22 @@ export class BlockService {
         return new FalsePredicate();
       case EmptyPredicate.id:
         return new EmptyPredicate();
+      case CompoundPredicate.id:
+        return new CompoundPredicate();
+      case Start.id:
+        return new Start();
+      case End.id:
+        return new End();
       default:
-        throw new Error('Id not recognized.');
+        throw new Error(`Id of ${id} is not recognized.`);
 
     }
+
+  }
+
+  cloneBlock(block: BlockCommand){
+
+    return Object.create(block);
 
   }
 

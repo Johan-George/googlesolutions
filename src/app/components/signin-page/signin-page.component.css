@@ -1,13 +1,12 @@
 
 #background {
-    background-color: #0b132b;
     height: 100%;
     overflow: auto;
 }
 
 #centerElement {
     background-color: #1c2541;
-    margin: 10% auto auto auto;
+    margin: 5% auto auto auto;
     width: 25%;
     height: 50%;
 }
@@ -17,6 +16,7 @@ h1 {
     display: inline-block;
     text-align: center;
     color: white;
+    font-family: Roboto;
 }
 
 hr {

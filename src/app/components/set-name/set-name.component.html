@@ -1,0 +1,7 @@
+<mat-icon id="cancel" (click)="cancel()">close</mat-icon>
+
+<h3>Enter a name to save this formation and code under:</h3>
+<mat-form-field appearance="fill" id="field" (keydown.enter)="enter()">
+  <mat-label>Input</mat-label>
+  <input matInput [(ngModel)]="data.name">
+</mat-form-field>
