@@ -41,7 +41,7 @@ export class BlockCodeComponent implements OnInit{
     [new Start(), new End()]
 
   ];
-  jsCodeTabs: Array<any> = this.codeBlocks.map(_ =>{return {content: '', file: null, ref: ''}});
+  jsCodeTabs: Array<any> = this.codeBlocks.map(_ =>{return {content: '', file: null, ref: '', rawFile: null}});
 
   verified: Array<boolean> = this.codeTabs.map(_ => false);
 
@@ -65,7 +65,7 @@ export class BlockCodeComponent implements OnInit{
   tabIndex: number = 1;
   run: Subject<boolean> = new Subject<boolean>();
   gameRun: boolean = false;
-  unitCodeChange: Subject<{unit: Unit, index: number}> = new Subject<{unit: Unit; index: number}>();
+  unitCodeChange: Subject<{unit: Unit, index: number, color: string}> = new Subject<{unit: Unit; index: number, color: string}>();
   saveFormationsAndCode: Subject<boolean> = new Subject<boolean>();
   javascriptMode: boolean = false;
 
@@ -147,9 +147,27 @@ export class BlockCodeComponent implements OnInit{
         if(tile != null && tile.team === 1){
           let unit = new UnitData();
           unit.TroopType = btoa(tile.constructor.name);
-          console.log(unit.TroopType);
-          unit.CodeType = CodeType.BLOCK;
-          unit.CodeBlocks = this.codeService.serializeBlocks(tile.activecode);
+          if(tile.codeType === CodeType.BLOCK){
+            unit.CodeType = CodeType.BLOCK;
+            unit.CodeBlocks = this.codeService.serializeBlocks(tile.activecode);
+          }else if(tile.codeType === CodeType.FILE){
+            unit.CodeType = CodeType.FILE
+            unit.CodeFile = {storageRef: tile.fileUrl, filename: tile.fileUrl.split('/')[3]};
+            let code = null;
+            for(let file of this.jsCodeTabs){
+
+              if(file.ref === tile.fileUrl){
+
+                code = file.rawFile;
+
+              }
+
+            }
+            if(code === null){
+              throw new Error("Couldn't find file. Something went wrong. Your code is spaghetti lel");
+            }
+            this.db.storeCodeAtLocation(tile.fileUrl, code);
+          }
           unit.location = tile.location;
           this.programData.Units.push(unit);
         }
@@ -172,14 +190,11 @@ export class BlockCodeComponent implements OnInit{
         let self = this;
         self.programData.Name = data.name;
         let id = 0;
-        function getRandomInt(max) {
-          return Math.floor(Math.random() * Math.floor(max));
-        }
         function setProgram(id){
           self.db.doesProgramExist(`${id}`, result => {
 
             if(result){
-              let id = getRandomInt(200);
+              let id = self.getRandomInt(200);
               setProgram(id);
             }else{
               self.db.setProgramData(`${id}`, self.programData).then(_ => {
@@ -436,9 +451,11 @@ export class BlockCodeComponent implements OnInit{
       }else{
         unit.codeType = CodeType.FILE;
         unit.activecode = new Worker(this.jsCodeTabs[this.tabIndex - 1].file);
+        unit.fileUrl = this.jsCodeTabs[this.tabIndex - 1].ref;
+        console.log(this.jsCodeTabs[this.tabIndex - 1].ref);
       }
       this.updateSelected();
-      this.unitCodeChange.next({unit: unit, index: this.tabIndex});
+      this.unitCodeChange.next({unit: unit, index: this.tabIndex, color: this.javascriptMode ? '#7A3DB8' : '#A4000F'});
     }
 
   }
@@ -472,13 +489,19 @@ export class BlockCodeComponent implements OnInit{
     let self = this;
     reader.onload = function(event) {
       if (typeof event.target.result === 'string') {
-        self.jsCodeTabs[self.tabIndex - 1].content = event.target.result;
-        self.jsCodeTabs[self.tabIndex - 1].file = window.URL.createObjectURL(file);
+        let fileRepr = self.jsCodeTabs[self.tabIndex - 1];
+        fileRepr.content = event.target.result;
+        fileRepr.file = window.URL.createObjectURL(file);
+        fileRepr.rawFile = file;
         // TODO: set the ref variable of the file object to be the appropriate file location for firebase
-        console.log(file.name.slice(0, file.name.length - 3));
+        fileRepr.ref = `/user_code/${self.auth.getUser().uid}/${new Date().getTime()}`;
       }
     };
     reader.readAsText(file);
+  }
+
+  getRandomInt(max) {
+    return Math.floor(Math.random() * Math.floor(max));
   }
 
 }
