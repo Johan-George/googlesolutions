@@ -54,8 +54,14 @@ export class LevelComponent implements OnInit {
   private gameLevelDataNum: string;
   @Input()
   private gamePlayerDataNum: string;
+  @Input()
+  private updateProgramData: Subject<ProgramData>;
+  @Input()
+  private giveGridData: Subject<boolean>;
   @Output()
   private gameActionLogger: EventEmitter<GameAction> = new EventEmitter<GameAction>();
+  @Output()
+  private gridDataEvent: EventEmitter<Unit[][]> = new EventEmitter<Unit[][]>();
   private contextMenu: createjs.Container = null;
   private contextMenuBounds = {x: 0, y: 0, w: 0, h: 0};
   private unitsLeft = 3;
@@ -103,6 +109,18 @@ export class LevelComponent implements OnInit {
         throw new Error('Save Formation And Code Subject must be defined in test mode');
       }
 
+    }
+    if(this.updateProgramData !== undefined && this.testMode){
+      this.updateProgramData.subscribe(data => {
+        this.programData = data;
+        console.log(this.grid);
+      });
+    }
+
+    if(this.giveGridData !== undefined && this.testMode){
+      this.giveGridData.subscribe(_ => {
+        this.gridDataEvent.emit(this.grid);
+      });
     }
 
     createjs.Ticker.on('tick', _ => {
@@ -174,6 +192,7 @@ export class LevelComponent implements OnInit {
 
       })
       this.loading = "done";
+      console.log(this.grid);
     }
 
   }
@@ -181,7 +200,6 @@ export class LevelComponent implements OnInit {
   placeOnScreen(unit: Unit){
 
     let half_sprite_length = SpriteConstants.spriteSize / 2;
-
     /*
     Add half a sprite length in the end because the center of the sprite is placed at the corner of the
     square
@@ -247,6 +265,7 @@ export class LevelComponent implements OnInit {
             this.grid[unit.location.x][unit.location.y] = unit;
             sprite.x = new_x;
             sprite.y = new_y;
+            this.giveGridData.next(true);
 
           }else{
 
@@ -254,7 +273,6 @@ export class LevelComponent implements OnInit {
             unit.sprite.y = (unit.location.y * SpriteConstants.spriteSize) + half_sprite_length;
 
           }
-          console.log(this.grid[unit.location.x][unit.location.y]);
 
         }
 
@@ -361,6 +379,8 @@ export class LevelComponent implements OnInit {
   }
   resetGame(){
 
+    this.grid = null;
+    this.loopservice.grid = null;
     this.gameStart = false;
     this.loadGridData(this.programData);
     this.tickCount = 0;
@@ -383,10 +403,11 @@ export class LevelComponent implements OnInit {
       this.closeContextMenu();
     }
     let unit = this.grid[location.x][location.y];
+    console.log(unit);
     if(unit !== null && unit !== undefined){
       this.unitClickEvent.emit(unit);
     }
-  }1
+  }
 
   changeCodeIndexOfUnit(unit: Unit, index: number, color: string){
 
@@ -418,7 +439,6 @@ export class LevelComponent implements OnInit {
     container.addChild(background);
 
     // add units left text
-
     let unitsLeft = new createjs.Text();
     let unitsLeftTextConstants = {x: 3, y: 10};
     unitsLeft.font = '12px JetBrains Mono';
@@ -442,6 +462,8 @@ export class LevelComponent implements OnInit {
       if(self.loopservice.grid[tileX][tileY] === null && this.imageQueue !== null && this.unitsLeft > 0){
         let unit = new Archer();
         unit.team = 1;
+        let team = self.loopservice.team1units;
+        unit.id = team.length > 0 ? team[team.length - 1].id + 1 : 0;
         unit.activecode = [new East()];
         unit.location.x = tileX;
         unit.codeType = CodeType.BLOCK;
@@ -453,6 +475,7 @@ export class LevelComponent implements OnInit {
         self.placeAllOnScreen([unit]);
         self.closeContextMenu();
         self.unitsLeft -= 1;
+        self.giveGridData.next(true);
       }
     });
     let addArcher = new createjs.Text();
@@ -476,6 +499,8 @@ export class LevelComponent implements OnInit {
       if(self.loopservice.grid[tileX][tileY] === null && this.imageQueue !== null && this.unitsLeft > 0){
         let unit = new Swordsman();
         unit.team = 1;
+        let team = self.loopservice.team1units;
+        unit.id = team.length > 0 ? team[team.length - 1].id + 1 : 0;
         unit.activecode = [new East()];
         unit.location.x = tileX;
         unit.codeType = CodeType.BLOCK;
@@ -487,6 +512,7 @@ export class LevelComponent implements OnInit {
         self.placeAllOnScreen([unit]);
         self.closeContextMenu();
         self.unitsLeft -= 1;
+        self.giveGridData.next(true);
       }
     });
     let addSwordsman = new createjs.Text();
@@ -509,12 +535,13 @@ export class LevelComponent implements OnInit {
     deleteButton.y = deleteButtonConstants.y;
     container.addChild(deleteButton);
     deleteButton.on('click', _ => {
-      if(self.loopservice.grid[tileX][tileY] !== null){
+      if(self.loopservice.grid[tileX][tileY] !== null && self.loopservice.grid[tileX][tileY].team !== 2){
         let unit = self.loopservice.grid[tileX][tileY];
         stage.removeChild(unit.sprite);
         this.loopservice.deleteUnit(unit);
         self.unitsLeft += 1;
         self.closeContextMenu();
+        self.giveGridData.next(true);
       }
     });
 
@@ -538,7 +565,7 @@ export class LevelComponent implements OnInit {
   onContextMenuOpen(event){
 
     event.preventDefault();
-    if(this.contextMenu === null && !this.gameStart && this.testMode){
+    if(this.contextMenu === null && !this.gameStart && this.testMode && this.loading === 'done'){
       this.renderContextMenuAt(event.pageX - event.target.offsetLeft, event.pageY - event.target.offsetTop,
         Math.floor((event.pageX - event.target.offsetLeft) / 40),
         Math.floor((event.pageY - event.target.offsetTop) / 40));
@@ -547,11 +574,6 @@ export class LevelComponent implements OnInit {
   }
 
   inContextMenuBounds(x, y): boolean{
-
-    // console.log(`${this.contextMenuBounds.x} ${this.contextMenuBounds.x + this.contextMenuBounds.w}` );
-    // console.log(`${this.contextMenuBounds.y} ${this.contextMenuBounds.y + this.contextMenuBounds.h}` );
-    // console.log(`${x} ${y}`);
-    // console.log('---------');
 
     return x >= this.contextMenuBounds.x && x <= this.contextMenuBounds.x + this.contextMenuBounds.w &&
       y >= this.contextMenuBounds.y && y <= this.contextMenuBounds.y + this.contextMenuBounds.h;

@@ -68,6 +68,8 @@ export class BlockCodeComponent implements OnInit{
   unitCodeChange: Subject<{unit: Unit, index: number, color: string}> = new Subject<{unit: Unit; index: number, color: string}>();
   saveFormationsAndCode: Subject<boolean> = new Subject<boolean>();
   javascriptMode: boolean = false;
+  giveGridData: Subject<boolean> = new Subject<boolean>();
+  updateProgramData: Subject<ProgramData> = new Subject<ProgramData>();
 
   constructor(private codeService: CodeService, public blockService: BlockService, private dialog: MatDialog,
               private db: FirestoreDatabaseService, private auth: AuthyLoginService, private router: Router) { }
@@ -100,7 +102,6 @@ export class BlockCodeComponent implements OnInit{
 
   }
 
-
   onDrop(event) {
 
     if (event.container.data === this.currentCode &&
@@ -119,7 +120,6 @@ export class BlockCodeComponent implements OnInit{
       this.realCode.splice(event.currentIndex + this.extraLinesAdded, 0, new RealCodeRepr(copy));
     }
 
-
   }
 
   onDeleteBlock(index) {
@@ -133,11 +133,9 @@ export class BlockCodeComponent implements OnInit{
 
     this.saveFormationsAndCode.next(true);
 
-
   }
 
-  saveState(state: Unit[][]){
-
+  saveProgramData(state: Unit[][]){
     this.programData = new ProgramData();
     this.programData.Name = 'Test';
     this.programData.Verified = true;
@@ -168,11 +166,17 @@ export class BlockCodeComponent implements OnInit{
             }
             this.db.storeCodeAtLocation(tile.fileUrl, code);
           }
-          unit.location = tile.location;
+          unit.location = Object.freeze(tile.location);
           this.programData.Units.push(unit);
         }
       }
     }
+    this.updateProgramData.next(this.programData);
+  }
+
+  saveState(state: Unit[][]){
+
+    this.saveProgramData(state);
     let data = {
 
       name: '',
@@ -474,7 +478,7 @@ export class BlockCodeComponent implements OnInit{
 
     this.run.next(true);
     this.gameRun = !this.gameRun;
-    console.log(this.gameRun);
+    console.log(this.programData.Units);
 
   }
 
