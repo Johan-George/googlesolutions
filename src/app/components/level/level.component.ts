@@ -11,6 +11,7 @@ import {CodeType, ProgramData} from '../../models/database/DatabaseData';
 import {Subject} from 'rxjs';
 import {Archer} from '../../models/game/units/Archer';
 import {East} from '../../models/blockCommands/blocks/executable/East';
+import {Swordsman} from '../../models/game/units/Swordsman';
 
 (<any>window).createjs = createjs;
 let stage;
@@ -334,9 +335,7 @@ export class LevelComponent implements OnInit {
       if(this.lastAction.hasDied){
 
         let dead = this.lastAction.receiver
-        // this.grid[dead.location.x][dead.location.y] = null;
         stage.removeChild(dead.sprite);
-        // this.loopservice.deleteUnit(dead);
         console.log('Death happened');
 
       }
@@ -406,17 +405,15 @@ export class LevelComponent implements OnInit {
   }
 
   renderContextMenuAt(x, y, tileX, tileY){
-
-    console.log(`${tileX} ${tileY}`);
     // create context menu
     let container = new createjs.Container();
-    let containerConstants = {x:0, y:0, w:100, h:100, absx: x, absy: y};
+    let containerConstants = {w:100, h:100, absx: x, absy: y};
     container.x = containerConstants.absx;
     container.y = containerConstants.absy;
     let background = new createjs.Shape();
-    background.graphics.beginFill('#BEBEBE').drawRect(containerConstants.x, containerConstants.y,
+    background.graphics.beginFill('#BEBEBE').drawRect(0, 0,
       containerConstants.w, containerConstants.h);
-    background.graphics.beginStroke('black').drawRect(containerConstants.x, containerConstants.y,
+    background.graphics.beginStroke('black').drawRect(0, 0,
       containerConstants.w, containerConstants.h);
     container.addChild(background);
 
@@ -433,14 +430,12 @@ export class LevelComponent implements OnInit {
 
     // create add archer button
     let addArcherButton = new createjs.Shape();
-    let archerButtonConstants = {x: 0, y: 20, w: 90, h: 20, absx: 4, absy: 5};
+    let archerButtonConstants = {x: 5, y: 25, w: 90, h: 20};
     let addArcherTextConstants = {x: 17, y: 30};
     addArcherButton.graphics.beginFill('white').drawRect(archerButtonConstants.x,
       archerButtonConstants.y, archerButtonConstants.w, archerButtonConstants.h);
     addArcherButton.graphics.beginStroke('black').drawRect(archerButtonConstants.x,
       archerButtonConstants.y, archerButtonConstants.w, archerButtonConstants.h);
-    addArcherButton.x = archerButtonConstants.absx;
-    addArcherButton.y = archerButtonConstants.absy;
     container.addChild(addArcherButton);
     let self = this;
     addArcherButton.on('click', _ => {
@@ -470,17 +465,29 @@ export class LevelComponent implements OnInit {
 
     // create add swordsman button
     let addSwordsmanButton = new createjs.Shape();
-    let addSwordsmanButtonConstants = {x: 0, y: 50, w: 90, h: 20, absx: 4, absy: 5};
-    let addSwordsmanTextConstants = {x: 7, y: 60};
+    let addSwordsmanButtonConstants = {x: 5, y: 50, w: 90, h: 20};
+    let addSwordsmanTextConstants = {x: 7, y: 55};
     addSwordsmanButton.graphics.beginFill('white').drawRect(addSwordsmanButtonConstants.x,
       addSwordsmanButtonConstants.y, addSwordsmanButtonConstants.w, addSwordsmanButtonConstants.h);
     addSwordsmanButton.graphics.beginStroke('black').drawRect(addSwordsmanButtonConstants.x,
       addSwordsmanButtonConstants.y, addSwordsmanButtonConstants.w, addSwordsmanButtonConstants.h);
-    addSwordsmanButton.x = addSwordsmanButtonConstants .absx;
-    addSwordsmanButton.y = addSwordsmanButtonConstants .absy;
     container.addChild(addSwordsmanButton);
     addSwordsmanButton.on('click', _ => {
-      console.log('add swordsman');
+      if(self.loopservice.grid[tileX][tileY] === null && this.imageQueue !== null && this.unitsLeft > 0){
+        let unit = new Swordsman();
+        unit.team = 1;
+        unit.activecode = [new East()];
+        unit.location.x = tileX;
+        unit.codeType = CodeType.BLOCK;
+        unit.location.y = tileY;
+        unit.initSprite(self.imageQueue.getResult(SpriteConstants.swordsmen));
+        self.loopservice.team1units.push(unit);
+        self.loopservice.grid[tileX][tileY] = unit;
+        self.placeOnGrid(unit);
+        self.placeAllOnScreen([unit]);
+        self.closeContextMenu();
+        self.unitsLeft -= 1;
+      }
     });
     let addSwordsman = new createjs.Text();
     addSwordsman.font = '11px JetBrains Mono';
@@ -489,6 +496,35 @@ export class LevelComponent implements OnInit {
     addSwordsman.x = addSwordsmanTextConstants.x;
     addSwordsman.y = addSwordsmanTextConstants.y;
     container.addChild(addSwordsman);
+
+    // create delete button
+    let deleteButton = new createjs.Shape();
+    let deleteButtonText = new createjs.Text();
+    let deleteButtonConstants = {x: 5, y: 75, w: 90, h: 20};
+    let deleteButtonTextConstants = {x: 13, y: 80};
+
+    deleteButton.graphics.beginFill('white').drawRect(0,0, deleteButtonConstants.w, deleteButtonConstants.h);
+    deleteButton.graphics.beginStroke('black').drawRect(0, 0, deleteButtonConstants.w, deleteButtonConstants.h);
+    deleteButton.x = deleteButtonConstants.x;
+    deleteButton.y = deleteButtonConstants.y;
+    container.addChild(deleteButton);
+    deleteButton.on('click', _ => {
+      if(self.loopservice.grid[tileX][tileY] !== null){
+        let unit = self.loopservice.grid[tileX][tileY];
+        stage.removeChild(unit.sprite);
+        this.loopservice.deleteUnit(unit);
+        self.unitsLeft += 1;
+        self.closeContextMenu();
+      }
+    });
+
+    deleteButtonText.font = '11px JetBrains Mono';
+    deleteButtonText.text = 'Delete Unit';
+    deleteButtonText.color = 'black';
+    deleteButtonText.x = deleteButtonTextConstants.x;
+    deleteButtonText.y = deleteButtonTextConstants.y;
+    container.addChild(deleteButtonText);
+
 
     this.contextMenu = container;
     this.contextMenuBounds.x = containerConstants.absx;
@@ -502,7 +538,7 @@ export class LevelComponent implements OnInit {
   onContextMenuOpen(event){
 
     event.preventDefault();
-    if(this.contextMenu === null && !this.gameStart){
+    if(this.contextMenu === null && !this.gameStart && this.testMode){
       this.renderContextMenuAt(event.pageX - event.target.offsetLeft, event.pageY - event.target.offsetTop,
         Math.floor((event.pageX - event.target.offsetLeft) / 40),
         Math.floor((event.pageY - event.target.offsetTop) / 40));
