@@ -382,6 +382,7 @@ export class LevelComponent implements OnInit {
     this.grid = null;
     this.loopservice.grid = null;
     this.gameStart = false;
+    stage.removeAllChildren();
     this.loadGridData(this.programData);
     this.tickCount = 0;
     this.lastAction = undefined;
