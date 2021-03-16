@@ -52,6 +52,9 @@ export class LevelComponent implements OnInit {
   private gamePlayerDataNum: string;
   @Output()
   private gameActionLogger: EventEmitter<GameAction> = new EventEmitter<GameAction>();
+  private contextMenu: createjs.Container = null;
+  private contextMenuBounds = {x: 0, y: 0, w: 0, h: 0};
+  private unitsLeft = 3;
 
   constructor(private sprite: SpriteService, private code: CodeService, private loopservice: GameLoopServiceService) { }
 
@@ -304,7 +307,6 @@ export class LevelComponent implements OnInit {
       .lineTo(400, canvas_height)
       .endStroke();
     stage.addChild(shape);
-
   }
 
   step(){
@@ -372,6 +374,10 @@ export class LevelComponent implements OnInit {
       x: Math.floor((event.pageX - event.target.offsetLeft) / 40),
       y: Math.floor((event.pageY - event.target.offsetTop) / 40)
     };
+    if(!this.inContextMenuBounds(location.x * 40, location.y * 40)){
+      stage.removeChild(this.contextMenu);
+      this.contextMenu = null;
+    }
     let unit = this.grid[location.x][location.y];
     if(unit !== null && unit !== undefined){
       this.unitClickEvent.emit(unit);
@@ -391,6 +397,83 @@ export class LevelComponent implements OnInit {
       }
 
     }
+
+  }
+
+  renderContextMenuAt(x, y){
+
+    // create context menu
+    let container = new createjs.Container();
+    let containerConstants = {x:0, y:0, w:100, h:100, absx: x, absy: y};
+    container.x = containerConstants.absx;
+    container.y = containerConstants.absy;
+    let background = new createjs.Shape();
+    background.graphics.beginFill('#F9F9FA').drawRect(containerConstants.x, containerConstants.y,
+      containerConstants.w, containerConstants.h);
+    background.graphics.beginStroke('black').drawRect(containerConstants.x, containerConstants.y,
+      containerConstants.w, containerConstants.h);
+    container.addChild(background);
+
+    // add units left text
+
+    let unitsLeft = new createjs.Text();
+    let unitsLeftTextConstants = {x: 3, y: 10};
+    unitsLeft.font = '12px JetBrains Mono';
+    unitsLeft.text = `Units Left: ${this.unitsLeft}`;
+    unitsLeft.color = 'black';
+    unitsLeft.x = unitsLeftTextConstants.x;
+    unitsLeft.y = unitsLeftTextConstants.y;
+    container.addChild(unitsLeft)
+
+    // create add archer button
+    let addArcherButton = new createjs.Shape();
+    let archerButtonConstants = {x: 0, y: 20, w: 80, h: 20, absx: 10, absy: 5};
+    let addArcherTextConstants = {x: 11, y: 30};
+    addArcherButton.graphics.beginFill('#BEBEBE').drawRect(archerButtonConstants.x,
+      archerButtonConstants.y, archerButtonConstants.w, archerButtonConstants.h);
+    addArcherButton.graphics.beginStroke('black').drawRect(archerButtonConstants.x,
+      archerButtonConstants.y, archerButtonConstants.w, archerButtonConstants.h);
+    addArcherButton.x = archerButtonConstants.absx;
+    addArcherButton.y = archerButtonConstants.absy;
+    container.addChild(addArcherButton);
+    addArcherButton.on('click', _ => {
+      console.log('clicked');
+    });
+    let addArcher = new createjs.Text();
+    addArcher.font = '13px JetBrains Mono';
+    addArcher.text = 'Add Archer';
+    addArcher.color = 'black';
+    addArcher.x = addArcherTextConstants.x;
+    addArcher.y = addArcherTextConstants.y;
+    container.addChild(addArcher);
+    stage.addChild(container);
+
+    this.contextMenu = container;
+    this.contextMenuBounds.x = containerConstants.absx;
+    this.contextMenuBounds.y = containerConstants.absy;
+    this.contextMenuBounds.w = containerConstants.w;
+    this.contextMenuBounds.h = containerConstants.h;
+
+  }
+
+  onContextMenuOpen(event){
+
+    event.preventDefault();
+    if(this.contextMenu === null){
+      this.renderContextMenuAt(event.pageX - event.target.offsetLeft, event.pageY - event.target.offsetTop);
+    }
+
+  }
+
+  inContextMenuBounds(x, y): boolean{
+
+    // console.log(`${this.contextMenuBounds.x} ${this.contextMenuBounds.x + this.contextMenuBounds.w}` );
+    // console.log(`${this.contextMenuBounds.y} ${this.contextMenuBounds.y + this.contextMenuBounds.h}` );
+    // console.log(`${x} ${y}`);
+    // console.log('---------');
+
+    return x >= this.contextMenuBounds.x && x <= this.contextMenuBounds.x + this.contextMenuBounds.w &&
+      y >= this.contextMenuBounds.y && y <= this.contextMenuBounds.y + this.contextMenuBounds.h;
 
   }
 
