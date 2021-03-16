@@ -124,10 +124,10 @@ export class GameLoopServiceService {
         this.grid[u.location.x][u.location.y] = u;
       }
 
-      console.log("Team 1 Data");
-      console.log(JSON.stringify(this.team1units));
-      console.log(JSON.stringify(this.team2units));
-      console.log(JSON.stringify(this.grid));
+      // console.log("Team 1 Data");
+      // console.log(JSON.stringify(this.team1units));
+      // console.log(JSON.stringify(this.team2units));
+      // console.log(JSON.stringify(this.grid));
 
     } catch (error) {
       console.log("Failed: " + error);

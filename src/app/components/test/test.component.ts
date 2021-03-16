@@ -12,6 +12,7 @@ import { CodeType } from 'src/app/models/database/DatabaseData';
 import { GameAction } from 'src/app/models/game/GameAction';
 import { Archer } from 'src/app/models/game/units/Archer';
 import { Swordsman } from 'src/app/models/game/units/Swordsman';
+import { Tower } from 'src/app/models/game/units/Tower';
 import { Unit } from 'src/app/models/game/units/Unit';
 import { FirestoreDatabaseService } from 'src/app/services/database/firestore-database.service';
 import { GameLoopServiceService } from 'src/app/services/game/gameloop/game-loop.service';
@@ -68,6 +69,8 @@ export class TestComponent {
     //             //   CodeType: CodeType.FILE, 
     //             //   CodeFile: {storageRef: "code/EnemyArcher.js", filename: "EnemyArcher.js"} 
     //             // },
+    // db.setProgramData("993", {Name: "TestSetup", Verified: true,
+    //   Units: [
     //             {
     //               TroopType:Swordsman.dbid, 
     //               CodeBlocks: null, 
@@ -109,6 +112,27 @@ export class TestComponent {
     //               location: {x:13,y:9}, 
     //               CodeType: CodeType.FILE, 
     //               CodeFile: {storageRef: "code/EnemySwordsmen.js", filename: "EnemySwordsmen.js"} 
+    //             },
+    //             {
+    //               TroopType:Tower.dbid, 
+    //               CodeBlocks: null, 
+    //               location: {x:14,y:4}, 
+    //               CodeType: CodeType.FILE, 
+    //               CodeFile: {storageRef: "code/EnemyTower.js", filename: "EnemyTower.js"} 
+    //             },
+    //             {
+    //               TroopType:Tower.dbid, 
+    //               CodeBlocks: null, 
+    //               location: {x:14,y:7}, 
+    //               CodeType: CodeType.FILE, 
+    //               CodeFile: {storageRef: "code/EnemyTower.js", filename: "EnemyTower.js"} 
+    //             },
+    //             {
+    //               TroopType:Tower.dbid, 
+    //               CodeBlocks: null, 
+    //               location: {x:14,y:10}, 
+    //               CodeType: CodeType.FILE, 
+    //               CodeFile: {storageRef: "code/EnemyTower.js", filename: "EnemyTower.js"} 
     //             },
     //           ]}
     // );

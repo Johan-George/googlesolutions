@@ -39,7 +39,7 @@ export class LevelComponent implements OnInit {
   @Input()
   private run: Subject<boolean>;
   @Input()
-  private unitCodeChange: Subject<{unit: Unit, index: number}>;
+  private unitCodeChange: Subject<{unit: Unit, index: number, color: string}>;
   @Input()
   private saveFormationsAndCode: Subject<boolean>;
   @Output()
@@ -78,7 +78,7 @@ export class LevelComponent implements OnInit {
     if(this.unitCodeChange !== undefined && this.testMode){
       this.unitCodeChange.subscribe(data => {
 
-        this.changeCodeIndexOfUnit(data.unit, data.index);
+        this.changeCodeIndexOfUnit(data.unit, data.index, data.color);
 
       });
     }
@@ -376,9 +376,9 @@ export class LevelComponent implements OnInit {
     if(unit !== null && unit !== undefined){
       this.unitClickEvent.emit(unit);
     }
-  }
+  }1
 
-  changeCodeIndexOfUnit(unit: Unit, index: number){
+  changeCodeIndexOfUnit(unit: Unit, index: number, color: string){
 
     unit.testCodeIndex = index;
     for(let numRep of this.codeIndexGraphics){
@@ -386,6 +386,7 @@ export class LevelComponent implements OnInit {
       if(numRep.location === unit.location){
 
         numRep.number.text = `${index}`;
+        numRep.number.color = color;
 
       }
 

@@ -12,6 +12,8 @@ this.onmessage = function (turnEvent) {
 
     if (enemyInRange(grid, me)) {
         this.postMessage({ result: 'Attack' });
+    } else {
+        this.postMessage({ result: 'Wait' });
     }
 
 }

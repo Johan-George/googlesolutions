@@ -39,7 +39,7 @@ import {MatFormFieldModule} from '@angular/material/form-field';
 import { LevelplayComponent } from './components/levelplay/levelplay.component';
 import { InfoComponent } from './components/info/info.component';
 import { ProgSelectDialogComponent } from './components/prog-select-dialog/prog-select-dialog.component';
-
+import { HomeComponent } from './components/home/home.component';
 
 const firebaseConfig = {
   apiKey: "AIzaSyB25gxYu7PkMvnjKhisCzPP62grU_OEMLU",
@@ -65,7 +65,8 @@ const firebaseConfig = {
     SetNameComponent,
     LevelplayComponent,
     InfoComponent,
-    ProgSelectDialogComponent
+    ProgSelectDialogComponent,
+    HomeComponent
   ],
   imports: [
     BrowserModule,

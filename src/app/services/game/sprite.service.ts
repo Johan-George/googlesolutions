@@ -15,6 +15,7 @@ export class SpriteService {
     let manifest = [
       {id:SpriteConstants.archer, src: 'assets/animations/archer sprite sheet.png'},
       {id:SpriteConstants.swordsmen, src: 'assets/animations/swordsman sprite sheet.png'},
+      {id:SpriteConstants.tower, src:'assets/animations/tower sprite sheet.png'},
       {id:SpriteConstants.testMap, src:'assets/maps/test map.png'}
     ];
     let queue = new createjs.LoadQueue();
