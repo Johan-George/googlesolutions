@@ -62,7 +62,7 @@ const firebaseConfig = {
     LevelselectComponent,
     SetNameComponent,
     LevelplayComponent,
-    InfoComponent
+    InfoComponent,
     HomeComponent
   ],
   imports: [
