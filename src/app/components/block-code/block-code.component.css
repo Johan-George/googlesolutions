@@ -25,13 +25,6 @@
 #top-left-content{
 
   width: 100%;
-  height: 60%;
-
-}
-
-#top-left-content .tabs{
-
-  height: 7%;
 
 }
 
@@ -44,6 +37,12 @@
   margin: 0 auto;
   overflow-y: scroll;
   box-shadow: 2px 2px black;
+
+}
+
+#code-boundary::-webkit-scrollbar {
+
+  display: none;
 
 }
 
@@ -121,6 +120,12 @@
 
 }
 
+#top-left-content .tabs{
+
+  height: 7%;
+
+}
+
 .tab{
 
   text-align: center;
@@ -147,7 +152,7 @@
 .tab h3{
 
   font-family: codefont;
-  font-size: 11px;
+  font-size: 12px;
 
 }
 
@@ -164,29 +169,48 @@
   text-align: center;
 }
 
-#export{
+#options{
+
+  display: flex;
+  flex-direction: row-reverse;
+
+}
+
+#options button{
 
   font-family: codefont;
-  font-size: 12px;
+  font-size: 15px;
   margin-right: 5px;
   flex-basis: 10%;
-  margin-left: auto;
+  flex-grow: 1;
   text-align: center;
   margin-bottom: 5px;
+  padding: 2px;
+
+}
+
+#switch{
+
+  background-color: #3A506B;
+
+}
+
+#export{
+
   background-color: #10C6F9;
-  overflow-wrap: break-word;
 }
 
-#run{
+#upload{
 
-  font-family: codefont;
-  font-size: 12px;
-  flex-basis: 10%;
-  text-align: center;
-  margin-bottom: 5px;
+  background-color: #7A3DB8;
 
 }
 
+#help{
+
+  background-color: orange;
+
+}
 
 .run-test{
 
@@ -256,6 +280,25 @@
 #map{
 
   overflow: scroll;
+
+}
+
+#user-js-code-console{
+
+  background-color: black;
+  font-size: 13px;
+  overflow-y: scroll;
+  width: 90%;
+  height: 90%;
+  margin: 25px auto;
+  position: relative;
+
+}
+
+#user-js-code{
+
+  font-family: codefont;
+  color: #2CDD3E;
 
 }
 

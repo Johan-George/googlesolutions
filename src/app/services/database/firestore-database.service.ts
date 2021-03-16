@@ -262,6 +262,20 @@ export class FirestoreDatabaseService {
     });
   }
 
+  /**
+   *
+   * Stores a user's javascript code at the specified url if that url does not already contain code.
+   * Note: this assumes the file does not already exist. To ensure it doesn't I include the current time in the url
+   * for simplicity.
+   * @param url: the url you wish to save your code at
+   * @param file: the file containing the code
+   */
+  public storeCodeAtLocation(url: string, file: File){
+
+    this.storage.upload(url, file);
+
+  }
+
   //deleters
   /**
    * Deletes program data from database
