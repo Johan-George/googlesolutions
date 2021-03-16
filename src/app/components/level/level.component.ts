@@ -1,5 +1,5 @@
-import {Component, OnInit, AfterViewInit, Input, Output, EventEmitter} from '@angular/core';
-import * as createjs from "createjs-module";
+import {Component, EventEmitter, Input, OnInit, Output} from '@angular/core';
+import * as createjs from 'createjs-module';
 import {SpriteService} from '../../services/game/sprite.service';
 import {Unit} from '../../models/game/units/Unit';
 import {SpriteConstants} from '../../services/SpriteConstants';
@@ -7,8 +7,11 @@ import {CodeService} from '../../services/program-construction/code.service';
 import {GameLoopServiceService} from '../../services/game/gameloop/game-loop.service';
 import {GameAction} from '../../models/game/GameAction';
 import {LevelDataInterfaceService} from '../../services/game/levelDataInterface/level-data-interface.service';
-import {ProgramData} from '../../models/database/DatabaseData';
+import {CodeType, ProgramData} from '../../models/database/DatabaseData';
 import {Subject} from 'rxjs';
+import {Archer} from '../../models/game/units/Archer';
+import {East} from '../../models/blockCommands/blocks/executable/East';
+
 (<any>window).createjs = createjs;
 let stage;
 // TODO, makes these dynamic
@@ -55,6 +58,7 @@ export class LevelComponent implements OnInit {
   private contextMenu: createjs.Container = null;
   private contextMenuBounds = {x: 0, y: 0, w: 0, h: 0};
   private unitsLeft = 3;
+  private imageQueue = null;
 
   constructor(private sprite: SpriteService, private code: CodeService, private loopservice: GameLoopServiceService) { }
 
@@ -72,6 +76,7 @@ export class LevelComponent implements OnInit {
 
         if(!this.gameStart){
           this.startGame();
+          this.closeContextMenu();
         }else{
           this.resetGame();
         }
@@ -160,6 +165,7 @@ export class LevelComponent implements OnInit {
         shape.graphics.beginBitmapFill(imageQueue.getResult(SpriteConstants.testMap)).drawRect(0, 0, canvas_width, canvas_height);
         stage.addChild(shape);
         this.drawGrid();
+        this.imageQueue = imageQueue;
         for(let row of self.grid){
           this.sprite.initSpritesForAll(row, imageQueue);
           self.placeAllOnScreen(row);
@@ -375,8 +381,7 @@ export class LevelComponent implements OnInit {
       y: Math.floor((event.pageY - event.target.offsetTop) / 40)
     };
     if(!this.inContextMenuBounds(location.x * 40, location.y * 40)){
-      stage.removeChild(this.contextMenu);
-      this.contextMenu = null;
+      this.closeContextMenu();
     }
     let unit = this.grid[location.x][location.y];
     if(unit !== null && unit !== undefined){
@@ -400,15 +405,16 @@ export class LevelComponent implements OnInit {
 
   }
 
-  renderContextMenuAt(x, y){
+  renderContextMenuAt(x, y, tileX, tileY){
 
+    console.log(`${tileX} ${tileY}`);
     // create context menu
     let container = new createjs.Container();
     let containerConstants = {x:0, y:0, w:100, h:100, absx: x, absy: y};
     container.x = containerConstants.absx;
     container.y = containerConstants.absy;
     let background = new createjs.Shape();
-    background.graphics.beginFill('#F9F9FA').drawRect(containerConstants.x, containerConstants.y,
+    background.graphics.beginFill('#BEBEBE').drawRect(containerConstants.x, containerConstants.y,
       containerConstants.w, containerConstants.h);
     background.graphics.beginStroke('black').drawRect(containerConstants.x, containerConstants.y,
       containerConstants.w, containerConstants.h);
@@ -427,40 +433,79 @@ export class LevelComponent implements OnInit {
 
     // create add archer button
     let addArcherButton = new createjs.Shape();
-    let archerButtonConstants = {x: 0, y: 20, w: 80, h: 20, absx: 10, absy: 5};
-    let addArcherTextConstants = {x: 11, y: 30};
-    addArcherButton.graphics.beginFill('#BEBEBE').drawRect(archerButtonConstants.x,
+    let archerButtonConstants = {x: 0, y: 20, w: 90, h: 20, absx: 4, absy: 5};
+    let addArcherTextConstants = {x: 17, y: 30};
+    addArcherButton.graphics.beginFill('white').drawRect(archerButtonConstants.x,
       archerButtonConstants.y, archerButtonConstants.w, archerButtonConstants.h);
     addArcherButton.graphics.beginStroke('black').drawRect(archerButtonConstants.x,
       archerButtonConstants.y, archerButtonConstants.w, archerButtonConstants.h);
     addArcherButton.x = archerButtonConstants.absx;
     addArcherButton.y = archerButtonConstants.absy;
     container.addChild(addArcherButton);
+    let self = this;
     addArcherButton.on('click', _ => {
-      console.log('clicked');
+      if(self.loopservice.grid[tileX][tileY] === null && this.imageQueue !== null && this.unitsLeft > 0){
+        let unit = new Archer();
+        unit.team = 1;
+        unit.activecode = [new East()];
+        unit.location.x = tileX;
+        unit.codeType = CodeType.BLOCK;
+        unit.location.y = tileY;
+        unit.initSprite(self.imageQueue.getResult(SpriteConstants.archer));
+        self.loopservice.team1units.push(unit);
+        self.loopservice.grid[tileX][tileY] = unit;
+        self.placeOnGrid(unit);
+        self.placeAllOnScreen([unit]);
+        self.closeContextMenu();
+        self.unitsLeft -= 1;
+      }
     });
     let addArcher = new createjs.Text();
-    addArcher.font = '13px JetBrains Mono';
+    addArcher.font = '11px JetBrains Mono';
     addArcher.text = 'Add Archer';
     addArcher.color = 'black';
     addArcher.x = addArcherTextConstants.x;
     addArcher.y = addArcherTextConstants.y;
     container.addChild(addArcher);
-    stage.addChild(container);
+
+    // create add swordsman button
+    let addSwordsmanButton = new createjs.Shape();
+    let addSwordsmanButtonConstants = {x: 0, y: 50, w: 90, h: 20, absx: 4, absy: 5};
+    let addSwordsmanTextConstants = {x: 7, y: 60};
+    addSwordsmanButton.graphics.beginFill('white').drawRect(addSwordsmanButtonConstants.x,
+      addSwordsmanButtonConstants.y, addSwordsmanButtonConstants.w, addSwordsmanButtonConstants.h);
+    addSwordsmanButton.graphics.beginStroke('black').drawRect(addSwordsmanButtonConstants.x,
+      addSwordsmanButtonConstants.y, addSwordsmanButtonConstants.w, addSwordsmanButtonConstants.h);
+    addSwordsmanButton.x = addSwordsmanButtonConstants .absx;
+    addSwordsmanButton.y = addSwordsmanButtonConstants .absy;
+    container.addChild(addSwordsmanButton);
+    addSwordsmanButton.on('click', _ => {
+      console.log('add swordsman');
+    });
+    let addSwordsman = new createjs.Text();
+    addSwordsman.font = '11px JetBrains Mono';
+    addSwordsman.text = 'Add Swordsman';
+    addSwordsman.color = 'black';
+    addSwordsman.x = addSwordsmanTextConstants.x;
+    addSwordsman.y = addSwordsmanTextConstants.y;
+    container.addChild(addSwordsman);
 
     this.contextMenu = container;
     this.contextMenuBounds.x = containerConstants.absx;
     this.contextMenuBounds.y = containerConstants.absy;
     this.contextMenuBounds.w = containerConstants.w;
     this.contextMenuBounds.h = containerConstants.h;
+    stage.addChild(container);
 
   }
 
   onContextMenuOpen(event){
 
     event.preventDefault();
-    if(this.contextMenu === null){
-      this.renderContextMenuAt(event.pageX - event.target.offsetLeft, event.pageY - event.target.offsetTop);
+    if(this.contextMenu === null && !this.gameStart){
+      this.renderContextMenuAt(event.pageX - event.target.offsetLeft, event.pageY - event.target.offsetTop,
+        Math.floor((event.pageX - event.target.offsetLeft) / 40),
+        Math.floor((event.pageY - event.target.offsetTop) / 40));
     }
 
   }
@@ -477,5 +522,9 @@ export class LevelComponent implements OnInit {
 
   }
 
+  closeContextMenu(){
+    stage.removeChild(this.contextMenu);
+    this.contextMenu = null;
+  }
 
 }
