@@ -7,6 +7,7 @@ import { CodeService } from '../../program-construction/code.service';
 import { Archer } from '../../../models/game/units/Archer';
 import { Swordsman } from 'src/app/models/game/units/Swordsman';
 import { Wait } from 'src/app/models/blockCommands/blocks/executable/Wait';
+import { Tower } from 'src/app/models/game/units/Tower';
 
 @Injectable({
   providedIn: 'root'
@@ -154,6 +155,8 @@ export class LevelDataInterfaceService {
         return new Archer();
       case Swordsman.dbid:
         return new Swordsman();
+      case Tower.dbid:
+        return new Tower();
       default:
         return new Unit();
     }
