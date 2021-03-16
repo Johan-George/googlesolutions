@@ -1,0 +1,9 @@
+<div id="background">
+    <h1 mat-dialog-title>Choose your program</h1>
+    <mat-dialog-content class="mat-typography">
+        <button class="option" mat-button *ngFor="let d of data" (click)="onSelect(d.id)">{{d.prog.Name}}</button>
+    </mat-dialog-content>
+    <mat-dialog-actions align="end">
+        <button mat-button (click)="onSelect(undefined)">Cancel</button>
+    </mat-dialog-actions>
+</div>

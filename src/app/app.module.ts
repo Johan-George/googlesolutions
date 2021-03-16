@@ -15,6 +15,7 @@ import { MatCheckboxModule } from '@angular/material/checkbox';
 import { MatRadioModule } from '@angular/material/radio';
 import { FormsModule } from '@angular/forms';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
+import { MatMenuModule } from '@angular/material/menu';
 import { MatTableModule } from '@angular/material/table';
 
 import { AngularFireModule } from '@angular/fire';
@@ -37,6 +38,7 @@ import { SetNameComponent } from './components/set-name/set-name.component';
 import {MatFormFieldModule} from '@angular/material/form-field';
 import { LevelplayComponent } from './components/levelplay/levelplay.component';
 import { InfoComponent } from './components/info/info.component';
+import { ProgSelectDialogComponent } from './components/prog-select-dialog/prog-select-dialog.component';
 import { HomeComponent } from './components/home/home.component';
 
 const firebaseConfig = {
@@ -63,6 +65,7 @@ const firebaseConfig = {
     SetNameComponent,
     LevelplayComponent,
     InfoComponent,
+    ProgSelectDialogComponent,
     HomeComponent
   ],
   imports: [
@@ -90,8 +93,8 @@ const firebaseConfig = {
     MatProgressSpinnerModule,
     FormsModule,
     MatProgressSpinnerModule,
-    MatTableModule
-
+    MatTableModule,
+    MatMenuModule
   ],
   providers: [],
   bootstrap: [AppComponent]
