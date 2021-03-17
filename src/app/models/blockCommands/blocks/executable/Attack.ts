@@ -75,9 +75,6 @@ export class Attack implements Executable {
     var closestDist = 1000;
 
     for(let x = 0; x < grid.length; x++){
-      if(x == 9 || x == 14) {
-        debugger
-      }
       for(let y = 0; y < grid[0].length; y++){
         let other = grid[x][y];
         if(!((unit.location.x === x && unit.location.y === y) || other === null || other.team === unit.team)){
