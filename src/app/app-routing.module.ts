@@ -2,7 +2,6 @@ import { NgModule } from '@angular/core';
 import { Routes, RouterModule } from '@angular/router';
 import {BlockCodeComponent} from './components/block-code/block-code.component';
 import { TestComponent } from './components/test/test.component';
-import {LevelComponent} from './components/level/level.component';
 import { SigninPageComponent } from './components/signin-page/signin-page.component';
 import { ProfilepagesComponent } from './components/profilepages/profilepages.component';
 import {DocsComponent} from './components/docs/docs.component';

@@ -95,8 +95,11 @@
   <div id="right-content">
     <app-level id="map" [testMode]="true" [programData]="programData" [run]="run" [unitCodeChange]="unitCodeChange"
                [saveFormationsAndCode]="saveFormationsAndCode"
+               [giveGridData]="giveGridData"
+               [updateProgramData]="updateProgramData"
                (unitClickEvent)="addCodeToUnit($event)"
-               (saveStateEvent)="saveState($event)"></app-level>
+               (saveStateEvent)="saveState($event)"
+               (gridDataEvent)="saveProgramData($event)"></app-level>
     <div id="options">
       <button mat-raised-button color="primary" id="export" (click)="exportCode()">
         save
