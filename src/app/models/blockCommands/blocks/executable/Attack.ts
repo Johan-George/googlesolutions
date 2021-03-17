@@ -35,7 +35,6 @@ export class Attack implements Executable {
     //     }
     //   }
     // }
-
     var closestUnit: Unit = this.getClosestEnemy(grid, unit);
 
     if (closestUnit != null) {
@@ -71,10 +70,14 @@ export class Attack implements Executable {
 
   //finds closest enemy of another team
   private getClosestEnemy(grid: Array<Array<Unit>>, unit: Unit): Unit {
+    
     var closest = null;
     var closestDist = 1000;
 
     for(let x = 0; x < grid.length; x++){
+      if(x == 9 || x == 14) {
+        debugger
+      }
       for(let y = 0; y < grid[0].length; y++){
         let other = grid[x][y];
         if(!((unit.location.x === x && unit.location.y === y) || other === null || other.team === unit.team)){
@@ -83,6 +86,7 @@ export class Attack implements Executable {
 
           if (distance < closestDist) {
             closest = other;
+            closestDist = distance;
           }
 
         }
