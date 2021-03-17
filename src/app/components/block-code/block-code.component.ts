@@ -135,11 +135,12 @@ export class BlockCodeComponent implements OnInit{
 
   }
 
-  saveProgramData(state: Unit[][], saveFile:boolean=false){
+  saveProgramData(state: Unit[][], saveFile:boolean=false, name="test"){
     this.programData = new ProgramData();
-    this.programData.Name = 'Test';
+    this.programData.Name = name;
     this.programData.Verified = true;
     this.programData.Units = [];
+    let savedFiles = [];
     for(let row of state){
       for(let tile of row){
         if(tile != null && tile.team === 1){
@@ -172,7 +173,10 @@ export class BlockCodeComponent implements OnInit{
               if(code === null){
                 throw new Error("Couldn't find file. Something went wrong. Your code is spaghetti lel");
               }
-              this.db.storeCodeAtLocation(tile.fileUrl, code);
+              if(!savedFiles.includes(tile.fileUrl)){
+                this.db.storeCodeAtLocation(tile.fileUrl, code);
+                savedFiles.push(tile.fileUrl);
+              }
             }
 
           }
@@ -186,7 +190,6 @@ export class BlockCodeComponent implements OnInit{
 
   saveState(state: Unit[][]){
 
-    this.saveProgramData(state, true);
     let data = {
 
       name: '',
@@ -202,7 +205,7 @@ export class BlockCodeComponent implements OnInit{
     name_dia.afterClosed().subscribe(_ => {
       if(data.name !== '' && !data.cancelled){
         let self = this;
-        self.programData.Name = data.name;
+        self.saveProgramData(state, true, data.name);
         let id = 0;
         function setProgram(id){
           self.db.doesProgramExist(`${id}`, result => {

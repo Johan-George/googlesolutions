@@ -436,6 +436,15 @@ export class LevelComponent implements OnInit {
     return false;
   }
 
+  removeCodeIndexGraphicForUnit(unit: Unit){
+
+    let index = this.codeIndexGraphics.findIndex(graphic => {
+      return graphic.location === unit.location;
+    });
+    stage.removeChild(this.codeIndexGraphics[index].number);
+    this.codeIndexGraphics.splice(index, 1);
+  };
+
   addAllCodeIndexGraphics(){
     for(let shape of this.codeIndexGraphics){
       stage.addChild(shape.number);
@@ -556,6 +565,7 @@ export class LevelComponent implements OnInit {
         let unit = self.loopservice.grid[tileX][tileY];
         stage.removeChild(unit.sprite);
         this.loopservice.deleteUnit(unit);
+        self.removeCodeIndexGraphicForUnit(unit);
         self.unitsLeft += 1;
         self.closeContextMenu();
         self.giveGridData.next(true);
