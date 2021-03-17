@@ -64,7 +64,7 @@ export class LevelComponent implements OnInit {
   private gridDataEvent: EventEmitter<Unit[][]> = new EventEmitter<Unit[][]>();
   private contextMenu: createjs.Container = null;
   private contextMenuBounds = {x: 0, y: 0, w: 0, h: 0};
-  private unitsLeft = 3;
+  private unitsLeft = 5;
   private imageQueue = null;
 
   constructor(private sprite: SpriteService, private code: CodeService, private loopservice: GameLoopServiceService) { }
@@ -81,13 +81,14 @@ export class LevelComponent implements OnInit {
     if(this.run !== undefined){
       this.run.subscribe(_ => {
 
-        if(!this.gameStart){
-          this.startGame();
-          this.closeContextMenu();
-        }else{
-          this.resetGame();
+        if(this.loading === 'done') {
+          if (!this.gameStart) {
+            this.startGame();
+            this.closeContextMenu();
+          } else {
+            this.resetGame();
+          }
         }
-
       });
     }
     if(this.unitCodeChange !== undefined && this.testMode){
@@ -113,7 +114,6 @@ export class LevelComponent implements OnInit {
     if(this.updateProgramData !== undefined && this.testMode){
       this.updateProgramData.subscribe(data => {
         this.programData = data;
-        console.log(this.grid);
       });
     }
 
@@ -189,10 +189,9 @@ export class LevelComponent implements OnInit {
           this.sprite.initSpritesForAll(row, imageQueue);
           self.placeAllOnScreen(row);
         }
-
+        self.addAllCodeIndexGraphics();
       })
       this.loading = "done";
-      console.log(this.grid);
     }
 
   }
@@ -207,15 +206,17 @@ export class LevelComponent implements OnInit {
     unit.sprite.x = (unit.location.x * SpriteConstants.spriteSize) + half_sprite_length;
     unit.sprite.y = (unit.location.y * SpriteConstants.spriteSize) + half_sprite_length;
     if(this.testMode && !this.gameStart){
-      let number = new createjs.Text(`${unit.testCodeIndex !== undefined ? unit.testCodeIndex: ''}`,
-        "13px Roboto", "#7A3DB8");
       let numberOffSetX = 10;
       let numberOffSetY = 8;
-      number.x = unit.sprite.x + numberOffSetX;
-      number.y = unit.sprite.y + numberOffSetY;
-      let numberRep = {number: number, location: unit.location}
-      this.codeIndexGraphics.push(numberRep);
-      stage.addChild(number);
+      if(!this.codeIndexGraphicExistsForUnit(unit)){
+        let number = new createjs.Text(`${unit.testCodeIndex !== undefined ? unit.testCodeIndex: ''}`,
+          "13px Roboto", "#7A3DB8");
+        number.x = unit.sprite.x + numberOffSetX;
+        number.y = unit.sprite.y + numberOffSetY;
+        let numberRep = {number: number, location: unit.location}
+        this.codeIndexGraphics.push(numberRep);
+        stage.addChild(number);
+      }
       // make the unit draggable to set formation
       unit.sprite.on('pressmove', e => {
 
@@ -245,7 +246,6 @@ export class LevelComponent implements OnInit {
             y: Math.floor((new_y - half_sprite_length) / SpriteConstants.spriteSize)
           }
 
-          console.log(new_location);
           if(this.grid[new_location.x][new_location.y] === null){
 
             this.grid[unit.location.x][unit.location.y] = null;
@@ -379,6 +379,7 @@ export class LevelComponent implements OnInit {
   }
   resetGame(){
 
+    this.loading = 'loading';
     this.grid = null;
     this.loopservice.grid = null;
     this.gameStart = false;
@@ -424,6 +425,21 @@ export class LevelComponent implements OnInit {
 
     }
 
+  }
+
+  codeIndexGraphicExistsForUnit(unit: Unit){
+    for(let numRep of this.codeIndexGraphics){
+      if(numRep.location === unit.location){
+        return true;
+      }
+    }
+    return false;
+  }
+
+  addAllCodeIndexGraphics(){
+    for(let shape of this.codeIndexGraphics){
+      stage.addChild(shape.number);
+    }
   }
 
   renderContextMenuAt(x, y, tileX, tileY){

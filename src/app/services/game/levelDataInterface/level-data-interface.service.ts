@@ -124,13 +124,18 @@ export class LevelDataInterfaceService {
           u.activecode = this.deserializeBlockCode(programData.Units[x].CodeBlocks);
         } else if (programData.Units[x].CodeType == CodeType.FILE) {
           u.codeType = CodeType.FILE;
+          u.fileUrl = programData.Units[x].CodeFile.storageRef;
           // progPromises.push(new Promise<void>((resolveP, rejectP) => {
           //   self.database.getUserCodeFromStorage(programData.Units[x].CodeFile.storageRef, programData.Units[x].CodeFile.filename, function (data) {
           //     u.activecode = data;
           //     resolveP();
           //   });
           //}));
-          progPromises.push(self.getStorageReadPromise(programData.Units[x].CodeFile.storageRef, programData.Units[x].CodeFile.filename, u));
+          if(!(u.fileUrl.startsWith('blob'))){
+            progPromises.push(self.getStorageReadPromise(programData.Units[x].CodeFile.storageRef, programData.Units[x].CodeFile.filename, u));
+          }else{
+            u.activecode = new Worker(u.fileUrl);
+          }
         } else {
           console.log("Illegal code type, continuing");
           continue;
