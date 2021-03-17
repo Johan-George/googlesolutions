@@ -68,6 +68,8 @@ export class BlockCodeComponent implements OnInit{
   unitCodeChange: Subject<{unit: Unit, index: number, color: string}> = new Subject<{unit: Unit; index: number, color: string}>();
   saveFormationsAndCode: Subject<boolean> = new Subject<boolean>();
   javascriptMode: boolean = false;
+  giveGridData: Subject<boolean> = new Subject<boolean>();
+  updateProgramData: Subject<ProgramData> = new Subject<ProgramData>();
 
   constructor(private codeService: CodeService, public blockService: BlockService, private dialog: MatDialog,
               private db: FirestoreDatabaseService, private auth: AuthyLoginService, private router: Router) { }
@@ -100,7 +102,6 @@ export class BlockCodeComponent implements OnInit{
 
   }
 
-
   onDrop(event) {
 
     if (event.container.data === this.currentCode &&
@@ -119,7 +120,6 @@ export class BlockCodeComponent implements OnInit{
       this.realCode.splice(event.currentIndex + this.extraLinesAdded, 0, new RealCodeRepr(copy));
     }
 
-
   }
 
   onDeleteBlock(index) {
@@ -133,15 +133,14 @@ export class BlockCodeComponent implements OnInit{
 
     this.saveFormationsAndCode.next(true);
 
-
   }
 
-  saveState(state: Unit[][]){
-
+  saveProgramData(state: Unit[][], saveFile:boolean=false, name="test"){
     this.programData = new ProgramData();
-    this.programData.Name = 'Test';
+    this.programData.Name = name;
     this.programData.Verified = true;
     this.programData.Units = [];
+    let savedFiles = [];
     for(let row of state){
       for(let tile of row){
         if(tile != null && tile.team === 1){
@@ -152,27 +151,45 @@ export class BlockCodeComponent implements OnInit{
             unit.CodeBlocks = this.codeService.serializeBlocks(tile.activecode);
           }else if(tile.codeType === CodeType.FILE){
             unit.CodeType = CodeType.FILE
+            if(saveFile){
+              for(let tab of this.jsCodeTabs){
+                if(tab.file === tile.fileUrl){
+                  tile.fileUrl = tab.ref;
+                }
+              }
+            }
             unit.CodeFile = {storageRef: tile.fileUrl, filename: tile.fileUrl.split('/')[3]};
-            let code = null;
-            for(let file of this.jsCodeTabs){
+            if(saveFile){
+              let code = null;
+              for(let file of this.jsCodeTabs){
 
-              if(file.ref === tile.fileUrl){
+                if(file.ref === tile.fileUrl){
 
-                code = file.rawFile;
+                  code = file.rawFile;
+
+                }
 
               }
+              if(code === null){
+                throw new Error("Couldn't find file. Something went wrong. Your code is spaghetti lel");
+              }
+              if(!savedFiles.includes(tile.fileUrl)){
+                this.db.storeCodeAtLocation(tile.fileUrl, code);
+                savedFiles.push(tile.fileUrl);
+              }
+            }
 
-            }
-            if(code === null){
-              throw new Error("Couldn't find file. Something went wrong. Your code is spaghetti lel");
-            }
-            this.db.storeCodeAtLocation(tile.fileUrl, code);
           }
-          unit.location = tile.location;
+          unit.location = Object.freeze(tile.location);
           this.programData.Units.push(unit);
         }
       }
     }
+    this.updateProgramData.next(this.programData);
+  }
+
+  saveState(state: Unit[][]){
+
     let data = {
 
       name: '',
@@ -188,7 +205,7 @@ export class BlockCodeComponent implements OnInit{
     name_dia.afterClosed().subscribe(_ => {
       if(data.name !== '' && !data.cancelled){
         let self = this;
-        self.programData.Name = data.name;
+        self.saveProgramData(state, true, data.name);
         let id = 0;
         function setProgram(id){
           self.db.doesProgramExist(`${id}`, result => {
@@ -456,8 +473,7 @@ export class BlockCodeComponent implements OnInit{
         if(this.jsCodeTabs[this.tabIndex - 1].file !== null){
           unit.codeType = CodeType.FILE;
           unit.activecode = new Worker(this.jsCodeTabs[this.tabIndex - 1].file);
-          unit.fileUrl = this.jsCodeTabs[this.tabIndex - 1].ref;
-          console.log(this.jsCodeTabs[this.tabIndex - 1].ref);
+          unit.fileUrl = this.jsCodeTabs[this.tabIndex - 1].file;
         }else{
           invalidCode = true;
         }
@@ -465,6 +481,7 @@ export class BlockCodeComponent implements OnInit{
       this.updateSelected();
       if(!invalidCode){
         this.unitCodeChange.next({unit: unit, index: this.tabIndex, color: this.javascriptMode ? '#7A3DB8' : '#A4000F'});
+        this.giveGridData.next(true);
       }
     }
 
@@ -474,7 +491,6 @@ export class BlockCodeComponent implements OnInit{
 
     this.run.next(true);
     this.gameRun = !this.gameRun;
-    console.log(this.gameRun);
 
   }
 
@@ -502,6 +518,7 @@ export class BlockCodeComponent implements OnInit{
         let fileRepr = self.jsCodeTabs[self.tabIndex - 1];
         fileRepr.content = event.target.result;
         fileRepr.file = window.URL.createObjectURL(file);
+        console.log(fileRepr.file);
         fileRepr.rawFile = file;
         // TODO: set the ref variable of the file object to be the appropriate file location for firebase
         fileRepr.ref = `/user_code/${self.auth.getUser().uid}/${new Date().getTime()}`;
