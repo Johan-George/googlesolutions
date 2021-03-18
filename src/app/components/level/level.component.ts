@@ -150,18 +150,14 @@ export class LevelComponent implements OnInit, OnDestroy {
     if(this.testMode){
       tiles_on_x = LevelDataInterfaceService.TESTGRID_SIZE.x;
       tiles_on_y = LevelDataInterfaceService.TESTGRID_SIZE.y
-      canvas_width = tiles_on_x * 40;
-      canvas_height = tiles_on_y * 40;
-      this.width = canvas_width;
-      this.height = canvas_height;
     }else{
       tiles_on_x = LevelDataInterfaceService.PLAYSPACE_SIZE.x;
       tiles_on_y = LevelDataInterfaceService.PLAYSPACE_SIZE.y
-      canvas_width = tiles_on_x * 40;
-      canvas_height = tiles_on_y * 40;
-      this.width = canvas_width;
-      this.height = canvas_height;
     }
+    canvas_width = tiles_on_x * 40;
+    canvas_height = tiles_on_y * 40;
+    this.width = canvas_width;
+    this.height = canvas_height;
   }
 
   loadGridData(programData){
