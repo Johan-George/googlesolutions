@@ -1,4 +1,4 @@
-import {Component, EventEmitter, Input, OnInit, Output} from '@angular/core';
+import {Component, EventEmitter, Input, OnDestroy, OnInit, Output} from '@angular/core';
 import * as createjs from 'createjs-module';
 import {SpriteService} from '../../services/game/sprite.service';
 import {Unit} from '../../models/game/units/Unit';
@@ -12,6 +12,8 @@ import {Subject} from 'rxjs';
 import {Archer} from '../../models/game/units/Archer';
 import {East} from '../../models/blockCommands/blocks/executable/East';
 import {Swordsman} from '../../models/game/units/Swordsman';
+import {BlockService} from '../../services/program-construction/block.service';
+import {FirestoreDatabaseService} from '../../services/database/firestore-database.service';
 
 (<any>window).createjs = createjs;
 let stage;
@@ -26,7 +28,7 @@ let canvas_height = tiles_on_y * 40;
   templateUrl: './level.component.html',
   styleUrls: ['./level.component.css']
 })
-export class LevelComponent implements OnInit {
+export class LevelComponent implements OnInit, OnDestroy {
 
   private grid: Unit[][];
   public loading: string = "loading";
@@ -68,6 +70,10 @@ export class LevelComponent implements OnInit {
   private imageQueue = null;
 
   constructor(private sprite: SpriteService, private code: CodeService, private loopservice: GameLoopServiceService) { }
+
+  ngOnDestroy(): void {
+    this.gameStart = false;
+  }
 
   ngOnInit(): void {
     if(this.testMode !== undefined && this.programData !== undefined){
@@ -140,7 +146,27 @@ export class LevelComponent implements OnInit {
 
   }
 
+  initGridSize(){
+    if(this.testMode){
+      tiles_on_x = LevelDataInterfaceService.TESTGRID_SIZE.x;
+      tiles_on_y = LevelDataInterfaceService.TESTGRID_SIZE.y
+      canvas_width = tiles_on_x * 40;
+      canvas_height = tiles_on_y * 40;
+      this.width = canvas_width;
+      this.height = canvas_height;
+    }else{
+      tiles_on_x = LevelDataInterfaceService.PLAYSPACE_SIZE.x;
+      tiles_on_y = LevelDataInterfaceService.PLAYSPACE_SIZE.y
+      canvas_width = tiles_on_x * 40;
+      canvas_height = tiles_on_y * 40;
+      this.width = canvas_width;
+      this.height = canvas_height;
+    }
+  }
+
   loadGridData(programData){
+
+    this.initGridSize();
 
     if(this.testMode){
 
@@ -153,12 +179,6 @@ export class LevelComponent implements OnInit {
 
     }else{
       //run the game
-      tiles_on_x = LevelDataInterfaceService.PLAYSPACE_SIZE.x;
-      tiles_on_y = LevelDataInterfaceService.PLAYSPACE_SIZE.y
-      canvas_width = tiles_on_x * 40;
-      canvas_height = tiles_on_y * 40;
-      this.width = canvas_width;
-      this.height = canvas_height;
       let self = this;
 
       if (this.gameLevelDataNum !== undefined && this.gamePlayerDataNum !== undefined) {
