@@ -206,10 +206,12 @@ export class GameLoopServiceService {
         // Return at the end of each of these to not execute the code after. We know we're done.
         if (this.team1units.length === 0) {
           //return new GameAction("GameEnd2", null, null, false);
+          debugger;
           successFunc(new GameAction("GameEnd2", null, null, false));
           return;
         } else if (this.team2units.length === 0) {
           //return new GameAction(""GameEnd1"", null, null, false);
+          debugger;
           successFunc(new GameAction("GameEnd1", null, null, false));
           return;
         }
@@ -535,13 +537,14 @@ export class GameLoopServiceService {
 
   deleteUnit(unit: Unit) {
 
+    debugger;
     console.log("Deleting unit " + unit.id + " of team " + unit.team);
     var team = (unit.team === 1 ? this.team1units : this.team2units);
     console.log("Looked at team " + team + " of type " + JSON.stringify((team === this.team1units ? "1" : "2")));
     for (let i = 0; i < team.length; i++) {
       if (team[i].id === unit.id) {
         console.log("Deleted unit " + unit.id + " at index " + i);
-        team.splice(i);
+        team.splice(i, 1);
       }
     }
 

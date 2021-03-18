@@ -1,8 +1,11 @@
 import { ChangeDetectorRef, Component, ElementRef, ViewChild } from '@angular/core';
 import { MatTableDataSource } from '@angular/material/table';
-import { ActivatedRoute } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { Subject } from 'rxjs';
+import { UserData } from 'src/app/models/database/DatabaseData';
 import { GameAction } from 'src/app/models/game/GameAction';
+import { FirestoreDatabaseService } from 'src/app/services/database/firestore-database.service';
+import { AuthyLoginService } from 'src/app/services/login/authy-login.service';
 
 @Component({
   selector: 'app-levelplay',
@@ -25,14 +28,28 @@ export class LevelplayComponent {
 
   started: boolean = false;
 
+  userData: UserData;
+
   @ViewChild("datalogTable", { read: ElementRef })
   datalogTable: ElementRef;
 
-  constructor(private route: ActivatedRoute,  private changeDetectorRefs: ChangeDetectorRef) {
-    route.queryParams.subscribe(params => {
-      this.levData = params.l;
-      this.progData = params.p;
-    });
+  constructor(private route: ActivatedRoute,  private changeDetectorRefs: ChangeDetectorRef, private db: FirestoreDatabaseService, 
+      private Auth: AuthyLoginService, private router: Router) {
+    if(!Auth.checkSigninStatus()) {
+      router.navigate(['/signin']);
+    } else {
+      var self = this;
+      db.getUserData(Auth.getUser().uid, function(result) {
+        console.log("Recieved UserData");
+        self.userData = result;
+      });
+
+      route.queryParams.subscribe(params => {
+        this.levData = params.l;
+        this.progData = params.p;
+      });
+    }
+    
   }
 
   startGame() {
@@ -99,7 +116,15 @@ export class LevelplayComponent {
   }
 
   private addWinToPlayer() {
+    if(this.userData != undefined) {
 
+      this.userData.CompletedLevels.push(parseInt(this.levData));
+
+      this.db.setUserData(this.Auth.getUser().uid, this.userData);
+
+    } else {
+      console.log("Database is taking wayyyy too long");
+    }
   }
 
 }
