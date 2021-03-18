@@ -8,6 +8,7 @@ import { LevelselectComponent } from './components/levelselect/levelselect.compo
 import { LevelplayComponent } from './components/levelplay/levelplay.component';
 import { HomeComponent } from './components/home/home.component';
 import {LevelComponent} from './components/level/level.component';
+import {JavascriptGuideComponent} from './components/javascript-guide/javascript-guide.component';
 
 const routes: Routes = [
   {path: 'signin', component: SigninPageComponent},
@@ -18,7 +19,8 @@ const routes: Routes = [
   {path: 'play', component: LevelplayComponent},
   {path: 'docs', component: DocsComponent},
   {path: 'level', component: LevelComponent},
-  {path: '', component: HomeComponent}
+  {path: '', component: HomeComponent},
+  {path: 'learn-js', component: JavascriptGuideComponent}
 ];
 
 @NgModule({
