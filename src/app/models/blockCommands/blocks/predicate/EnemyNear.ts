@@ -21,7 +21,7 @@ export class EnemyNear implements Predicate {
         let other = grid[x][y];
         if(!((unit.location.x === x && unit.location.y === y) || other === null || other.team === unit.team)){
           if((x >= unit.location.x - unit.attackRange && x <= unit.location.x + unit.attackRange) &&
-            (y >= unit.location.y - unit.attackRange && y <= unit.location.x + unit.attackRange)){
+            (y >= unit.location.y - unit.attackRange && y <= unit.location.y + unit.attackRange)){
             return true;
           }
         }

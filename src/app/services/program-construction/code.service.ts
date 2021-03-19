@@ -314,7 +314,7 @@ export class CodeService {
       }
     }
 
-    conditional.condition = this.convertToSingleCondition(conditional.conditions);
+    conditional.condition = this.convertToSingleCondition(conditional.conditions,0, blockIndex);
 
   }
 
@@ -323,7 +323,7 @@ export class CodeService {
    * @param conditions The predicates used for a complex conditional statement
    * @param index The index to start iterating from
    */
-  convertToSingleCondition(conditions: Array<Predicate>, index:number=0): Predicate{
+  convertToSingleCondition(conditions: Array<Predicate>, index:number=0, blockLocation): Predicate{
     //debugger;
     if(conditions.length === 1){
       return conditions[0];
@@ -358,7 +358,7 @@ export class CodeService {
 
       if(conditions[i].conjunction !== '|'){
 
-        throw new Error(CodeErrorFormatters.SOMETHING_WENT_WRONG());
+        throw new Error(CodeErrorFormatters.NO_CONJUNCTION_SPECIFIED(blockLocation + 1));
 
       }else{
 
@@ -366,7 +366,7 @@ export class CodeService {
         let cond = condition;
 
         condition = (grid, unit) => {
-          return cond(grid, unit) || this.convertToSingleCondition(conditions, i).evaluation(grid, unit);
+          return cond(grid, unit) || this.convertToSingleCondition(conditions, i, blockLocation).evaluation(grid, unit);
         }
 
       }
@@ -424,6 +424,10 @@ class CodeErrorFormatters{
 
     return 'Something probably went wrong on our end! Please send a bug report.';
 
+  }
+
+  static NO_CONJUNCTION_SPECIFIED = function(index){
+    return `AND or OR not specified for a conditional block at block ${index}`;
   }
 
 }
