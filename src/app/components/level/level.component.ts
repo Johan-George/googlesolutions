@@ -561,7 +561,7 @@ export class LevelComponent implements OnInit {
     deleteButton.y = deleteButtonConstants.y;
     container.addChild(deleteButton);
     deleteButton.on('click', _ => {
-      if(self.loopservice.grid[tileX][tileY] !== null && self.loopservice.grid[tileX][tileY].team !== 2){
+      if(self.loopservice.grid[tileX][tileY] !== null && self.loopservice.grid[tileX][tileY].team !== 2 && this.unitsLeft !== 5){
         let unit = self.loopservice.grid[tileX][tileY];
         stage.removeChild(unit.sprite);
         this.loopservice.deleteUnit(unit);

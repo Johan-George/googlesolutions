@@ -531,4 +531,9 @@ export class BlockCodeComponent implements OnInit{
     return Math.floor(Math.random() * Math.floor(max));
   }
 
+  goToHelpPage(){
+    this.router.navigate(['using-the-code-editor']);
+    window.scroll(0,0);
+  }
+
 }

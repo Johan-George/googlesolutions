@@ -112,7 +112,7 @@
         <input id="file" type='file' hidden accept=".js" (change)="retrieveJavascriptCode($event)" />
         upload code
       </button>
-      <button mat-raised-button id="help">
+      <button mat-raised-button id="help" (click)="goToHelpPage()">
         help
       </button>
       <button mat-raised-button id="switch" (click)="switchEditorMode()">

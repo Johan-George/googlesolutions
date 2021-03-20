@@ -9,6 +9,7 @@ import { LevelplayComponent } from './components/levelplay/levelplay.component';
 import { HomeComponent } from './components/home/home.component';
 import {LevelComponent} from './components/level/level.component';
 import {JavascriptGuideComponent} from './components/javascript-guide/javascript-guide.component';
+import {CodeEditorGuideComponent} from './components/code-editor-guide/code-editor-guide.component';
 
 const routes: Routes = [
   {path: 'signin', component: SigninPageComponent},
@@ -20,7 +21,8 @@ const routes: Routes = [
   {path: 'docs', component: DocsComponent},
   {path: 'level', component: LevelComponent},
   {path: '', component: HomeComponent},
-  {path: 'learn-js', component: JavascriptGuideComponent}
+  {path: 'learn-js', component: JavascriptGuideComponent},
+  {path: 'using-the-code-editor', component: CodeEditorGuideComponent}
 ];
 
 @NgModule({
