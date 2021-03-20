@@ -39,7 +39,7 @@ export class Attack implements Executable {
 
     if (closestUnit != null) {
       if ((closestUnit.location.x >= unit.location.x - unit.attackRange && closestUnit.location.x <= unit.location.x + unit.attackRange) &&
-        (closestUnit.location.y >= unit.location.y - unit.attackRange && closestUnit.location.y <= unit.location.x + unit.attackRange)) {
+        (closestUnit.location.y >= unit.location.y - unit.attackRange && closestUnit.location.y <= unit.location.y + unit.attackRange)) {
 
         //they are in range
         let died = false;
@@ -70,7 +70,7 @@ export class Attack implements Executable {
 
   //finds closest enemy of another team
   private getClosestEnemy(grid: Array<Array<Unit>>, unit: Unit): Unit {
-    
+
     var closest = null;
     var closestDist = 1000;
 
