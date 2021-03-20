@@ -12,6 +12,11 @@
     color: #2cdd3e;
 }
 
+.right-buttons{
+  display: block;
+  float: right;
+}
+
 hr{
     margin: 0 0 0 0;
 }
