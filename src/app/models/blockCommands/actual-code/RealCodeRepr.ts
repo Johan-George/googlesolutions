@@ -49,7 +49,7 @@ export const enemyNearFunc: string = 'function enemyInRange(grid, you){@' +
   '^^^let other = grid[x][y];@' +
   '^^^if(!((you.location.x === x && you.location.y === y) || other === null || you.team === other.team)){@' +
   '^^^^if((x >= you.location.x - you.attackRange && x <= you.location.x + you.attackRange) &&@' +
-  '^^^^^(y >= you.location.y - you.attackRange && y <= you.location.x + you.attackRange)){@' +
+  '^^^^^(y >= you.location.y - you.attackRange && y <= you.location.y + you.attackRange)){@' +
   '^^^^^^return true;@' +
   '^^^^^}@' +
   '^^^^}@' +

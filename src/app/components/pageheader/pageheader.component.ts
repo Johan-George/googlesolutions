@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import {Component, Input, OnInit} from '@angular/core';
 import { Router } from '@angular/router';
 import { AuthyLoginService } from 'src/app/services/login/authy-login.service';
 
@@ -9,15 +9,17 @@ import { AuthyLoginService } from 'src/app/services/login/authy-login.service';
 })
 export class PageheaderComponent {
 
-  loggedIn: boolean = false;
-  username: string = "";
+  @Input()
+  loggedIn: boolean;
+  @Input()
+  username: string;
 
-  constructor(private auth: AuthyLoginService, private router: Router) { 
-    this.loggedIn = this.auth.checkSigninStatus();
-    
-    if(this.loggedIn) {
-      this.username = this.auth.getUser().authDisplayName;
-    }
+  constructor(private auth: AuthyLoginService, private router: Router) {
+    // this.loggedIn = this.auth.checkSigninStatus();
+    //
+    // if(this.loggedIn) {
+    //   this.username = this.auth.getUser().authDisplayName;
+    // }
   }
 
   logout() {

@@ -1,1 +1,4 @@
+<app-pageheader [loggedIn]="auth.checkSigninStatus()"
+                [username]="auth.getUser() !== null ? auth.getUser().authDisplayName : ''"></app-pageheader>
+
 <router-outlet></router-outlet>

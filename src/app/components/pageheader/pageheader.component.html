@@ -1,12 +1,19 @@
 <div style="background-color: #0b132b;">
     <button mat-button class="typebutton" routerLink="">SS</button>
-    <button mat-button id="Sign" class="typebutton" routerLink="/signin" *ngIf="!loggedIn">Sign in</button>
-    <button mat-button id="Sign" class="typebutton" *ngIf="loggedIn" [matMenuTriggerFor]="profiledropdown">{{username}}</button>
-    <button mat-button id="Sign" class="typebutton" routerLink="/levelSelect" *ngIf="loggedIn">Level Select</button>
-    <button mat-button id="Sign" class="typebutton" routerLink="/code" *ngIf="loggedIn">Code Now</button>
+    <button mat-button id="Sign" class="typebutton right-buttons" routerLink="/signin" *ngIf="!loggedIn">Sign in</button>
+    <button mat-button id="Username" class="typebutton right-buttons" *ngIf="loggedIn" [matMenuTriggerFor]="profiledropdown">{{username}}</button>
+    <button mat-button id="LevelSelect" class="typebutton right-buttons" routerLink="/levelSelect" *ngIf="loggedIn">Level Select</button>
+    <button mat-button id="CodeNow" class="typebutton right-buttons" routerLink="/code" *ngIf="loggedIn">Code Now</button>
+    <button mat-button id="Docs" class="typebutton right-buttons" *ngIf="loggedIn"
+      [mat-menu-trigger-for]="guidedropdown">Guides</button>
     <mat-menu #profiledropdown="matMenu" xPosition="before">
         <button mat-menu-item routerLink="/profile">Profile</button>
         <button mat-menu-item (click)="logout()">Logout</button>
+    </mat-menu>
+    <mat-menu #guidedropdown="matMenu" xPosition="after">
+      <button mat-menu-item routerLink="/using-the-code-editor">Using The Scripting Siege Code Editor</button>
+      <button mat-menu-item routerLink="/learn-js">Learn Javascript</button>
+      <button mat-menu-item routerLink="/docs">Scripting Siege Javascript API docs</button>
     </mat-menu>
     <hr style="margin-bottom: 0; background-color: #3a506b; height: 5px; border: none;">
 </div>

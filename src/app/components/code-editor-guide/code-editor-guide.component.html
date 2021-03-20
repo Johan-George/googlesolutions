@@ -1,0 +1,124 @@
+<header id="main-header">
+  <h1 id="title">Using Our Code Editor</h1>
+</header>
+
+<div id="main-content">
+  <div id="book-marks">
+    <a (click)="scrollToSection('editing-your-block-code')"><h3>Editing Your Block Code</h3></a>
+    <a (click)="scrollToSection('adding-conditional-logic-to-your-block-code')"><h3>
+      Adding Conditional Logic to Your Block Code</h3></a>
+    <a (click)="scrollToSection('testing-your-block-code')"><h3>Testing Your Block Code</h3></a>
+    <a (click)="scrollToSection('editing-the-grid')"><h3>Editing the Grid</h3></a>
+    <a (click)="scrollToSection('using-javascript-mode')"><h3>Using Javascript Mode</h3></a>
+    <a (click)="scrollToSection('saving-your-code-and-unit-formation')">
+      <h3>Saving Your Code and Unit Formation</h3></a>
+  </div>
+  <div id="docs-content">
+    <h1>Introduction</h1>
+    <p>
+      The Scripting Siege code editor is where you’ll be doing your coding and testing before entering the game.
+      Getting comfortable with it is an important first step to beginning to learn and have fun with our platform.
+      The editor is split into two different modes representing the two styles of coding we offer, Javascript
+      programming and our pseudo programming language (block code). We will go over how to use each mode to produce
+      functional game code and later test it within the editor.
+    </p>
+    <h1 id="editing-your-block-code">Editing Your Block Code</h1>
+    <p>
+      First, let’s begin by talking about how to use our pseudo programming language, block code. By default, the editor
+      will be in block mode but you can press the “go to js” button to go to Javascript mode. Once you are in Javascript
+      mode you can go back to block mode by pressing the “go to blocks” button that should appear where the “go to js”
+      button was. On the left-hand side, you should see two blue blocks stacked on top of each other that say
+      “When turn”, and “End turn”:
+    </p>
+    <img src="assets/guides/code-editor-guide/imgs/default%20blocks.PNG">
+    <p>
+      As the text on those blocks suggests, they represent the start of your code (when your unit’s turn begins) and the
+      end of your code (when your unit’s code ends). Below that panel, you will see another panel containing black
+      blocks laid out like so:
+    </p>
+    <img src="assets/guides/code-editor-guide/imgs/action%20blocks.PNG">
+    <p>
+      You can drag these blocks between the “When turn” and “End turn” blocks above to start giving your unit
+      instructions. Note in each turn your unit is limited to performing a single action at a time. You must ensure that
+      in your code your unit will only perform at most one action by the end of the turn. As the names of the tabs
+      suggest, any block under the “Action” tab is considered an action for your unit to execute. Once you’ve dragged
+      a block onto your code, you will notice a trash can icon on it. Clicking it will remove the block from your code
+      if you’ve ever made a mistake. You will notice after placing your block the Javascript console on the lower right
+      updates. This console shows you how your code would look like as actual Javascript code. This will be very useful
+      to help you learn a little more about Javascript along the way and give you an idea of how to code units with real
+      Javascript code. Also, note that you can click the numbered tabs above to work on multiple block code snippets at
+      once.
+    </p>
+    <h1 id="adding-conditional-logic-to-your-block-code">Adding Conditional Logic to Your Block Code</h1>
+    <p>
+      You will notice in the lower panel with the unplaced blocks there’s a tab titled “Conditional”. These contain
+      special blocks that allow you to create conditional logic (if this then do that, otherwise do this). When you
+      place an if block you will notice it will render like this:
+    </p>
+    <img src="assets/guides/code-editor-guide/imgs/If.PNG">
+    <p>
+      From here, you can select the condition to check for during that turn, negate that condition (check that the
+      condition is not true), or add more conditions with AND and OR logic. If you place a block below the if condition,
+      you will notice that it is indented further right than the if block like so:
+    </p>
+    <img src="assets/guides/code-editor-guide/imgs/If%20in%20range%20attack.PNG">
+    <p>
+      This means that the block below the if block will be executed only if the condition in the if block is met. Once
+      you’re done adding code your unit will execute under the condition, you need to close the “if” statement. In other
+      words, you need to tell our block code interpreter that you’re done adding code it will use if the condition is
+      met. To do so you need to add either an “end if” block, an “else if” block, or an “else” block. The “else if”
+      block is for if you want to add another condition to check if the first condition was not met. Then like the if
+      block you can add code under that condition for if that condition is met. To close the “else if” statement, you
+      would add either another “else if” block to check for more conditions, an “end else if” block, or an “else” block.
+      An “else” block is a block that can close an “if” statement or an “else if” statement. It’s used when you want to
+      add code to be executed if none of the “if” or “else if” conditions in your conditional logic are met. Otherwise,
+      if you don’t need “else” logic, you can add an “end else if” block to close your “else if” statement. Similarly,
+      if you want to close an “if” statement without an “else if” block or an “else” block, you would use an “end if”
+      block.
+    </p>
+    <h1 id="testing-your-block-code">Testing Your Block Code</h1>
+    <p>
+      Once you’re satisfied with the code you’ve written and want to try it out, right-click your block code. This will
+      first verify that your code is made properly. If there is an error in your code, you will be prompted to fix it
+      with a hint as to where the mistake occurred. Once your code has been verified, you can click a unit on the grid
+      to assign the code to. Note you can only assign code to units that are facing right. Once you added your code a
+      number will appear on the tile the unit is on indicating the tab which contains its code. Then simply click on the
+      run button to test out your code.
+    </p>
+    <h1 id="editing-the-grid">Editing the Grid</h1>
+    <p>
+      Our code editor also provides the option to add units to the grid and move them. To move your unit across the grid
+      simply drag it to move it to where you want it to be. To add units on the grid, right-click the tile you want to
+      add a unit on and you will see an option to units or delete units. Note you are limited to 6 of your own units on
+      the grid at a time.
+    </p>
+    <h1 id="using-javascript-mode">Using Javascript Mode</h1>
+    <p>
+      If you feel comfortable coding your units in Javascript, then you can try using the Javascript mode of our code
+      editor! To re-iterate, you can switch to Javascript mode by clicking the “go to js” button in the editor. Once
+      there, your code tabs will turn into Javascript consoles. As of right now, you cannot type code into those
+      consoles nor do we have plans to allow that. Instead, you can code Javascript code in the code environment of your
+      choice and upload the code file. When you upload your code it will appear in the console of the currently opened
+      tab. Like the block code editor, you right-click the console to select it and then click the unit to assign it to.
+      Note: that we do not currently verify the Javascript code for usability in the game. There’s no guarantee that
+      your code will even work properly in the game if you made a mistake in it. To find out how to code for your units
+      in Javascript refer to the <a class="link" (click)="goToDocs()">documentation</a>.
+    </p>
+    <h1 id="saving-your-code-and-unit-formation">Saving Your Code and Unit Formation</h1>
+    <p>
+      Once you’re satisfied with all the code you’ve written and the placement of your units, you can save the code and
+      formation using the save button. This will prompt you to give a name to refer to your work. Once you’ve saved your
+      code and formation, you can bring it to the game.
+    </p>
+    <h1>Conclusion</h1>
+    <p>
+      Now that you have hopefully learned how to use our code editor, you can start having fun and learn Javascript
+      using our platform. Don’t be discouraged if you’re code doesn’t work the way you want it to the first time, the
+      goal here is for you to learn. Over time, you’ll get figure out what strategies work and start understanding
+      programming concepts along the way. Even once you’ve learned the basics there’s a lot of potential for you to
+      practice more with our platform and create a more complex strategy. Happy coding!
+    </p>
+  </div>
+
+
+</div>

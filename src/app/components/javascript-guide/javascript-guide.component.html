@@ -1,0 +1,177 @@
+<header id="main-header">
+  <h1 id="title">Everything Javascript</h1>
+</header>
+
+<div id="main-content">
+  <div id="book-marks">
+    <a><h3 (click)="scrollToSection('variables-in-javascript')">Variables</h3></a>
+    <a><h3 (click)="scrollToSection('conditional-statements')">Conditional Statements</h3></a>
+    <a><h3 (click)="scrollToSection('arrays')">Arrays</h3></a>
+    <a><h3 (click)="scrollToSection('for-loops')">For Loops</h3></a>
+    <a><h3 (click)="scrollToSection('functions')">Functions</h3></a>
+    <a><h3 (click)="scrollToSection('objects')">Objects</h3></a>
+    <a><h3 (click)="scrollToSection('bonus-tips-to-maintain-your-code')">Bonus Tips</h3></a>
+  </div>
+  <div id="docs-content">
+<h1 id="all-you-need-to-know-about-javascript">Introduction</h1>
+<p>To get started coding your Scripting Siege units in Javascript, you of course need to the basics of the language first! This guide will try to cover the bare basics you&#39;ll need to know to write meaningful code to control your units. Keep in mind however that there is a lot to know about Javascript to fit into this guide. We’ve tried our best to give a deep overview of Javascript in a way that’s concise yet understandable. However, if you feel that this guide may be too fast for you, feel free to look for resources to learn at your own pace. There are many good free guides online particularly on Youtube. You could also use them to supplement what you’ve learned from reading this. We highly recommend you do so since there may be some stuff we missed here that could be useful to you. In particular, we recommend this full and free <a class="link" href="https://youtu.be/PkZNo7MFNFg">Javascript course</a> by <em>freecodecamp</em>.</p>
+<h1 id="getting-started">Getting Started</h1>
+<p>One of the beautiful things about Javascript is that it is a very easy language to set up. As long as you have a browser on your computer, you can write and run Javascript code. Open up your browser and right-click any page. Then click inspect element which should open up a console somewhere (this can vary depending on your browser). In that console, you can start writing random Javascript code and instantly see what it does. The reason this exists is because Javascript is the language of the web. Practically all websites or web applications use Javascript in one way or another. For this reason, you’ll typically see Javascript partnered with HTML and CSS (two languages specialized in designing web pages). Yet, Javascript isn’t just limited to the web, it has evolved for you to use it just about anywhere. This is part of the reason it is now one of the most popular languages among developers. Anyways, if you want to get started writing and playing around with Javascript, we recommend using an IDE (integrated development environment). This is basically a fancy text editor to help you code. One of the more popular IDEs for Javascript developers is <a class="link" href="https://code.visualstudio.com/">vscode</a> which is completely free and provides useful tools for you to code more efficiently. Although you can also use an online IDE like the one provided by <a class="link" href="https://code.sololearn.com/web/">Sololearn</a>. Sololearn has a <a class="link" href="https://www.sololearn.com/learning/1024">free Javascript course</a> you can use to help you better understand the concepts here or learn even further. Anyways, now that you some background knowledge of Javascript, let’s start learning.</p>
+<h1 id="variables-in-javascript">Variables in Javascript</h1>
+<p>You can use variables in Javascript to store information with the desired name for it. The basic syntax for declaring a variable is like so:</p>
+<pre><code class="lang-Javascript"><span class="hljs-attribute">let number</span> = 19;
+</code></pre>
+<blockquote>
+  <p>Note that we end the statement with a semicolon. It is a good convention but not required. However, other programming languages will require this.</p>
+</blockquote>
+<p>Just like in math class, you&#39;ll define variables using a <em>let</em> statement. After you define the variable you can use it without that <em>let</em> word before it. Keep in mind that you cannot have a variable name with spaces, numbers, or some special characters. Also, note that in Javascript <em>=</em> does not mean equality but instead it is used to assign or reassign a value to a variable. For example, we can do this:</p>
+<pre><code class="lang-Javascript"><span class="hljs-attribute">number</span> = <span class="hljs-number">20</span><span class="hljs-comment">;</span>
+</code></pre>
+<p>To give that number variable a new value of 20. Variables can hold anything from booleans (<code>true</code> or <code>false</code>), text (commonly known as strings), numbers, or even objects (we will discuss what those are later). Now if you wanted to increase the value stored in number by 1 you would do something like this:</p>
+<pre><code class="lang-Javascript"><span class="hljs-built_in">number</span> = <span class="hljs-built_in">number</span> + <span class="hljs-number">1</span>;
+</code></pre>
+<p>Remember that <em>=</em> does not mean equality but instead we use it to give a variable a new value. So what we are doing here is setting the value of <code>number</code> to whatever value is in number plus 1. Javascript gives us a useful shortcut to increase a number variable by 1:</p>
+<pre><code class="lang-Javascript"><span class="hljs-built_in">number</span>++;
+</code></pre>
+<p>You can also use a similar statement to decrease the value of <code>number</code> by 1:</p>
+<pre><code class="lang-Javascript"><span class="hljs-built_in">number</span><span class="hljs-comment">--;</span>
+</code></pre>
+<p>Although, there is also another shortcut if you want to increase or decrease the value of a variable by a value not equal to 1:</p>
+<pre><code class="lang-javascript"><span class="hljs-built_in">number</span> += <span class="hljs-number">12</span><span class="hljs-comment">;</span>
+<span class="hljs-built_in">Number</span> -= <span class="hljs-number">12</span><span class="hljs-comment">;</span>
+</code></pre>
+<h1 id="conditional-statements">Conditional Statements</h1>
+<p>Remember how we mentioned that we can store true or false values in variables? We can use true or false values to create what are called <em>if statements</em>. An <em>if statement</em> is pretty much some code that tells Javascript <em>if this is true, then do this</em>. An if statement can optionally have an else statement following it to give instructions if whatever you were checking is false. As an example, we can do the following:</p>
+<pre><code class="lang-Javascript"><span class="hljs-keyword">let</span> isRainingOutside = <span class="hljs-literal">true</span>;
+<span class="hljs-keyword">let</span> result = <span class="hljs-string">''</span>;
+<span class="hljs-keyword">if</span>(isRainingOutside){{'{'}}
+  result = <span class="hljs-string">'Bring an umbrella!'</span>;
+{{'}'}}<span class="hljs-keyword">else</span>{{'{'}}
+  result = <span class="hljs-string">'What a nice day!'</span>;
+{{'}'}}
+</code></pre>
+<blockquote>
+  <p>Notice that we gave the result variable a value that is some text in quotation marks. This is how you set a variable to have a string (text) value.</p>
+</blockquote>
+<p>So what we are doing here is setting <code>isRainingOutside</code> to true. Then we tell Javascript, if <code>isRainingOutside</code> is true, then set <code>result</code> to the value <code>&#39;Bring an umbrella!&#39;</code> otherwise, we set it to <code>&#39;What a nice day!&#39;</code>. This isn&#39;t too useful because we know the value of <code>isRainingOutside</code> ahead of time. Yet when you read game data from Scripting Siege this won&#39;t be the case. Also, Javascript has what is called <code>conditional operators</code> which are used to test certain conditions about data. For example, we can do something like this:</p>
+<pre><code class="lang-Javascript"><span class="hljs-keyword">let</span> age = <span class="hljs-number">19</span>;
+<span class="hljs-keyword">let</span> <span class="hljs-literal">result</span> = '';
+<span class="hljs-keyword">if</span>(age &gt;= <span class="hljs-number">19</span>){{'{'}}
+  <span class="hljs-literal">result</span> = <span class="hljs-string">"Here's some alcohol."</span>;
+{{'}'}}<span class="hljs-keyword">else</span>{{'{'}}
+  <span class="hljs-literal">result</span> = <span class="hljs-string">"Hey that's illegal you can't drink!"</span>;
+{{'}'}}
+</code></pre>
+<blockquote>
+  <p>Notice in the string values we have single quotes inside. If you intend to use text that contains single quotes, you need to wrap it in double-quotes. This way, you don&#39;t confuse Javascript into thinking you are trying to make another string.</p>
+</blockquote>
+<p>Here, we say that if age is greater than or equal to 19 then we give the person some alcohol, otherwise we don&#39;t. But let&#39;s say the person may or may not like alcohol to begin with, we can&#39;t just give them alcohol if they don&#39;t want it. We can solve this issue like so:</p>
+<pre><code class="lang-Javascript"><span class="hljs-keyword">let</span> age = <span class="hljs-number">19</span>;
+<span class="hljs-keyword">let</span> likesAlcohol = <span class="hljs-literal">false</span>;
+<span class="hljs-keyword">let</span> <span class="hljs-literal">result</span> = '';
+<span class="hljs-keyword">if</span>(age &gt;= <span class="hljs-number">19</span> &amp;&amp; likesAlcohol){{'{'}}
+  <span class="hljs-literal">result</span> = <span class="hljs-string">"Here's some alcohol."</span>;
+{{'}'}}<span class="hljs-keyword">else</span> <span class="hljs-keyword">if</span>(age &gt;= <span class="hljs-number">19</span> &amp;&amp; !likesAlcohol){{'{'}}
+  <span class="hljs-literal">result</span> = <span class="hljs-string">"Oh you don't like alcohol my bad."</span>;
+{{'}'}}<span class="hljs-keyword">else</span>{{'{'}}
+  <span class="hljs-literal">result</span> = <span class="hljs-string">"Hey that's illegal you can't drink!"</span>;
+{{'}'}}
+</code></pre>
+<p>This is a little more involved, but we&#39;ll go through it step by step. We first check if their age is greater than or equal to 19, and (&amp;&amp; means and) the <code>likesAlcohol</code> variable is true. If this is the case then we set <code>result</code> to <code>&quot;Here&#39;s some alcohol.&quot;</code>. If this is false, we then check if they&#39;re 19 and don&#39;t like alcohol (! means not). In which case we set <code>result</code> to <code>&quot;Oh you don&#39;t like alcohol my bad.&quot;</code> . Otherwise, if that&#39;s not true then their age must be less than 19, meaning they are not legal drinking age (at least where we are sorry Americans). If this is true then we set <code>result</code> to <code>&quot;Hey that&#39;s illegal you can&#39;t drink!&quot;</code>. You may be wondering what that <code>else if</code> part does. What it does is if the first condition in the <code>if</code> statement is not met, then it checks the condition in the <code>else if</code>. Otherwise, if neither is true then we do whatever is in the <code>else</code> statement. If the first condition is met, then Javascript doesn&#39;t even check the <code>else if</code> condition. In this example, we only used 1 <code>else if</code> statement but you can use as much as you need. Small note, notice how in Javascript <em>&amp;&amp;</em> means and, if you wanted to say <em>or</em> you would you use <em>||</em>. Also, if you want to compare if two things are equal, you would use this operator <code>===</code>.</p>
+<h1 id="arrays">Arrays</h1>
+<p>An array in Javascript is simply a list of any values you want. They take this basic syntax:</p>
+<pre><code class="lang-Javascript">let nums = [<span class="hljs-number">9</span>, <span class="hljs-number">12</span>, <span class="hljs-number">3</span>, <span class="hljs-number">4</span>, <span class="hljs-number">1</span>];
+</code></pre>
+<p>Javascript numbers each item in the array in order from 0 to the number of items - 1. So in this example, we have 5 items where item 0 is 9, item 1 is 12, item 2 is 3, item 3 is 4, and item 4 is 1. The number associated with the item is known as its index. Using the index we could access individual items using this syntax:</p>
+<pre><code class="lang-Javascript"><span class="hljs-attribute">let number</span> = nums[1];
+</code></pre>
+<p>In this case, we will be getting item 1 which has a value of 12. It&#39;s also important to understand that an array can also contain a bunch of inner arrays (usually called a 2D array). In Scripting Siege, you will see that we will use these 2D arrays to represent data about the in-game, grid. More precisely, you will encounter an array containing a bunch of inner arrays representing columns in the grid. In each of these inner arrays is data representing all the units on that column. For now, let us give you a simpler example of a 2D array:</p>
+<pre><code class="lang-Javascript">let grid = [
+  [<span class="hljs-number">1</span>, <span class="hljs-number">2</span>, <span class="hljs-number">3</span>, <span class="hljs-number">4</span>],
+  [<span class="hljs-number">5</span>, <span class="hljs-number">6</span>, <span class="hljs-number">7</span>, <span class="hljs-number">8</span>],
+  [<span class="hljs-number">9</span>, <span class="hljs-number">10</span>, <span class="hljs-number">11</span>, <span class="hljs-number">12</span>],
+  [<span class="hljs-number">13</span>, <span class="hljs-number">14</span>, <span class="hljs-number">15</span>, <span class="hljs-number">16</span>]
+];
+
+let item = grid[<span class="hljs-number">0</span>][<span class="hljs-number">1</span>];
+</code></pre>
+<blockquote>
+  <p>Note that the way we formatted the 2D array is just for readability, we could have defined it on one line but doing it this way is easier to read</p>
+</blockquote>
+<p>It may look a little funky seeing two consecutive square brackets with indexes in them, yet it is much simpler than it looks. Remember a 2D array is just an array with a bunch of inner arrays. So when we say <code>grid[0]</code>, we are getting the inner list at index 0. Then when we add <code>[1]</code> to the end of that, we are getting the element at index 1 of that inner array. Or in other words, <code>grid[0]</code> is itself an array, so we can retrieve items from particular indexes like so: <code>grid[0][1]</code>. So here we are getting the 2nd item of the 1st array within the grid array. This item would have the value 2.</p>
+<h1 id="for-loops">For loops</h1>
+<p>Next, let&#39;s have a look at what a <em>for loop</em> is. A for loop is just a way to tell Javascript to repeat some code a certain amount of times. It follows the following syntax:</p>
+<pre><code class="lang-Javascript"><span class="hljs-built_in">let</span> <span class="hljs-built_in">num</span> = <span class="hljs-number">0</span>;
+<span class="hljs-keyword">for</span>(<span class="hljs-built_in">let</span> i = <span class="hljs-number">0</span>; i &lt; <span class="hljs-number">10</span>; i++){{'{'}}
+  <span class="hljs-built_in">num</span> = i;
+{{'}'}}
+</code></pre>
+<p>This might look like a bit much but once you start to break it down it&#39;s pretty straightforward. In the brackets after the <em>for</em> word, we declare a variable called <code>i</code> with a value of 0. Then we give a conditional statement, <code>i &lt; 10</code> meaning as long as i is less than 10 keep repeating what is in the curly braces (these: {{'{'}} ). Then after that, we say <code>i++</code> meaning we want to increase the<code>i</code>variable by 1 after each time we run code in the curly braces. So in this example, the code in the curly braces will run 10 times, since <code>i</code> will go from 0 to 9. Notice we can also use the value of <code>i</code> within the curly braces. You&#39;ll find that using the value of <code>i</code> could be pretty useful once you start coding more. For example, you could use it to look through the items in an array:</p>
+<pre><code class="lang-Javascript">let sum = <span class="hljs-number">0</span>;
+let nums = [<span class="hljs-number">1</span>, <span class="hljs-number">2</span>, <span class="hljs-number">3</span>, <span class="hljs-number">4</span>, <span class="hljs-number">5</span>];
+for(let i = <span class="hljs-number">0</span>; i &lt; nums.length; i++){{'{'}}
+  sum += nums[i];
+{{'}'}}
+  </code></pre>
+  <p>In this for loop, the i variable goes from 0 to the number of items in <code>nums</code> minus 1. This is because the loop&#39;s condition <em>i &lt; nums.length</em> will no longer be true when i is equal to the number of items in nums (<code>nums.length</code>), so the loop will not run at that point. This is exactly what we want because the indexes in <code>nums</code> range from 0 to the number of items in <code>nums</code> minus 1. Javascript also gives us an alternate way to look through all the items in an array:</p>
+<pre><code class="lang-Javascript"><span class="hljs-built_in">let</span> <span class="hljs-built_in">sum</span> = <span class="hljs-number">0</span>;
+<span class="hljs-built_in">let</span> nums = [<span class="hljs-number">3</span>, <span class="hljs-number">1</span>, <span class="hljs-number">9</span>, <span class="hljs-number">2</span>, <span class="hljs-number">5</span>];
+<span class="hljs-keyword">for</span>(<span class="hljs-built_in">let</span> <span class="hljs-built_in">num</span> of nums){{'{'}}
+  <span class="hljs-built_in">sum</span> += <span class="hljs-built_in">num</span>;
+{{'}'}}
+  </code></pre>
+  <p>This time, in the brackets after the <em>for</em> word it says <code>let num of nums</code>. What this means is that we execute the code (<code>sum += num</code>) once for each number in <code>nums</code>. Each time we execute the code, the value of num is a unique item in the <code>nums</code> array, going in order. In other words, the first time it executes the code <code>num</code> is 3, then the next time we execute the code <code>num</code> is 1, then <code>num</code> is 9, then <code>num</code> is 2, then finally in the last time the loop executes <code>num</code> is 5.</p>
+  <h1 id="functions">Functions</h1>
+  <p>In programming, a function is a collection of related code that you can reuse whenever you want. Like functions in math class, they can take input and give back output, although you don&#39;t necessarily need to give an output if you don&#39;t need to. To create a function, you would do something like this:</p>
+<pre><code class="lang-Javascript">function <span class="hljs-built_in">sum</span>(nums){{'{'}}
+  <span class="hljs-built_in">let</span> <span class="hljs-built_in">sum</span> = <span class="hljs-number">0</span>;
+  <span class="hljs-keyword">for</span>(<span class="hljs-built_in">let</span> <span class="hljs-built_in">num</span> of nums){{'{'}}
+
+    <span class="hljs-built_in">sum</span> += <span class="hljs-built_in">num</span>;
+
+  {{'}'}}
+  <span class="hljs-built_in">return</span> <span class="hljs-built_in">sum</span>;
+{{'}'}}
+  </code></pre>
+  <p>Here, our function accepts an input called <code>nums</code> which we assume is an array of numbers. If it&#39;s not an array an error will probably occur, in which case it won&#39;t run. Also, if the array contains items that aren&#39;t numbers then you will probably get unexpected behavior. Thus, it is important to make sure you give this function the right input whenever you use it. Going to the contents of the function, we add all the numbers in the array to get the sum. You will notice at the end, we have this line of code: <code>return sum</code>. This is saying that the output of our function will be the sum. When we want to use this function, we would do something like this:</p>
+<pre><code class="lang-Javascript">let mySum = sum([<span class="hljs-number">1</span>, <span class="hljs-number">2</span>, <span class="hljs-number">3</span>, <span class="hljs-number">4</span>]);
+</code></pre>
+<p>Here, we use the <code>sum</code> function with an array of numbers as an input. Then we store the output of the function in a variable called <code>mySum</code>.</p>
+<h1 id="objects">Objects</h1>
+<p>Next, let&#39;s discuss objects in Javascript. An object is just a collection of related variables and functions that you store as a single variable. They are typically used to model a real-world thing. For example, we can create an object to represent a dog:</p>
+<pre><code class="lang-Javascript"><span class="hljs-attribute">let myDoggo</span> = {{'{'}}
+  name: <span class="hljs-string">'Steve'</span>,
+  ownerName: <span class="hljs-string">'Bobbert'</span>,
+  collarColor: <span class="hljs-string">'red'</span>,
+  age: 5
+{{'}'}};
+</code></pre>
+<p>Here, we create an object representing a dog and store it as a variable called <code>myDoggo</code>. If we want to access variables in the <code>myDoggo</code> object we would do something like this:</p>
+<pre><code class="lang-Javascript"><span class="hljs-attribute">let name</span> = myDoggo.name;
+<span class="hljs-attribute">let owner</span> = myDoggo.ownerName;
+<span class="hljs-attribute">let collarColor</span> = myDoggo.collarColor;
+<span class="hljs-attribute">let age</span> = myDoggo.age;
+</code></pre>
+<p>An object can even contain functions in them if you need them to. For example, if you had a <em>bark</em> function in that dog object, you would use it like so:</p>
+<pre><code class="lang-Javascript">myDoggo.bark()<span class="hljs-comment">;</span>
+</code></pre>
+<h1 id="bonus-tips-to-maintain-your-code">Bonus Tips to Maintain Your Code</h1>
+<p>The more you code, the more you&#39;ll realize that things can get pretty wild as you start coding more complex stuff. For example, you&#39;ll come to realize you&#39;ll very rarely do things right the first time. As well, sometimes it could be easy to forget exactly how some of the code you wrote works. Here, we&#39;ll show you some small tips to help you out with both of these issues. To help remember how your code works, programming languages including Javascript have a feature called comments. These are little notes you can write in your code for personal use:</p>
+<pre><code class="lang-Javascript">// <span class="hljs-type">This</span> <span class="hljs-keyword">is</span> a single-line comment. <span class="hljs-type">The</span> code below me declares a variable called number <span class="hljs-keyword">with</span> a value <span class="hljs-keyword">of</span> <span class="hljs-number">42</span>.
+<span class="hljs-keyword">let</span> number = <span class="hljs-number">42</span>;
+/*
+<span class="hljs-type">This</span> <span class="hljs-keyword">is</span> a multi-line comment
+I can <span class="hljs-keyword">type</span> random text <span class="hljs-keyword">in</span> <span class="hljs-keyword">as</span> many
+lines <span class="hljs-keyword">as</span> I see fit
+*/
+</code></pre>
+<p>Anything wrapped between the <code>/*</code> and the <code>*/</code> or following a <code>//</code> will be ignored because Javascript knows those are just personal notes. Although useful, they won&#39;t help you if there is a bug in your code. A small tool that can help you debug your code is the use of print statements. Print statements tell Javascript to print out data to the console in your browser. To do this, you would simply type the following:</p>
+<pre><code class="lang-Javascript">let myData = <span class="hljs-number">42</span><span class="hljs-comment">;</span>
+console.log(myData)<span class="hljs-comment">;</span>
+</code></pre>
+<p>Note that you can print out practically anything you want this way. So if something goes wrong you can print out the values of certain data to check their state when you run your code. Recall in the beginning we mentioned a Javascript console in your browser. This is where the <code>console.log</code> statements print out the data. Javascript will also print out errors in the console if something goes very wrong that would cause it to stop. Although it can be a little frustrating to see it can give useful hints for you to find what went wrong.</p>
+<h1 id="conclusion">Conclusion</h1>
+<p>In this guide, we went over the fundamental Javascript concepts you need to help you get started coding your units in Scripting Siege. If you understood these concepts you should be ready to start writing your own code that can be used in the game. Just make sure you have a look at the <a class="link" href="./Getting%20Started%20With%20Coding%20a%20Scripting%20Siege%20Unit.md">documentation</a> to see how exactly to get started.</p>
+
+  </div>
+</div>

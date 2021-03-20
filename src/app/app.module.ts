@@ -40,6 +40,8 @@ import { LevelplayComponent } from './components/levelplay/levelplay.component';
 import { InfoComponent } from './components/info/info.component';
 import { ProgSelectDialogComponent } from './components/prog-select-dialog/prog-select-dialog.component';
 import { HomeComponent } from './components/home/home.component';
+import { JavascriptGuideComponent } from './components/javascript-guide/javascript-guide.component';
+import { CodeEditorGuideComponent } from './components/code-editor-guide/code-editor-guide.component';
 
 const firebaseConfig = {
   apiKey: "AIzaSyB25gxYu7PkMvnjKhisCzPP62grU_OEMLU",
@@ -66,7 +68,9 @@ const firebaseConfig = {
     LevelplayComponent,
     InfoComponent,
     ProgSelectDialogComponent,
-    HomeComponent
+    HomeComponent,
+    JavascriptGuideComponent,
+    CodeEditorGuideComponent
   ],
   imports: [
     BrowserModule,

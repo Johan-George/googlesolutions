@@ -3,11 +3,11 @@ import {ViewportScroller} from '@angular/common';
 import {Router} from '@angular/router';
 
 @Component({
-  selector: 'app-docs',
-  templateUrl: './docs.component.html',
-  styleUrls: ['./docs.component.css']
+  selector: 'app-code-editor-guide',
+  templateUrl: './code-editor-guide.component.html',
+  styleUrls: ['../docs/docs.component.css']
 })
-export class DocsComponent implements OnInit {
+export class CodeEditorGuideComponent implements OnInit {
 
   constructor(private viewPortScroller: ViewportScroller, private router: Router) { }
 
@@ -20,9 +20,9 @@ export class DocsComponent implements OnInit {
 
   }
 
-  goToJavascriptGuide(){
-    this.router.navigate(['learn-js']);
-    window.scroll(0, 0);
+  goToDocs(){
+    this.router.navigate(['docs']);
+    window.scroll(0,0 );
   }
 
 }

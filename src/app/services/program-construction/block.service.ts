@@ -59,10 +59,9 @@ export class BlockService {
   static allBlocks: Array<BlockCommand> = BlockService.placeableBlocks.concat(new Start(), new End(), new EmptyPredicate());
 
   /**
-   * Array representing all Predicates avaliable
+   * Array representing all Predicates available
    */
-  static predicates: Array<Predicate> = [new EnemyNear(), new HealthBelow30Percent(),
-    new TruePredicate(), new FalsePredicate()];
+  static predicates: Array<Predicate> = [new EnemyNear(), new HealthBelow30Percent()];
 
   /**
    * returns true if the BlockCommand is a ConditionalBlock Object
