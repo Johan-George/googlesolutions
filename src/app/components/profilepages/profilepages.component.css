@@ -69,7 +69,9 @@ h2{
     width: 940px;
 
     padding: 30px 30px 30px 30px;
-
+    
+    overflow-x: auto;
+    overflow-y: auto;
 }
 
 #DisplayArea {
@@ -79,7 +81,7 @@ h2{
 }
 
 #CodeSelection {
-    width: 130px;
+    /* width: 500px; */
     float: left;
 }
 
@@ -100,6 +102,6 @@ h3 {
     color: white;
     font-size: 20px;
     font-family: Roboto;
-    width: 100px;
+    /* width: 100px; */
     margin-bottom: 10px;
 }
