@@ -1,4 +1,10 @@
-# Googlesolutions
+# Scripting Siege
+
+This Project is called Scripting Siege. A code-block based programming system to help users learn to code using a gamified and competitive learning enviroment.
+
+To run this project, open the html file inside the `dist/` folder, or you can open the development server using the Angular instructions generated below.
+
+## Angular Information
 
 This project was generated with [Angular CLI](https://github.com/angular/angular-cli) version 10.1.6.
 

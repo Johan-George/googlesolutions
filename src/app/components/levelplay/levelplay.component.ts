@@ -22,8 +22,8 @@ export class LevelplayComponent {
   progData: string;
 
   logColumns = ["id", "msg"];
-  logData: MatTableDataSource<{id: number, msg: string}> = new MatTableDataSource<{id: number, msg: string}>();
-  actionLog: {id: number, msg: string}[] = [];
+  logData: MatTableDataSource<{ id: number, msg: string }> = new MatTableDataSource<{ id: number, msg: string }>();
+  actionLog: { id: number, msg: string }[] = [];
   actionlogNum: number = 1;
 
   started: boolean = false;
@@ -33,13 +33,13 @@ export class LevelplayComponent {
   @ViewChild("datalogTable", { read: ElementRef })
   datalogTable: ElementRef;
 
-  constructor(private route: ActivatedRoute,  private changeDetectorRefs: ChangeDetectorRef, private db: FirestoreDatabaseService, 
-      private Auth: AuthyLoginService, private router: Router) {
-    if(!Auth.checkSigninStatus()) {
+  constructor(private route: ActivatedRoute, private changeDetectorRefs: ChangeDetectorRef, private db: FirestoreDatabaseService,
+    private Auth: AuthyLoginService, private router: Router) {
+    if (!Auth.checkSigninStatus()) {
       router.navigate(['/signin']);
     } else {
       var self = this;
-      db.getUserData(Auth.getUser().uid, function(result) {
+      db.getUserData(Auth.getUser().uid, function (result) {
         console.log("Recieved UserData");
         self.userData = result;
       });
@@ -49,7 +49,7 @@ export class LevelplayComponent {
         this.progData = params.p;
       });
     }
-    
+
   }
 
   startGame() {
@@ -60,46 +60,46 @@ export class LevelplayComponent {
 
     console.log("called");
 
-    switch(action.actionId) {
+    switch (action.actionId) {
       case "GameEnd2":
         this.addActionToLog("You lost the game");
-      break;
+        break;
 
       case "GameEnd1":
         this.addActionToLog("You won the game");
         this.addWinToPlayer();
-      break;
+        break;
 
       case "NoEvent":
         this.addActionToLog("Nothing Happened");
-      break;
+        break;
 
       case "Attack":
         this.addActionToLog("Unit " + action.doer.id + " attacked unit " + action.receiver.id);
-        if(action.hasDied) {
+        if (action.hasDied) {
           this.addActionToLog("Unit " + action.receiver.id + " died");
         }
-      break;
+        break;
 
       case "Wait":
         this.addActionToLog("Unit " + action.doer.id + " Waited");
-      break;
+        break;
 
       case "North":
         this.addActionToLog("Unit " + action.doer.id + " moved " + action.actionId);
-      break;
+        break;
 
       case "East":
         this.addActionToLog("Unit " + action.doer.id + " moved " + action.actionId);
-      break;
+        break;
 
       case "South":
         this.addActionToLog("Unit " + action.doer.id + " moved " + action.actionId);
-      break;
+        break;
 
       case "West":
         this.addActionToLog("Unit " + action.doer.id + " moved " + action.actionId);
-      break;
+        break;
 
       default:
         this.addActionToLog("Unexpected action: \"" + action.actionId + "\"" + action.doer.id);
@@ -109,18 +109,21 @@ export class LevelplayComponent {
   }
 
   private addActionToLog(msg: string) {
-    this.actionLog.push({id: this.actionlogNum, msg});
+    this.actionLog.push({ id: this.actionlogNum, msg });
     this.logData.data = this.actionLog;
     this.actionlogNum++;
     this.datalogTable.nativeElement.scrollTop = this.datalogTable.nativeElement.scrollHeight;
   }
 
   private addWinToPlayer() {
-    if(this.userData != undefined) {
+    if (this.userData != undefined) {
 
-      this.userData.CompletedLevels.push(parseInt(this.levData));
+      if (this.userData.CompletedLevels.indexOf(parseInt(this.levData)) < 0) {
 
-      this.db.setUserData(this.Auth.getUser().uid, this.userData);
+        this.userData.CompletedLevels.push(parseInt(this.levData));
+
+        this.db.setUserData(this.Auth.getUser().uid, this.userData);
+      }
 
     } else {
       console.log("Database is taking wayyyy too long");
