@@ -17,6 +17,8 @@ h1 {
     text-align: center;
     color: white;
     font-family: Roboto;
+
+    width: 100%;
 }
 
 hr {
