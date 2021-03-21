@@ -9,6 +9,8 @@ import {Start} from 'src/app/models/blockCommands/blocks/terminal/Start';
 import {GameAction} from 'src/app/models/game/GameAction';
 import {BlockService} from './block.service';
 import {CompoundPredicate} from '../../models/blockCommands/blocks/predicate/CompoundPredicate';
+import {EndElseIf} from '../../models/blockCommands/blocks/terminal/EndElseIf';
+import {EndElse} from '../../models/blockCommands/blocks/terminal/EndElse';
 
 @Injectable({
   providedIn: 'root'
@@ -103,11 +105,11 @@ export class CodeService {
    */
   deserializeToBlocks(repr: Array<string>): Array<BlockCommand> {
     let commands: Array<BlockCommand> = [];
-
+    console.log('HELLO');
     for (let rep of repr) {
 
       if (rep.includes('_')) {
-
+        debugger;
         let ids = rep.split('_');
         let conditional: ConditionalBlock = <ConditionalBlock>this.blockService.getById(ids[0]);
         // Make the list empty because it starts off with an empty predicate
@@ -151,8 +153,11 @@ export class CodeService {
           commands.push(conditional);
 
         }else{
-          conditional.conditions[0] = <Predicate>this.blockService.getById(ids[1]);
+          conditional.conditions.push(<Predicate>this.blockService.getById(ids[1]));
           commands.push(conditional);
+        }
+        if(conditional.getId() !== Else.id){
+          this.compileConditions(conditional, 0);
         }
 
       } else {
@@ -176,7 +181,7 @@ export class CodeService {
     let global_executables = executable_count;
     let local_executables = 0;
     let start = i;
-
+    let foundElse = false;
     // if(condition.getLabel() === EmptyPredicate.label){
     //   throw new Error('An if block is missing a condition');
     // }
@@ -205,7 +210,7 @@ export class CodeService {
       } else if (commands[i].getLabel() === ElseIf.label) {
         this.compileConditions((<ConditionalBlock>commands[i]), i);
         let next = this.parseElseIfOrElse(i, commands, global_executables);
-        elseIfs.push([next[1], next[2]])
+        elseIfs.push([next[1], next[2]]);
         i = next[0];
 
       } else if (commands[i].getLabel() === Else.label) {
@@ -213,6 +218,7 @@ export class CodeService {
         let next = this.parseElseIfOrElse(i, commands, global_executables);
         elseActions = next[2];
         i = next[0];
+        foundElse = true;
 
       } else {
 
@@ -226,6 +232,11 @@ export class CodeService {
         throw new Error(CodeErrorFormatters.ONLY_ONE_ACTION());
 
       }
+    }
+    if(elseIfs.length === 0 && commands[i].getLabel() === EndElseIf.label){
+      throw new Error(CodeErrorFormatters.CONDITIONAL_NOT_CLOSED(i + 1));
+    }else if(!foundElse && commands[i].getLabel() === EndElse.label){
+      throw new Error(CodeErrorFormatters.CONDITIONAL_NOT_CLOSED(i + 1));
     }
     /*
     Append to the actions array a new function that will execute all the functions in the conditional_actions array
@@ -386,7 +397,7 @@ class CodeErrorFormatters{
 
   static ELSE_WITHOUT_IF = function(index){
 
-    return `Else If without If at block ${index}`;
+    return `Else without If at block ${index}`;
 
   }
 

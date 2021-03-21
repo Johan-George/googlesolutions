@@ -22,6 +22,10 @@ import {TextAction2} from '../../models/blockCommands/blocks/executable/TestActi
 import {TruePredicate} from '../../models/blockCommands/blocks/predicate/TruePredicate';
 import {FalsePredicate} from '../../models/blockCommands/blocks/predicate/FalsePredicate';
 import {CompoundPredicate} from '../../models/blockCommands/blocks/predicate/CompoundPredicate';
+import {EastAvailable} from '../../models/blockCommands/blocks/predicate/EastAvailable';
+import {WestAvailable} from '../../models/blockCommands/blocks/predicate/WestAvailable';
+import {NorthAvailable} from '../../models/blockCommands/blocks/predicate/NorthAvailable';
+import {SouthAvailable} from '../../models/blockCommands/blocks/predicate/SouthAvailable';
 
 @Injectable({
   providedIn: 'root'
@@ -61,7 +65,8 @@ export class BlockService {
   /**
    * Array representing all Predicates available
    */
-  static predicates: Array<Predicate> = [new EnemyNear(), new HealthBelow30Percent()];
+  static predicates: Array<Predicate> = [new EnemyNear(), new HealthBelow30Percent(),
+    new NorthAvailable(), new SouthAvailable(), new EastAvailable(), new WestAvailable()];
 
   /**
    * returns true if the BlockCommand is a ConditionalBlock Object
@@ -133,6 +138,14 @@ export class BlockService {
         return new EmptyPredicate();
       case CompoundPredicate.id:
         return new CompoundPredicate();
+      case EastAvailable.id:
+        return new EastAvailable();
+      case WestAvailable.id:
+        return new WestAvailable();
+      case NorthAvailable.id:
+        return new NorthAvailable();
+      case SouthAvailable.id:
+        return new SouthAvailable();
       case Start.id:
         return new Start();
       case End.id:
