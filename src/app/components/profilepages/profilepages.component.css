@@ -69,7 +69,9 @@ h2{
     width: 940px;
 
     padding: 30px 30px 30px 30px;
-
+    
+    overflow-x: auto;
+    overflow-y: auto;
 }
 
 #DisplayArea {
