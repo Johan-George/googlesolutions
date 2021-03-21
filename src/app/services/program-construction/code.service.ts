@@ -105,11 +105,11 @@ export class CodeService {
    */
   deserializeToBlocks(repr: Array<string>): Array<BlockCommand> {
     let commands: Array<BlockCommand> = [];
-
+    console.log('HELLO');
     for (let rep of repr) {
 
       if (rep.includes('_')) {
-
+        debugger;
         let ids = rep.split('_');
         let conditional: ConditionalBlock = <ConditionalBlock>this.blockService.getById(ids[0]);
         // Make the list empty because it starts off with an empty predicate
@@ -153,8 +153,11 @@ export class CodeService {
           commands.push(conditional);
 
         }else{
-          conditional.conditions[0] = <Predicate>this.blockService.getById(ids[1]);
+          conditional.conditions.push(<Predicate>this.blockService.getById(ids[1]));
           commands.push(conditional);
+        }
+        if(conditional.getId() !== Else.id){
+          this.compileConditions(conditional, 0);
         }
 
       } else {

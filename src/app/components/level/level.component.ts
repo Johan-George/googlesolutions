@@ -421,8 +421,8 @@ export class LevelComponent implements OnInit, OnDestroy {
       this.closeContextMenu();
     }
     let unit = this.grid[location.x][location.y];
-    console.log(unit);
     if(unit !== null && unit !== undefined){
+      console.log(unit.activecode);
       this.unitClickEvent.emit(unit);
     }
   }

@@ -15,9 +15,7 @@ function locationOccupied(location, grid){
  * @return true or false depending on if a tile is in bounds of the in-game grid
  */
 function isInBounds(location, grid){
-
     return location.x >= 0 && location.x < grid.length && location.y >= 0 && location.y < grid[0].length
-
 }
 
 /**
@@ -27,7 +25,7 @@ function isInBounds(location, grid){
  */
 function locationValid(location, grid){
 
-    return !locationOccupied(location, grid) && isInBounds(location, grid);
+    return isInBounds(location, grid) && !locationOccupied(location, grid) ;
 
 }
 
@@ -41,7 +39,7 @@ function enemyInRange(grid, you){
     for(let x = 0; x < grid.length; x++){
         for(let y = 0; y < grid[0].length; y++){
             let other = grid[x][y];
-            if(!((you.location.x === x && you.location.y === y) || other === null || you.team === other.team)){
+            if(!((you.location.x === x && you.location.y === y) || other === null || you.team === other.team )){
                 if((x >= you.location.x - you.attackRange && x <= you.location.x + you.attackRange) &&
                     (y >= you.location.y - you.attackRange && y <= you.location.x + you.attackRange)){
                     return true;
@@ -82,6 +80,7 @@ this.onmessage = function (turnEvent){
     if(healthLessThan50Percent(me)){
         this.postMessage({result: 'West'});
     }else if(enemyInRange(grid, me)){
+        console.log('I ATTACKED');
         this.postMessage({result: 'Attack'});
     }else if(locationValid(east, grid)){
         this.postMessage({result: 'East'});

@@ -7,7 +7,12 @@ import {Start} from 'src/app/models/blockCommands/blocks/terminal/Start';
 import {BlockService} from 'src/app/services/program-construction/block.service';
 import {CodeService} from 'src/app/services/program-construction/code.service';
 import {Else} from 'src/app/models/blockCommands/blocks/conditional/Else';
-import {enemyNearFunc, healthBelow30PercentFunc, RealCodeRepr} from '../../models/blockCommands/actual-code/RealCodeRepr';
+import {
+  enemyNearFunc,
+  healthBelow30PercentFunc,
+  locationAvailableFunc,
+  RealCodeRepr
+} from '../../models/blockCommands/actual-code/RealCodeRepr';
 import {HealthBelow30Percent} from '../../models/blockCommands/blocks/predicate/HealthBelow30Percent';
 import {EnemyNear} from '../../models/blockCommands/blocks/predicate/EnemyNear';
 import {EmptyPredicate} from '../../models/blockCommands/blocks/predicate/EmptyPredicate';
@@ -21,6 +26,10 @@ import {FirestoreDatabaseService} from '../../services/database/firestore-databa
 import {AuthyLoginService} from '../../services/login/authy-login.service';
 import {Router} from '@angular/router';
 import {InfoComponent} from '../info/info.component';
+import {NorthAvailable} from '../../models/blockCommands/blocks/predicate/NorthAvailable';
+import {SouthAvailable} from '../../models/blockCommands/blocks/predicate/SouthAvailable';
+import {WestAvailable} from '../../models/blockCommands/blocks/predicate/WestAvailable';
+import {EastAvailable} from '../../models/blockCommands/blocks/predicate/EastAvailable';
 
 @Component({
   selector: 'app-block-code',
@@ -61,6 +70,7 @@ export class BlockCodeComponent implements OnInit{
   extraLinesAdded: number = 3;
   hasHealthFunc = false;
   hasEnemyNearFunc = false;
+  hasLocationAvailableFunc = false;
   programData: ProgramData;
   tabIndex: number = 1;
   run: Subject<boolean> = new Subject<boolean>();
@@ -108,10 +118,11 @@ export class BlockCodeComponent implements OnInit{
       event.currentIndex != 0 && !(event.currentIndex >= this.currentCode.length)) {
       this.unverifyCode();
       let block = event.previousContainer.data[event.previousIndex];
-      let copy = Object.create(block);
+      let copy = this.blockService.cloneBlock(block);
       this.setIndentationLevel(event, block);
       if (this.blockService.isConditional(block)) {
-        copy.condition = Object.create(block.conditions);
+        copy.conditions = [new EmptyPredicate()];
+        copy.condition = new EmptyPredicate();
       }
       event.previousContainer.data.push(copy);
       transferArrayItem(event.previousContainer.data,
@@ -250,6 +261,7 @@ export class BlockCodeComponent implements OnInit{
   }
 
   onChangeCondition(block, value, index, blockIndex) {
+    console.log('HERE');
     let conjunction = block.conditions[index].conjunction;
     block.conditions[index] = value;
     block.conditions[index].conjunction = conjunction;
@@ -261,6 +273,10 @@ export class BlockCodeComponent implements OnInit{
     }else if(value.getLabel() === EnemyNear.label && !this.hasEnemyNearFunc){
       this.addFunctionToRealCode(enemyNearFunc);
       this.hasEnemyNearFunc = true;
+    }else if([NorthAvailable.label, SouthAvailable.label, EastAvailable.label, WestAvailable.label].includes(value.getLabel())
+      && !this.hasLocationAvailableFunc){
+      this.addFunctionToRealCode(locationAvailableFunc);
+      this.hasLocationAvailableFunc = true;
     }
   }
 

@@ -15,7 +15,7 @@ export class GridParserService {
 
   static isInBounds(location, grid){
 
-    return location.x >= 0 && location.x < grid.length && location.y >= 0 && location.y < grid[0].length
+    return location.x >= 0 && location.x < grid.length && location.y >= 0 && location.y < grid[0].length;
 
   }
 

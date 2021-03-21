@@ -41,7 +41,7 @@ export class RealCodeRepr{
 export const healthBelow30PercentFunc: string = 'function healthLessThan30Percent(you){@' +
   '^return ((you.health / you.maxHealth) * 100) < 30;' +
   '@' +
-  '}'
+  '}';
 
 export const enemyNearFunc: string = 'function enemyInRange(grid, you){@' +
   '^for(let x = 0; x < grid.length; x++){@' +
@@ -56,4 +56,8 @@ export const enemyNearFunc: string = 'function enemyInRange(grid, you){@' +
   '^^^}@' +
   '^^}@' +
   '^return false;@' +
-  '}'
+  '}';
+
+export const locationAvailableFunc: string = 'function locationAvailable(grid, location){@' +
+  '^return grid[location.x][location.y] === null && location.x >= 0 && location.x < grid.length && location.y >= 0 && location.y < grid[0].length;@'+
+  '}';
