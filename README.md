@@ -2,7 +2,21 @@
 
 This Project is called Scripting Siege. A code-block based programming system to help users learn to code using a gamified and competitive learning enviroment.
 
-To run this project, open the html file inside the `dist/` folder, or you can open the development server using the Angular instructions generated below.
+To run this project, follow the following steps:
+
+### Windows
+
+1. Download and install Nodejs at `https://nodejs.org/en/` (Use the recomended release)
+
+2. Download this project by cloning the repo or downloading as a zip and extracting that zip.
+
+3. Open Command-Prompt and navigate to the inside of the directory of this project
+
+4. Run the command `npm install` in the Command-Prompt
+
+5. Run the command `ng serve` to start the development server
+
+6. In your browser, go to `http://localhost:4200/`
 
 ## Angular Information
 
