@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import {ViewportScroller} from '@angular/common';
 import {Router} from '@angular/router';
+import {AuthyLoginService} from '../../services/login/authy-login.service';
 
 @Component({
   selector: 'app-code-editor-guide',
@@ -9,9 +10,12 @@ import {Router} from '@angular/router';
 })
 export class CodeEditorGuideComponent implements OnInit {
 
-  constructor(private viewPortScroller: ViewportScroller, private router: Router) { }
+  constructor(private viewPortScroller: ViewportScroller, private router: Router, private auth: AuthyLoginService) { }
 
   ngOnInit(): void {
+    if(!this.auth.checkSigninStatus()){
+      this.router.navigate(['']);
+    }
   }
 
   scrollToSection(sectionName){
