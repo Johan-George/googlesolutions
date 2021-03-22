@@ -12,7 +12,7 @@ To run this project, follow the following steps:
 
 3. Open Command-Prompt and navigate to the inside of the directory of this project
 
-4. Run the command `npm init` in the Command-Prompt
+4. Run the command `npm install` in the Command-Prompt
 
 5. Run the command `ng serve` to start the development server
 
