@@ -30,6 +30,7 @@ import {NorthAvailable} from '../../models/blockCommands/blocks/predicate/NorthA
 import {SouthAvailable} from '../../models/blockCommands/blocks/predicate/SouthAvailable';
 import {WestAvailable} from '../../models/blockCommands/blocks/predicate/WestAvailable';
 import {EastAvailable} from '../../models/blockCommands/blocks/predicate/EastAvailable';
+import {East} from '../../models/blockCommands/blocks/executable/East';
 
 @Component({
   selector: 'app-block-code',
@@ -91,7 +92,7 @@ export class BlockCodeComponent implements OnInit{
       this.programData = new ProgramData();
       this.programData.Name = 'Test';
       let unit = new UnitData();
-      unit.CodeBlocks = ['RWFzdA=='];
+      unit.CodeBlocks = [East.id];
       unit.CodeType = CodeType.BLOCK;
       unit.TroopType = Swordsman.dbid;
       unit.location = {x: 1, y:2};
