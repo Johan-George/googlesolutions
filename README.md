@@ -14,9 +14,11 @@ To run this project, follow the following steps:
 
 4. Run the command `npm install` in the Command-Prompt
 
-5. Run the command `ng serve` to start the development server
+5. Run the command `npm install -g @angular/cli` in the Command-Prompt to install Angular CLI
 
-6. In your browser, go to `http://localhost:4200/`
+6. Run the command `ng serve` to start the development server
+
+7. In your browser, go to `http://localhost:4200/`
 
 ## Angular Information
 
