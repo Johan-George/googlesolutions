@@ -14,6 +14,7 @@ import {East} from '../../models/blockCommands/blocks/executable/East';
 import {Swordsman} from '../../models/game/units/Swordsman';
 import {BlockService} from '../../services/program-construction/block.service';
 import {FirestoreDatabaseService} from '../../services/database/firestore-database.service';
+import {Tower} from '../../models/game/units/Tower';
 
 (<any>window).createjs = createjs;
 let stage;
@@ -313,7 +314,7 @@ export class LevelComponent implements OnInit, OnDestroy {
       this.placeOnScreen(unit);
       stage.addChild(unit.sprite);
       // Assuming units of team 2 face west
-      if(unit.team === 2){
+      if(unit.team === 2 && unit.constructor.name !== Tower.name){
 
         this.sprite.flipSpriteInPlace(unit);
 
