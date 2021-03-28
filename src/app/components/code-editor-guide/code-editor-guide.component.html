@@ -16,10 +16,7 @@
   <div id="docs-content">
     <h1>Introduction</h1>
     <p>
-      The Scripting Siege code editor is where you’ll be doing your coding and testing before entering the game.
-      Getting comfortable with it is an important first step to beginning to learn and have fun with our platform.
-      The editor is split into two different modes representing the two styles of coding we offer, Javascript
-      programming and our pseudo programming language (block code). We will go over how to use each mode to produce
+      The Scripting Siege code editor is where you’ll be doing your coding and testing before entering the game. Getting comfortable with it is an important first step in beginning to learn and have fun with our platform. The editor is split into two different modes representing the two styles of coding we offer, Javascript programming and our pseudo programming language (block code). We will go over how to use each mode to produce
       functional game code and later test it within the editor.
     </p>
     <h1 id="editing-your-block-code">Editing Your Block Code</h1>
@@ -40,10 +37,10 @@
     <p>
       You can drag these blocks between the “When turn” and “End turn” blocks above to start giving your unit
       instructions. Note in each turn your unit is limited to performing a single action at a time. You must ensure that
-      in your code your unit will only perform at most one action by the end of the turn. As the names of the tabs
+      in your code your unit will only perform at most one action. As the names of the tabs
       suggest, any block under the “Action” tab is considered an action for your unit to execute. Once you’ve dragged
       a block onto your code, you will notice a trash can icon on it. Clicking it will remove the block from your code
-      if you’ve ever made a mistake. You will notice after placing your block the Javascript console on the lower right
+      if you’ve ever made a mistake. After placing your block the Javascript console on the lower right
       updates. This console shows you how your code would look like as actual Javascript code. This will be very useful
       to help you learn a little more about Javascript along the way and give you an idea of how to code units with real
       Javascript code. Also, note that you can click the numbered tabs above to work on multiple block code snippets at
@@ -51,15 +48,15 @@
     </p>
     <h1 id="adding-conditional-logic-to-your-block-code">Adding Conditional Logic to Your Block Code</h1>
     <p>
-      You will notice in the lower panel with the unplaced blocks there’s a tab titled “Conditional”. These contain
+      In the lower panel with the unplaced blocks, there’s a tab titled “Conditional”. These contain
       special blocks that allow you to create conditional logic (if this then do that, otherwise do this). When you
-      place an if block you will notice it will render like this:
+      place an if block it from that tab it will render like this:
     </p>
     <img src="assets/guides/code-editor-guide/imgs/If.PNG">
     <p>
       From here, you can select the condition to check for during that turn, negate that condition (check that the
       condition is not true), or add more conditions with AND and OR logic. If you place a block below the if condition,
-      you will notice that it is indented further right than the if block like so:
+      it becomes indented further right than the if block like so:
     </p>
     <img src="assets/guides/code-editor-guide/imgs/If%20in%20range%20attack.PNG">
     <p>
@@ -69,7 +66,7 @@
       met. To do so you need to add either an “end if” block, an “else if” block, or an “else” block. The “else if”
       block is for if you want to add another condition to check if the first condition was not met. Then like the if
       block you can add code under that condition for if that condition is met. To close the “else if” statement, you
-      would add either another “else if” block to check for more conditions, an “end else if” block, or an “else” block.
+      would add either another “else if” block to check for more conditions, an “end else if” block or an “else” block.
       An “else” block is a block that can close an “if” statement or an “else if” statement. It’s used when you want to
       add code to be executed if none of the “if” or “else if” conditions in your conditional logic are met. Otherwise,
       if you don’t need “else” logic, you can add an “end else if” block to close your “else if” statement. Similarly,
@@ -80,22 +77,22 @@
     <p>
       Once you’re satisfied with the code you’ve written and want to try it out, right-click your block code. This will
       first verify that your code is made properly. If there is an error in your code, you will be prompted to fix it
-      with a hint as to where the mistake occurred. Once your code has been verified, you can click a unit on the grid
+      with a hint on where the mistake occurred. Once your code has been verified, you can click a unit on the grid
       to assign the code to. Note you can only assign code to units that are facing right. Once you added your code a
       number will appear on the tile the unit is on indicating the tab which contains its code. Then simply click on the
-      run button to test out your code.
+      run button to test it out.
     </p>
     <h1 id="editing-the-grid">Editing the Grid</h1>
     <p>
       Our code editor also provides the option to add units to the grid and move them. To move your unit across the grid
       simply drag it to move it to where you want it to be. To add units on the grid, right-click the tile you want to
-      add a unit on and you will see an option to units or delete units. Note you are limited to 6 of your own units on
+      add a unit on and you will see an option to add units or delete units. Note you are limited to 6 of your own units on
       the grid at a time.
     </p>
     <h1 id="using-javascript-mode">Using Javascript Mode</h1>
     <p>
       If you feel comfortable coding your units in Javascript, then you can try using the Javascript mode of our code
-      editor! To re-iterate, you can switch to Javascript mode by clicking the “go to js” button in the editor. Once
+      editor! To re-iterate, you can switch to Javascript mode by clicking the “go to js” button. Once
       there, your code tabs will turn into Javascript consoles. As of right now, you cannot type code into those
       consoles nor do we have plans to allow that. Instead, you can code Javascript code in the code environment of your
       choice and upload the code file. When you upload your code it will appear in the console of the currently opened
